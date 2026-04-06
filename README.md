@@ -26,9 +26,9 @@ git clone https://github.com/TON-USERNAME/digiwork-hub.git
 - PHP
 
 ## Membres du groupe
-- Nom Prénom 1
-- Nom Prénom 2
-- Nom Prénom 3
-- Nom Prénom 4
-- Nom Prénom 5
-- Nom Prénom 6
+- maram mechergui 
+- tasnim khediri
+- yassine jeddey
+- siwar balloum
+- mariem hammami 
+- med ali zouaoui

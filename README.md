@@ -1,13 +1,4 @@
-DIGIWORK HUB
-
-
-
-
-
-
-
-
-📖 Description
+Description
 
 DigiWork Hub est une plateforme intelligente pour entrepreneurs digitaux, freelances et créateurs de contenu.
 
@@ -17,14 +8,16 @@ Gérer des missions
 Optimiser les profils avec l’IA
 Analyser les performances
 Recommander des services
-🗂 Table des matières
+
+Table des matières
 Aperçu du projet
 Fonctionnalités
 Installation
 Technologies utilisées
 Membres du groupe
 Licence
-🧐 Aperçu du projet
+
+Aperçu du projet
 
 DigiWork Hub accompagne les professionnels dans leur transformation digitale et l’optimisation de leur productivité.
 
@@ -33,6 +26,7 @@ Problématiques
 ⏱️ Difficulté à mesurer la productivité à distance
 💼 Manque de visibilité sur les revenus et projets
 🤝 Collaboration à distance inefficace
+
 Solution
 
 Une plateforme tout-en-un pour :
@@ -41,7 +35,8 @@ Centraliser la gestion de projets et d’activités
 Analyser la performance et la productivité
 Simplifier la collaboration en équipe
 Visualiser les données en temps réel
-✨ Fonctionnalités
+
+Fonctionnalités
 Pour les Entrepreneurs
 📊 Tableau de bord intelligent
 💰 Gestion financière
@@ -54,15 +49,19 @@ Pour les Travailleurs à distance
 👥 Espace collaboratif
 ✅ Tâches partagées
 🔔 Notifications en temps réel
-💻 Installation
+
+Installation
 Cloner le projet :
 git clone https://github.com/maram-arch/digiwork-hub.git
+
 Ouvrir dans un éditeur ou serveur local (XAMPP, WAMP, etc.)
+
 🛠 Technologies utilisées
 JavaScript (ES6+)
 PHP 7.4+
 MySQL
-👥 Membres du groupe
+
+Membres du groupe
 Maram Mechergui
 Tasnim Khediri
 Yassine Jeddey

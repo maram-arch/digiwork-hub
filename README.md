@@ -1,16 +1,3 @@
-DIGIWORK HUB
-
-
-
-
-
-
-
-
-
-
-
-
 Description
 
 DigiWork Hub est une plateforme intelligente dédiée aux entrepreneurs digitaux, freelances et créateurs de contenu.
@@ -32,15 +19,12 @@ Aperçu du projet
 
 DigiWork Hub accompagne les professionnels dans leur transformation digitale et l’optimisation de leur productivité.
 
-Problématiques :
-
+Problématiques
 📱 Gestion fragmentée des outils digitaux
 ⏱️ Difficulté à mesurer la productivité à distance
 💼 Manque de visibilité sur les revenus et projets
 🤝 Collaboration à distance inefficace
-
-Solution :
-
+Solution
 Centraliser la gestion de projets et d’activités
 Analyser la performance et la productivité
 Simplifier la collaboration en équipe
@@ -63,9 +47,9 @@ Cloner le projet :
 git clone https://github.com/TON-USERNAME/digiwork-hub.git
 Ouvrir dans votre éditeur ou serveur local (XAMPP, WAMP, etc.)
 Technologies utilisées
-Frontend : HTML5, CSS3, JavaScript (ES6+)
-Backend : PHP 7.4+
-Base de données : MySQL
+JavaScript (ES6+)
+PHP 7.4+
+MySQL
 Membres du groupe
 Maram Mechergui
 Tasnim Khediri
@@ -73,6 +57,3 @@ Yassine Jeddey
 Siwar Balloum
 Mariem Hammami
 Med Ali Zouaoui
-Licence
-
-Ce projet est sous licence MIT.

@@ -1,5 +1,5 @@
-﻿<?php
-require_once("../config/config.php");
+<?php
+require_once(__DIR__ . "/../config/config.php");
 
 class Abonnement {
 
@@ -21,6 +21,24 @@ class Abonnement {
 
         $stmt2 = $pdo->prepare($sql2);
         $stmt2->execute([$pack, $id_abonnement]);
+    }
+
+    function getAllAbonnements() {
+        global $pdo;
+        return $pdo->query("SELECT a.*, p.`nom-pack`, u.nom, u.tel FROM `abonnement` a
+                            JOIN `abon-pack` ap ON a.`id-abonnement` = ap.`id-abonnement`
+                            JOIN `pack` p ON ap.`id-pack` = p.`id-pack`
+                            JOIN `user` u ON a.`id-user` = u.id_user")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    function delete($id) {
+        global $pdo;
+        // Due to FK constraints, delete from abon-pack first
+        $stmt1 = $pdo->prepare("DELETE FROM `abon-pack` WHERE `id-abonnement`=?");
+        $stmt1->execute([$id]);
+        
+        $stmt2 = $pdo->prepare("DELETE FROM `abonnement` WHERE `id-abonnement`=?");
+        $stmt2->execute([$id]);
     }
 }
 ?>

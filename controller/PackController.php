@@ -1,22 +1,48 @@
-﻿<?php
-require_once("../model/Pack.php");
+<?php
+require_once('../model/Pack.php');
 
 $pack = new Pack();
 
-if(isset($_POST['add'])) {
-    $pack->add(
-        $_POST['nom'],
-        $_POST['prix'],
-        $_POST['duree'],
-        $_POST['description'],
-        $_POST['nb'],
-        $_POST['support']
-    );
-    header("Location: ../view/back/dashboard_packs.php");
+// Front-Office API Route via Fetch (kept for compatibility)
+if (isset($_GET['action']) && $_GET['action'] === 'getAll') {
+    $packs = $pack->getAll()->fetchAll(PDO::FETCH_ASSOC);
+    echo json_encode($packs);
+    exit;
 }
 
-if(isset($_GET['delete'])) {
-    $pack->delete($_GET['delete']);
-    header("Location: ../view/back/dashboard_packs.php");
+// Admin Deletion (GET)
+if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
+    $pack->delete($_GET['id']);
+    header('Location: ../view/back/dashboard_packs.php');
+    exit;
+}
+
+// Add Pack (POST)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
+    $pack->add(
+        $_POST['nom'],
+        floatval($_POST['prix']),
+        $_POST['duree'],
+        $_POST['description'],
+        intval($_POST['nb']),
+        $_POST['support']
+    );
+    header('Location: ../view/back/dashboard_packs.php');
+    exit;
+}
+
+// Update Pack (POST)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update') {
+    $pack->update(
+        $_POST['id-pack'],
+        $_POST['nom'],
+        floatval($_POST['prix']),
+        $_POST['duree'],
+        $_POST['description'],
+        intval($_POST['nb']),
+        $_POST['support']
+    );
+    header('Location: ../view/back/dashboard_packs.php');
+    exit;
 }
 ?>

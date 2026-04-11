@@ -1,5 +1,5 @@
-﻿<?php
-$host = "localhost";
+<?php
+$host = "127.0.0.1";
 $dbname = "digiwork-hub";
 $username = "root";
 $password = "";

@@ -105,8 +105,8 @@
                                 <input type="number" step="0.01" id="prix" name="prix" required value="<?= $editPack ? htmlspecialchars($editPack['prix']) : '' ?>">
                             </div>
                             <div class="form-group">
-                                <label>Durée :</label>
-                                <input type="text" id="duree" name="duree" required value="<?= $editPack ? htmlspecialchars($editPack['duree']) : '' ?>">
+                                <label>Durée (date de début recommandé) :</label>
+                                <input type="date" id="duree" name="duree" required value="<?= $editPack ? htmlspecialchars($editPack['duree']) : '' ?>">
                             </div>
                             <div class="form-group">
                                 <label>Nombre de projets max :</label>

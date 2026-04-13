@@ -48,9 +48,30 @@
     $pm = new Pack();
 
     $recommended_defs = [
-        ['name' => 'Pack Gratuit', 'prix' => 0.0, 'duree' => '7 jours', 'description' => 'Accès limité, parfait pour tester la plateforme.', 'nb' => 1, 'support' => 'non'],
-        ['name' => 'Pack Standard', 'prix' => 49.0, 'duree' => '1 mois', 'description' => 'Pour freelances actifs — gestion de 5 projets et support prioritaire.', 'nb' => 5, 'support' => 'oui'],
-        ['name' => 'Pack Premium', 'prix' => 129.0, 'duree' => '1 mois', 'description' => 'Toutes les fonctionnalités + support VIP et intégrations.', 'nb' => 9999, 'support' => 'oui']
+        [
+            'name' => 'PACK BASIC (Débutant)',
+            'prix' => 0.0,
+            'duree' => '30 jours',
+            'description' => "🎯 Cible\n\n👉 Étudiants / débutants / nouveaux freelances\n\n📦 Contenu\nAccès limité à la plateforme\nNombre de projets max : 2–3\nPas de support prioritaire\nPas d’outils avancés",
+            'nb' => 3,
+            'support' => 'non'
+        ],
+        [
+            'name' => 'PACK PRO (Standard)',
+            'prix' => 35.0,
+            'duree' => '1 mois',
+            'description' => "🎯 Cible\n\n👉 Freelances actifs / entrepreneurs en croissance\n\n📦 Contenu\nAccès complet aux fonctionnalités\nNombre de projets moyen (10–20)\nSupport normal\nAccès aux recommandations",
+            'nb' => 15,
+            'support' => 'oui'
+        ],
+        [
+            'name' => 'PACK PREMIUM (Avancé)',
+            'prix' => 80.0,
+            'duree' => '1 mois',
+            'description' => "🎯 Cible\n\n👉 Freelances professionnels / agences / power users\n\n📦 Contenu\nProjets illimités\nSupport prioritaire\nMise en avant du profil\nAccès aux analytics avancés\nAccès aux meilleures opportunités",
+            'nb' => 9999,
+            'support' => 'oui'
+        ]
     ];
 
     $recommended = [];
@@ -75,8 +96,8 @@
                     <div>
                         <h3 class="pack-title"><?= htmlspecialchars($r['nom-pack']) ?></h3>
                         <div class="pack-price"><?= htmlspecialchars($r['prix']) ?> dt — <?= htmlspecialchars($r['duree']) ?></div>
-                        <p style="font-size:13px;color:var(--text-muted);"><?= htmlspecialchars($r['description']) ?></p>
-                        <div style="font-size:13px;color:var(--text-muted);">Projets max: <strong><?= $r['nb-proj-max'] ?></strong> • Support prioritaire: <strong><?= htmlspecialchars($r['support-prioritaire']) ?></strong></div>
+                            <p style="font-size:13px;color:var(--text-muted);white-space:pre-line;"><?= htmlspecialchars($r['description']) ?></p>
+                            <div style="font-size:13px;color:var(--text-muted);">Projets max: <strong><?= $r['nb-proj-max'] ?></strong> • Support prioritaire: <strong><?= htmlspecialchars($r['support-prioritaire']) ?></strong></div>
                     </div>
                     <form method="POST" action="../../controller/AbonnementController.php">
                         <input type="hidden" name="action" value="subscribe">

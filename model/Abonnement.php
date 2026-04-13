@@ -31,6 +31,17 @@ class Abonnement {
                             JOIN `user` u ON a.`id-user` = u.id_user")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    function getByUser($userId) {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT a.*, p.`nom-pack`, u.nom, u.tel FROM `abonnement` a
+                            JOIN `abon-pack` ap ON a.`id-abonnement` = ap.`id-abonnement`
+                            JOIN `pack` p ON ap.`id-pack` = p.`id-pack`
+                            JOIN `user` u ON a.`id-user` = u.id_user
+                            WHERE a.`id-user` = ?");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     function delete($id) {
         global $pdo;
         // Due to FK constraints, delete from abon-pack first

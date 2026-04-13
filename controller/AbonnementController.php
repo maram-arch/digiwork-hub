@@ -5,11 +5,26 @@ require_once('../model/Abonnement.php');
 $abo = new Abonnement();
 
 // Return JSON for API consumers
-if (isset($_GET['action']) && $_GET['action'] === 'getAll') {
-    header('Content-Type: application/json');
-    $abonnements = $abo->getAllAbonnements();
-    echo json_encode($abonnements);
-    exit;
+// Return JSON for API consumers: all abonnements (admin) or per-user via getMine
+if (isset($_GET['action'])) {
+    if ($_GET['action'] === 'getAll') {
+        header('Content-Type: application/json');
+        $abonnements = $abo->getAllAbonnements();
+        echo json_encode($abonnements);
+        exit;
+    }
+
+    if ($_GET['action'] === 'getMine') {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode([]);
+            exit;
+        }
+        $userId = intval($_SESSION['user_id']);
+        $abonnements = $abo->getByUser($userId);
+        echo json_encode($abonnements);
+        exit;
+    }
 }
 
 // Handle POST requests (both AJAX and normal form submissions)

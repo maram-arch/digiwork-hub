@@ -97,7 +97,7 @@
             });
 
             // Load abonnements (for current user) via AbonnementController
-            fetch('../../controller/AbonnementController.php?action=getAll')
+            fetch('../../controller/AbonnementController.php?action=getMine')
             .then(res => res.json())
             .then(data => {
                 const container = document.getElementById('abonnements-container');

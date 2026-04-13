@@ -32,6 +32,13 @@ class Pack {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    function getByName($name) {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT * FROM `pack` WHERE `nom-pack` = ? LIMIT 1");
+        $stmt->execute([$name]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     function update($id, $nom, $prix, $duree, $desc, $nb, $support) {
         global $pdo;
         $sql = "UPDATE `pack` SET `nom-pack`=?, `prix`=?, `duree`=?, `description`=?, `nb-proj-max`=?, `support-prioritaire`=? WHERE `id-pack`=?";

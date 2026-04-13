@@ -1,8 +1,3 @@
-<?php
-require_once("../../model/Pack.php");
-$packModel = new Pack();
-$packs = $packModel->getAll();
-?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,37 +7,94 @@ $packs = $packModel->getAll();
 </head>
 <body>
     <div class="front-navbar">
-        <h2>DigiWork Hub</h2>
-        <div>
-            <a href="packs.php">Nos Packs</a>
-            <a href="abonnement.php">Mon Tableau de Bord</a>
+        <div class="logo-container">
+            <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB" style="height:48px;">
+        </div>
+        <div class="nav-links">
+            <a href="../frontoffice/index.php">Accueil</a>
+            <a href="#">Projets</a>
+            <a href="packs.php">Packs & Formations</a>
+            <a href="#">Durabilité</a>
+            <a href="abonnement.php">Mon Profil</a>
         </div>
     </div>
 
-    <div style="text-align: center; padding: 40px 20px 0 20px;">
-        <h1>Abonnements Gérés</h1>
-        <p>Découvrez les offres spécialement conçues pour vos projets à distance.</p>
+    <div class="hero">
+        <h1>Trouvez les meilleures opportunités freelances pour vous !</h1>
+        <p>Boostez votre carrière digitale avec nos abonnements prioritaires, gestion de projets et support VIP.</p>
+        <div class="hero-buttons">
+            <a href="#" class="btn-white">Explorez les Projets</a>
+            <a href="#packs-container" class="btn-green">Voir les Packs</a>
+        </div>
     </div>
 
-    <div class="cards-container">
-        <?php while ($p = $packs->fetch(PDO::FETCH_ASSOC)) : ?>
-        <div class="pack-card">
-            <h3><?= htmlspecialchars($p['nom-pack']) ?></h3>
-            <h2><?= htmlspecialchars($p['prix']) ?> dt</h2>
-            <br>
-            <p><strong>Max Projets :</strong> <?= htmlspecialchars($p['nb-proj-max']) ?></p>
-            <p><strong>Durée :</strong> <?= htmlspecialchars($p['duree']) ?></p>
-            <p><strong>Support Prioritaire :</strong> <?= htmlspecialchars($p['support-prioritaire']) ?></p>
-            <br>
-            <p><?= htmlspecialchars($p['description']) ?></p>
-            <br>
-            <form action="../../controller/AbonnementController.php" method="POST">
-                <input type="hidden" name="action" value="subscribe">
-                <input type="hidden" name="pack_id" value="<?= htmlspecialchars($p['id-pack']) ?>">
-                <button type="submit" class="btn-accent" style="width: 100%;">S'abonner</button>
-            </form>
-        </div>
-        <?php endwhile; ?>
+    <h2 class="section-title">Packs Recommandés pour Vous</h2>
+
+    <div id="packs-container" class="cards-container">
+        <!-- Packs will be injected here via Fetch API -->
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('../../controller/PackController.php?action=getAll')
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('packs-container');
+                let html = '';
+                data.forEach(pack => {
+                    html += `
+                        <div class="pack-card">
+                            <div class="pack-card-header">
+                                <div style="box-sizing: border-box; background: var(--secondary); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 24px;">${pack['nom-pack']}</div>
+                            </div>
+                            <div class="pack-content">
+                                <div>
+                                    <span class="pack-tag">${pack['nb-proj-max']} Projets Max</span>
+                                    <h3 class="pack-title">${pack['nom-pack']}</h3>
+                                    <div class="pack-price">${pack.prix} dt / ${pack.duree} j</div>
+                                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+                                        Support Prioritaire: <strong>${pack['support-prioritaire']}</strong><br><br>
+                                        ${pack.description}
+                                    </p>
+                                </div>
+                                <form method="POST" action="../../controller/AbonnementController.php" onsubmit="return subscribeForm(event, ${pack['id-pack']});">
+                                    <input type="hidden" name="action" value="subscribe">
+                                    <input type="hidden" name="pack_id" value="${pack['id-pack']}">
+                                    <button type="submit" class="btn-accent">S'abonner</button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            })
+            .catch(err => console.error(err));
+        });
+
+        function subscribeForm(e, packId) {
+            // Use fetch to submit and stay on page or redirect to profile
+            e.preventDefault();
+            const fd = new FormData();
+            fd.append('action', 'subscribe');
+            fd.append('pack_id', packId);
+
+            fetch('../../controller/AbonnementController.php', {
+                method: 'POST',
+                body: fd
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    alert('Félicitations, abonnement réussi !');
+                    window.location.href = 'abonnement.php';
+                } else {
+                    alert('Erreur: ' + res.message);
+                }
+            })
+            .catch(err => alert('Erreur réseau.'));
+
+            return false;
+        }
+    </script>
 </body>
 </html>

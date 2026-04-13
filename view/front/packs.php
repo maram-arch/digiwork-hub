@@ -42,6 +42,65 @@
     </div>
 
     <h2 class="section-title">Packs Recommandés pour Vous</h2>
+    <!-- Recommended static packs (Free, Standard, Premium) -->
+    <div style="max-width:1100px;margin:0 auto 24px auto;padding:0 20px;display:flex;gap:20px;">
+        <div class="pack-card" style="width:33%;">
+            <div class="pack-card-header" style="background:linear-gradient(90deg,#F9FAFB 0,#E6C79C 100%);">
+                <div style="font-size:18px;font-weight:700;color:var(--primary);">Free</div>
+            </div>
+            <div class="pack-content">
+                <div>
+                    <h3 class="pack-title">Pack Gratuit</h3>
+                    <div class="pack-price">0 dt — Essai</div>
+                    <p style="font-size:13px;color:var(--text-muted);">Accès limité, parfait pour tester la plateforme.</p>
+                    <div style="font-size:13px;color:var(--text-muted);">Projets max: <strong>1</strong> • Support prioritaire: <strong>non</strong></div>
+                </div>
+                <form method="POST" action="../../controller/AbonnementController.php">
+                    <input type="hidden" name="action" value="subscribe">
+                    <input type="hidden" name="pack_id" value="0">
+                    <button type="submit" class="btn-accent">S'abonner</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="pack-card" style="width:33%;">
+            <div class="pack-card-header" style="background:linear-gradient(90deg,#E6C79C 0,#F59E0B 100%);">
+                <div style="font-size:18px;font-weight:700;color:white;">Standard</div>
+            </div>
+            <div class="pack-content">
+                <div>
+                    <h3 class="pack-title">Pack Standard</h3>
+                    <div class="pack-price">49 dt / mois</div>
+                    <p style="font-size:13px;color:var(--text-muted);">Pour freelances actifs — gestion de 5 projets et support prioritaire.</p>
+                    <div style="font-size:13px;color:var(--text-muted);">Projets max: <strong>5</strong> • Support prioritaire: <strong>oui</strong></div>
+                </div>
+                <form method="POST" action="../../controller/AbonnementController.php">
+                    <input type="hidden" name="action" value="subscribe">
+                    <input type="hidden" name="pack_id" value="-1">
+                    <button type="submit" class="btn-accent">S'abonner</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="pack-card" style="width:33%;">
+            <div class="pack-card-header" style="background:linear-gradient(90deg,#0A2540 0,#174276 100%);">
+                <div style="font-size:18px;font-weight:700;color:white;">Premium</div>
+            </div>
+            <div class="pack-content">
+                <div>
+                    <h3 class="pack-title">Pack Premium</h3>
+                    <div class="pack-price">129 dt / mois</div>
+                    <p style="font-size:13px;color:var(--text-muted);">Toutes les fonctionnalités + support VIP et intégrations.</p>
+                    <div style="font-size:13px;color:var(--text-muted);">Projets max: <strong>Illimité</strong> • Support prioritaire: <strong>oui</strong></div>
+                </div>
+                <form method="POST" action="../../controller/AbonnementController.php">
+                    <input type="hidden" name="action" value="subscribe">
+                    <input type="hidden" name="pack_id" value="-2">
+                    <button type="submit" class="btn-accent">S'abonner</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <?php if ($flash): ?>
         <div style="max-width:1100px;margin:20px auto;">
@@ -76,7 +135,7 @@
                                         ${pack.description}
                                     </p>
                                 </div>
-                                <form method="POST" action="../../controller/AbonnementController.php" onsubmit="return subscribeForm(event, ${pack['id-pack']});">
+                                <form method="POST" action="../../controller/AbonnementController.php">
                                     <input type="hidden" name="action" value="subscribe">
                                     <input type="hidden" name="pack_id" value="${pack['id-pack']}">
                                     <button type="submit" class="btn-accent">S'abonner</button>

@@ -1,26 +1,29 @@
 <?php
 require_once('../model/Pack.php');
 
-header('Content-Type: application/json');
+session_start();
 
 $pack = new Pack();
 
+// Return JSON list if requested
 if (isset($_GET['action']) && $_GET['action'] === 'getAll') {
+    header('Content-Type: application/json');
     $packs = $pack->getAll()->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($packs);
     exit;
 }
 
+// Handle POST form submissions (Add / Update / Delete via POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    
-    // Delete Pack (AJAX POST)
+    // Delete Pack (form submit)
     if ($_POST['action'] === 'delete' && isset($_POST['id'])) {
-        $pack->delete($_POST['id']);
-        echo json_encode(['status' => 'success', 'message' => 'Pack supprimé avec succès']);
+        $pack->delete(intval($_POST['id']));
+        $_SESSION['flash'] = 'Pack supprimé avec succès';
+        header('Location: /view/back/dashboard_packs.php');
         exit;
     }
 
-    // Add Pack (AJAX POST)
+    // Add Pack
     if ($_POST['action'] === 'add') {
         $pack->add(
             $_POST['nom'],
@@ -30,11 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             intval($_POST['nb']),
             $_POST['support']
         );
-        echo json_encode(['status' => 'success', 'message' => 'Pack ajouté avec succès']);
+        $_SESSION['flash'] = 'Pack ajouté avec succès';
+        header('Location: /view/back/dashboard_packs.php');
         exit;
     }
 
-    // Update Pack (AJAX POST)
+    // Update Pack
     if ($_POST['action'] === 'update') {
         $pack->update(
             $_POST['id-pack'],
@@ -45,24 +49,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             intval($_POST['nb']),
             $_POST['support']
         );
-        echo json_encode(['status' => 'success', 'message' => 'Pack modifié avec succès']);
+        $_SESSION['flash'] = 'Pack modifié avec succès';
+        header('Location: /view/back/dashboard_packs.php');
         exit;
     }
 }
+
 // Support GET-based delete (admin link like PackController.php?delete=1&id=3)
 if (isset($_GET['delete']) && isset($_GET['id'])) {
     $id = intval($_GET['id']);
     $pack->delete($id);
-
-    // If request expects JSON, return JSON
-    if (isset($_GET['ajax']) || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
-        header('Content-Type: application/json');
-        echo json_encode(['status' => 'success', 'message' => 'Pack supprimé avec succès']);
-        exit;
-    }
-
-    // Otherwise redirect back to admin UI
+    $_SESSION['flash'] = 'Pack supprimé avec succès';
     header('Location: /view/back/dashboard_packs.php');
     exit;
 }
-?>
+    // Support GET-based delete (admin link like PackController.php?delete=1&id=3)

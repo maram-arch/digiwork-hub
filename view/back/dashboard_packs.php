@@ -6,6 +6,27 @@
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
+    <?php
+    // Server-rendered Back Office Packs dashboard (non-AJAX forms)
+    session_start();
+    require_once(__DIR__ . '/../../model/Pack.php');
+
+    $packModel = new Pack();
+    $packs = $packModel->getAll()->fetchAll(PDO::FETCH_ASSOC);
+
+    // flash message
+    $flash = isset($_SESSION['flash']) ? $_SESSION['flash'] : null;
+    if ($flash) unset($_SESSION['flash']);
+
+    // Edit mode
+    $editPack = null;
+    if (isset($_GET['edit'])) {
+        $id = intval($_GET['edit']);
+        $editPack = $packModel->getById($id);
+    }
+
+    ?>
+
     <div class="back-layout">
         <!-- Sidebar -->
         <div class="sidebar">
@@ -34,6 +55,9 @@
             </div>
 
             <div class="content">
+                <?php if ($flash): ?>
+                    <div style="margin-bottom:16px;"><div style="background:#FEF3C7;padding:12px;border-radius:8px;color:#92400E;font-weight:700;"><?= htmlspecialchars($flash) ?></div></div>
+                <?php endif; ?>
                 <div class="stat-cards">
                     <div class="stat-card blue">
                         <div>
@@ -66,41 +90,46 @@
                 </div>
 
                 <div class="dashboard-panel">
-                    <div class="panel-title">Ajouter un nouveau Pack</div>
-                    <form id="packForm">
-                        <input type="hidden" id="action" name="action" value="add">
-                        <input type="hidden" id="id-pack" name="id-pack" value="">
+                    <div class="panel-title"><?= $editPack ? 'Modifier le Pack' : 'Ajouter un nouveau Pack' ?></div>
+                    <form method="POST" action="../../controller/PackController.php">
+                        <input type="hidden" name="action" value="<?= $editPack ? 'update' : 'add' ?>">
+                        <input type="hidden" id="id-pack" name="id-pack" value="<?= $editPack ? htmlspecialchars($editPack['id-pack']) : '' ?>">
                         
                         <div class="admin-form">
                             <div class="form-group">
                                 <label>Nom du Pack :</label>
-                                <input type="text" id="nom" name="nom" required>
+                                <input type="text" id="nom" name="nom" required value="<?= $editPack ? htmlspecialchars($editPack['nom-pack']) : '' ?>">
                             </div>
                             <div class="form-group">
                                 <label>Prix (dt) :</label>
-                                <input type="number" step="0.01" id="prix" name="prix" required>
+                                <input type="number" step="0.01" id="prix" name="prix" required value="<?= $editPack ? htmlspecialchars($editPack['prix']) : '' ?>">
                             </div>
                             <div class="form-group">
                                 <label>Durée :</label>
-                                <input type="text" id="duree" name="duree" required>
+                                <input type="text" id="duree" name="duree" required value="<?= $editPack ? htmlspecialchars($editPack['duree']) : '' ?>">
                             </div>
                             <div class="form-group">
                                 <label>Nombre de projets max :</label>
-                                <input type="number" id="nb" name="nb" required>
+                                <input type="number" id="nb" name="nb" required value="<?= $editPack ? htmlspecialchars($editPack['nb-proj-max']) : '' ?>">
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
                                 <label>Description :</label>
-                                <textarea id="description" name="description" rows="3" required></textarea>
+                                <textarea id="description" name="description" rows="3" required><?= $editPack ? htmlspecialchars($editPack['description']) : '' ?></textarea>
                             </div>
                             <div class="form-group">
                                 <label>Support Prioritaire :</label>
                                 <select id="support" name="support">
-                                    <option value="oui">Oui</option>
-                                    <option value="non">Non</option>
+                                    <option value="oui" <?= $editPack && $editPack['support-prioritaire'] === 'oui' ? 'selected' : '' ?>>Oui</option>
+                                    <option value="non" <?= $editPack && $editPack['support-prioritaire'] === 'non' ? 'selected' : '' ?>>Non</option>
                                 </select>
                             </div>
                         </div>
-                        <button type="submit" class="btn-sm" style="background: var(--accent);">Enregistrer le Pack</button>
+                        <div style="margin-top:12px;display:flex;gap:12px;">
+                            <button type="submit" class="btn-sm" style="background: var(--accent);"><?= $editPack ? 'Mettre à jour' : 'Enregistrer le Pack' ?></button>
+                            <?php if ($editPack): ?>
+                                <a href="dashboard_packs.php" class="btn-sm" style="background:#94A3B8;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;">Annuler</a>
+                            <?php endif; ?>
+                        </div>
                     </form>
                 </div>
 
@@ -117,7 +146,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Filled by JS -->
+                            <?php foreach ($packs as $p): ?>
+                                <tr id="pack-<?= htmlspecialchars($p['id-pack']) ?>">
+                                    <td><?= htmlspecialchars($p['id-pack']) ?></td>
+                                    <td style="font-weight:bold;"><?= htmlspecialchars($p['nom-pack']) ?></td>
+                                    <td style="color:var(--green-card); font-weight:bold;"><?= htmlspecialchars($p['prix']) ?> dt</td>
+                                    <td><?= htmlspecialchars($p['nb-proj-max']) ?> Max</td>
+                                    <td>
+                                        <a class="btn-sm" href="dashboard_packs.php?edit=<?= htmlspecialchars($p['id-pack']) ?>" style="background:#3B82F6;color:white;padding:6px 10px;border-radius:6px;text-decoration:none;margin-right:8px;">Modifier</a>
+                                        <a class="btn-sm" href="../../controller/PackController.php?delete=1&id=<?= htmlspecialchars($p['id-pack']) ?>" style="background:var(--danger-color);color:white;padding:6px 10px;border-radius:6px;text-decoration:none;">Supprimer</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
@@ -126,6 +166,8 @@
         </div>
     </div>
 
-    <script src="pack_crud.js"></script>
+    <!-- Non-AJAX server-rendered CRUD; JS file not required here -->
+</body>
+</html>
 </body>
 </html>

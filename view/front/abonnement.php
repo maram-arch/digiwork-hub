@@ -11,6 +11,12 @@
     </style>
 </head>
 <body>
+    <?php
+    session_start();
+    $flash = isset($_SESSION['flash']) ? $_SESSION['flash'] : null;
+    if ($flash) unset($_SESSION['flash']);
+    ?>
+
     <div class="front-navbar">
         <div class="logo-container">
             <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB" style="height:48px;">
@@ -21,8 +27,20 @@
             <a href="packs.php">Packs & Formations</a>
             <a href="#">Durabilité</a>
             <a href="abonnement.php" style="color: var(--primary);">Mon Profil</a>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <span style="color: #FFF; margin-left: 12px; font-weight:600;">Bonjour, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Utilisateur') ?></span>
+                <a href="../../controller/AuthController.php?action=logout" style="margin-left:8px;">Se déconnecter</a>
+            <?php else: ?>
+                <a href="login.php" style="margin-left:8px;">Se connecter</a>
+            <?php endif; ?>
         </div>
     </div>
+
+    <?php if ($flash): ?>
+        <div style="max-width:900px;margin:20px auto;">
+            <div style="background:#D1FAE5;color:#065F46;padding:12px;border-radius:8px;font-weight:bold;"><?= htmlspecialchars($flash) ?></div>
+        </div>
+    <?php endif; ?>
 
     <div class="profile-container">
         <h2 style="color: var(--primary);">Mes Abonnements Actifs</h2>

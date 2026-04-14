@@ -1,0 +1,513 @@
+<?php
+session_start();
+
+// Vérifier si l'utilisateur est connecté et est admin
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+    header('Location: login.php');
+    exit;
+}
+
+// Stocker les informations de l'utilisateur pour affichage
+$loggedInUser = $_SESSION['user'];
+
+// Gestion de la déconnexion
+if (isset($_GET['logout']) && $_GET['logout'] == 1) {
+    session_destroy();
+    header('Location: login.php');
+    exit;
+}
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiWork Hub - Dashboard Administrateur</title>
+
+    <script>
+        if (window.location.protocol === 'file:') {
+            window.location.replace('http://localhost/projectttttt/digiwork-hub/view/backoffice/index.php');
+        }
+    </script>
+    
+    <link rel="stylesheet" href="assets/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/vendors/chartjs/Chart.min.css">
+    <link rel="stylesheet" href="assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+    <link rel="shortcut icon" href="assets/images/favicon.svg" type="image/x-icon">
+    <style>
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .admin-badge {
+            display: inline-block;
+            background: #00A651;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="sidebar" class='active'>
+            <div class="sidebar-wrapper active">
+                <div class="sidebar-header">
+                   <img src="assets/images/logo.png" alt="DigiWork Hub Logo" style="height: 90px; width: auto; margin-bottom: 10px;" srcset="">
+                   <h4 class="mt-2" style="color:#00A651;">DigiWork Hub</h4>
+                   <div class="user-info">
+                       <span><?php echo htmlspecialchars($loggedInUser['email'] ?? 'Admin'); ?></span>
+                       <span class="admin-badge">ADMIN</span>
+                   </div>
+            </div>
+                <div class="sidebar-menu">
+                    <ul class="menu">
+                        <li class='sidebar-title'>Menu Principal</li>
+                        <li class="sidebar-item active">
+                            <a href="index.php" class='sidebar-link'>
+                                <i data-feather="home" width="20"></i> 
+                                <span>Tableau de bord</span>
+                            </a>
+                        </li>
+                        
+                        <li class='sidebar-title'>Gestion</li>
+                        
+                        <li class="sidebar-item has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i data-feather="briefcase" width="20"></i> 
+                                <span>Gestion des offres</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="#">Toutes les offres</a></li>
+                                <li><a href="#">Ajouter une offre</a></li>
+                                <li><a href="#">Catégories</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="sidebar-item has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i data-feather="users" width="20"></i> 
+                                <span>Gestion des utilisateurs</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="users.php">Utilisateurs (CRUD)</a></li>
+                                <li><a href="#">Statistique</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="sidebar-item has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i data-feather="folder" width="20"></i> 
+                                <span>Gestion des projets</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="#">Tous les projets</a></li>
+                                <li><a href="#">Projets en cours</a></li>
+                                <li><a href="#">Projets terminés</a></li>
+                                <li><a href="#">Livrables</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="sidebar-item has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i data-feather="star" width="20"></i> 
+                                <span>Packs</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="#">Toutes les packs</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="sidebar-item has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i data-feather="message-circle" width="20"></i> 
+                                <span>Forums</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="#">Tous les sujets</a></li>
+                                <li><a href="#">Messages signalés</a></li>
+                                <li><a href="#">Catégories</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class='sidebar-title'>Actions</li>
+                        
+                        <li class="sidebar-item">
+                            <a href="?logout=1" class='sidebar-link'>
+                                <i data-feather="log-out" width="20"></i> 
+                                <span>Déconnexion</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+            </div>
+        </div>
+        
+        <div id="main">
+            <nav class="navbar navbar-header navbar-expand navbar-light">
+                <a class="sidebar-toggler" href="#"><span class="navbar-toggler-icon"></span></a>
+                <button class="btn navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav d-flex align-items-center navbar-light ml-auto">
+                        <li class="dropdown nav-icon">
+                            <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+                                <div class="d-lg-inline-block">
+                                    <i data-feather="bell"></i>
+                                    <span class="badge bg-danger notification-badge">3</span>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-large">
+                                <h6 class='py-2 px-4'>Notifications</h6>
+                                <ul class="list-group rounded-none">
+                                    <li class="list-group-item border-0 align-items-start">
+                                        <div class="avatar bg-success mr-3">
+                                            <span class="avatar-content"><i data-feather="briefcase"></i></span>
+                                        </div>
+                                        <div>
+                                            <h6 class='text-bold'>Nouvelle offre publiée</h6>
+                                            <p class='text-xs'>Une nouvelle mission "Développeur IA" vient d'être publiée</p>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item border-0 align-items-start">
+                                        <div class="avatar bg-warning mr-3">
+                                            <span class="avatar-content"><i data-feather="alert-triangle"></i></span>
+                                        </div>
+                                        <div>
+                                            <h6 class='text-bold'>Réclamation en attente</h6>
+                                            <p class='text-xs'>Une nouvelle réclamation nécessite votre attention</p>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item border-0 align-items-start">
+                                        <div class="avatar bg-info mr-3">
+                                            <span class="avatar-content"><i data-feather="message-circle"></i></span>
+                                        </div>
+                                        <div>
+                                            <h6 class='text-bold'>Message signalé</h6>
+                                            <p class='text-xs'>Un message a été signalé sur le forum</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+                                <div class="avatar mr-1">
+                                    <img src="assets/images/avatar/avatar-s-1.png" alt="Admin DigiWork Hub">
+                                </div>
+                                <div class="d-none d-md-block d-lg-inline-block"><?php echo htmlspecialchars($loggedInUser['email'] ?? 'Admin'); ?></div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#"><i data-feather="user"></i> Mon profil</a>
+                                <a class="dropdown-item" href="#"><i data-feather="settings"></i> Paramètres</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="?logout=1"><i data-feather="log-out"></i> Déconnexion</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <div class="main-content container-fluid">
+                <div class="page-title">
+                    <h3>Tableau de bord administrateur</h3>
+                    <p class="text-subtitle text-muted">Bienvenue sur DigiWork Hub - Plateforme intelligente d'accompagnement des entrepreneurs digitaux</p>
+                </div>
+                
+                <section class="section">
+                    <!-- Statistiques principales -->
+                    <div class="row mb-2">
+                        <div class="col-12 col-md-3">
+                            <div class="card card-statistic">
+                                <div class="card-body p-0">
+                                    <div class="d-flex flex-column">
+                                        <div class='px-3 py-3 d-flex justify-content-between'>
+                                            <h3 class='card-title'>Offres publiées</h3>
+                                            <div class="card-right d-flex align-items-center">
+                                                <p class="text-primary">156</p>
+                                            </div>
+                                        </div>
+                                        <div class="chart-wrapper">
+                                            <canvas id="canvas1" style="height:100px !important"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <div class="card card-statistic">
+                                <div class="card-body p-0">
+                                    <div class="d-flex flex-column">
+                                        <div class='px-3 py-3 d-flex justify-content-between'>
+                                            <h3 class='card-title'>Utilisateurs actifs</h3>
+                                            <div class="card-right d-flex align-items-center">
+                                                <p class="text-success">1 284</p>
+                                            </div>
+                                        </div>
+                                        <div class="chart-wrapper">
+                                            <canvas id="canvas2" style="height:100px !important"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <div class="card card-statistic">
+                                <div class="card-body p-0">
+                                    <div class="d-flex flex-column">
+                                        <div class='px-3 py-3 d-flex justify-content-between'>
+                                            <h3 class='card-title'>Projets en cours</h3>
+                                            <div class="card-right d-flex align-items-center">
+                                                <p class="text-warning">342</p>
+                                            </div>
+                                        </div>
+                                        <div class="chart-wrapper">
+                                            <canvas id="canvas3" style="height:100px !important"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <div class="card card-statistic">
+                                <div class="card-body p-0">
+                                    <div class="d-flex flex-column">
+                                        <div class='px-3 py-3 d-flex justify-content-between'>
+                                            <h3 class='card-title'>Réclamations</h3>
+                                            <div class="card-right d-flex align-items-center">
+                                                <p class="text-danger">12</p>
+                                            </div>
+                                        </div>
+                                        <div class="chart-wrapper">
+                                            <canvas id="canvas4" style="height:100px !important"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Graphique des revenus et activités -->
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class='card-heading p-1 pl-3'>Activité de la plateforme</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4 col-12">
+                                            <div class="pl-3">
+                                                <h1 class='mt-5'>+23%</h1>
+                                                <p class='text-xs'><span class="text-green"><i data-feather="bar-chart" width="15"></i> +23%</span> que le mois dernier</p>
+                                                <div class="legends">
+                                                    <div class="legend d-flex flex-row align-items-center">
+                                                        <div class='w-3 h-3 rounded-full bg-info mr-2'></div>
+                                                        <span class='text-xs'>Mois dernier</span>
+                                                    </div>
+                                                    <div class="legend d-flex flex-row align-items-center">
+                                                        <div class='w-3 h-3 rounded-full bg-blue mr-2'></div>
+                                                        <span class='text-xs'>Mois actuel</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8 col-12">
+                                            <canvas id="bar"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4 class="card-title">Dernières réclamations</h4>
+                                    <div class="d-flex">
+                                        <i data-feather="download"></i>
+                                    </div>
+                                </div>
+                                <div class="card-body px-0 pb-0">
+                                    <div class="table-responsive">
+                                        <table class='table mb-0' id="table1">
+                                            <thead>
+                                                <tr>
+                                                    <th>Utilisateur</th>
+                                                    <th>Titre</th>
+                                                    <th>Date</th>
+                                                    <th>Statut</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Marie Laurent</td>
+                                                    <td>Problème de paiement</td>
+                                                    <td>15/03/2024</td>
+                                                    <td><span class="badge bg-warning">En attente</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Thomas Dubois</td>
+                                                    <td>Offre non conforme</td>
+                                                    <td>14/03/2024</td>
+                                                    <td><span class="badge bg-success">En cours</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sophie Martin</td>
+                                                    <td>Litige avec un client</td>
+                                                    <td>12/03/2024</td>
+                                                    <td><span class="badge bg-danger">Urgent</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Lucas Bernard</td>
+                                                    <td>Compte bloqué</td>
+                                                    <td>10/03/2024</td>
+                                                    <td><span class="badge bg-success">Résolu</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Camille Petit</td>
+                                                    <td>Problème technique</td>
+                                                    <td>09/03/2024</td>
+                                                    <td><span class="badge bg-success">Résolu</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <!-- Performances IA -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Matching IA</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div id="radialBars"></div>
+                                    <div class="text-center mb-5">
+                                        <h6>Taux de correspondance</h6>
+                                        <h1 class='text-green'>+78%</h1>
+                                        <p class="text-xs">Matching réussi entre offres et profils</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Progression des modules -->
+                            <div class="card widget-todo">
+                                <div class="card-header border-bottom d-flex justify-content-between align-items-center">
+                                    <h4 class="card-title d-flex">
+                                        <i class='bx bx-check font-medium-5 pl-25 pr-75'></i>Activité des modules
+                                    </h4>
+                                </div>
+                                <div class="card-body px-0 py-1">
+                                    <table class='table table-borderless'>
+                                        <tr>
+                                            <td class='col-3'>Offres</td>
+                                            <td class='col-6'>
+                                                <div class="progress progress-info">
+                                                    <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                            <td class='col-3 text-center'>156</td>
+                                        </tr>
+                                        <tr>
+                                            <td class='col-3'>Utilisateurs</td>
+                                            <td class='col-6'>
+                                                <div class="progress progress-success">
+                                                    <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                            <td class='col-3 text-center'>1 284</td>
+                                        </tr>
+                                        <tr>
+                                            <td class='col-3'>Projets</td>
+                                            <td class='col-6'>
+                                                <div class="progress progress-primary">
+                                                    <div class="progress-bar" role="progressbar" style="width: 64%" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                            <td class='col-3 text-center'>342</td>
+                                        </tr>
+                                        <tr>
+                                            <td class='col-3'>Forums</td>
+                                            <td class='col-6'>
+                                                <div class="progress progress-warning">
+                                                    <div class="progress-bar" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                            <td class='col-3 text-center'>89 sujets</td>
+                                        </tr>
+                                        <tr>
+                                            <td class='col-3'>Évaluations</td>
+                                            <td class='col-6'>
+                                                <div class="progress progress-secondary">
+                                                    <div class="progress-bar" role="progressbar" style="width: 91%" aria-valuenow="91" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                            <td class='col-3 text-center'>4.8/5</td>
+                                        </tr>
+                                        <tr>
+                                            <td class='col-3'>Réclamations</td>
+                                            <td class='col-6'>
+                                                <div class="progress progress-danger">
+                                                    <div class="progress-bar" role="progressbar" style="width: 28%" aria-valuenow="28" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                            <td class='col-3 text-center'>12</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Impact durable -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Impact durable</h4>
+                                </div>
+                                <div class="card-body text-center">
+                                    <i data-feather="leaf" width="48" height="48" class="text-success mb-3"></i>
+                                    <h3 class="text-success">-156 kg</h3>
+                                    <p>d'émissions CO₂ évitées<br>grâce au télétravail</p>
+                                    <div class="progress mt-3">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 67%">Objectif 2024 : 67%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <footer>
+                <div class="footer clearfix mb-0 text-muted">
+                    <div class="float-left">
+                        <p>2024 &copy; DigiWork Hub - Plateforme intelligente d'accompagnement des entrepreneurs digitaux</p>
+                    </div>
+                    <div class="float-right">
+                        <p>Propulsé par l'IA et le développement durable</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    
+    <script src="assets/js/feather-icons/feather.min.js"></script>
+    <script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/vendors/chartjs/Chart.min.js"></script>
+    <script src="assets/vendors/apexcharts/apexcharts.min.js"></script>
+    <script src="assets/js/pages/dashboard.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

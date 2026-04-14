@@ -245,9 +245,10 @@ CREATE TABLE `sponsorships` (
 --
 
 CREATE TABLE `user` (
-  `id_user` int(11) NOT NULL,
+  `id_user` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(50) NOT NULL,
   `mdp` varchar(30) NOT NULL,
+  `role` enum('condidat','admin','entreprise','sponsor') NOT NULL DEFAULT 'condidat',
   `tel` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -367,6 +368,12 @@ ALTER TABLE `sponsorships`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id_user`);
+
+--
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for dumped tables

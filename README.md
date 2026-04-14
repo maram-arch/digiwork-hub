@@ -95,3 +95,28 @@ Med Ali Zouaoui
 ⚖️ Licence
 
 Ce projet est sous licence MIT.
+
+Livrable semaine CRUD (MVC)
+
+Entite implementee
+- Utilisateur (table user)
+
+CRUD FrontOffice
+- URL: /digiwork-hub/view/frontoffice/users.php
+- Operations: ajouter, lister, modifier, supprimer
+- Validation: JavaScript personnalise + validation serveur (sans attributs HTML5 required/pattern)
+
+CRUD BackOffice
+- URL: /digiwork-hub/view/backoffice/users.php
+- Operations: ajouter, lister, modifier, supprimer
+- Validation: JavaScript personnalise + validation serveur
+
+Architecture MVC respectee
+- Model: model/user.php
+- Controller: controller/UserController.php
+- Views: view/frontoffice/users.php, view/backoffice/users.php
+
+Notes GitHub (organisation de groupe)
+- Creer une issue par tache (CRUD FO, CRUD BO, validation, integration template)
+- Associer chaque commit a une issue (ex: "refs #12")
+- Remplir le tableau de bord GitHub Projects avec les colonnes: Todo, In progress, Done

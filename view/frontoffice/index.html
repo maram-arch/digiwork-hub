@@ -1,527 +1,517 @@
 <!DOCTYPE html>
-<html class="no-js" lang="">
-  <head>
+<html class="no-js" lang="fr">
+<head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Nova - Bootstrap 5 Template</title>
-    <meta name="description" content="" />
+    <title>DigiWork Hub - Plateforme intelligente pour entrepreneurs digitaux</title>
+    <meta name="description" content="DigiWork Hub accompagne les entrepreneurs digitaux avec l'IA et le développement durable" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Place favicon.ico in the root directory -->
 
-    <!-- ========================= CSS here ========================= -->
+    <script>
+        if (window.location.protocol === 'file:') {
+            window.location.href = 'http://localhost/projectttttt/digiwork-hub/view/frontoffice/index.php';
+        }
+    </script>
+
+    <!-- CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap-5.0.0-beta1.min.css" />
     <link rel="stylesheet" href="assets/css/LineIcons.2.0.css"/>
     <link rel="stylesheet" href="assets/css/tiny-slider.css"/>
     <link rel="stylesheet" href="assets/css/animate.css"/>
     <link rel="stylesheet" href="assets/css/lindy-uikit.css"/>
-  </head>
-  <body>
-    <!--[if lte IE 9]>
-      <p class="browserupgrade">
-        You are using an <strong>outdated</strong> browser. Please
-        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
-        your experience and security.
-      </p>
-    <![endif]-->
+    <link rel="stylesheet" href="assets/css/frontoffice-auth-modals.css" />
+    <style>
+        .header-6 .navbar-nav .page-scroll-auth {
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            padding: 8px 0;
+            display: inline-block;
+        }
+        .header-6 .navbar-nav .page-scroll-auth:hover {
+            color: #00A651;
+        }
+    </style>
+</head>
+<body>
 
-    <!-- ========================= preloader start ========================= -->
-    <div class="preloader">
-      <div class="loader">
-        <div class="spinner">
-          <div class="spinner-container">
-            <div class="spinner-rotator">
-              <div class="spinner-left">
-                <div class="spinner-circle"></div>
-              </div>
-              <div class="spinner-right">
-                <div class="spinner-circle"></div>
-              </div>
-            </div>
-          </div>
+<!-- Login Modal -->
+<div id="loginModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Connexion</h3>
+            <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
         </div>
-      </div>
+        <div class="modal-body">
+            <div id="loginAlert" class="alert-message"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" id="loginEmail" placeholder="exemple@domaine.com">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="loginPassword" placeholder="Mot de passe">
+                </div>
+                <button type="submit" class="btn-submit">Se connecter</button>
+            </form>
+            <div class="switch-form">
+                Pas encore de compte ? 
+                <a class="switch-link" href="#" onclick="event.preventDefault(); switchToSignup();">S'inscrire</a>
+            </div>
+        </div>
     </div>
-    <!-- ========================= preloader end ========================= -->
+</div>
 
-    <!-- ========================= hero-section-wrapper-5 start ========================= -->
-    <section id="home" class="hero-section-wrapper-5">
-
-      <!-- ========================= header-6 start ========================= -->
-      <header class="header header-6">
-        <div class="navbar-area">
-          <div class="container">
-            <div class="row align-items-center">
-              <div class="col-lg-12">
-                <nav class="navbar navbar-expand-lg">
-                  <a class="navbar-brand" href="index.html">
-                    <img src="assets/img/logo/logo.svg" alt="Logo" />
-                  </a>
-                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent6" aria-controls="navbarSupportedContent6" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="toggler-icon"></span>
-                    <span class="toggler-icon"></span>
-                    <span class="toggler-icon"></span>
-                  </button>
-  
-                  <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent6">
-                    <ul id="nav6" class="navbar-nav ms-auto">
-                      <li class="nav-item">
-                        <a class="page-scroll active" href="#home">Home</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="page-scroll" href="#feature">Feature</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="page-scroll" href="#about">About</a>
-                      </li>
-
-                      <li class="nav-item">
-                        <a class="page-scroll" href="#pricing">Pricing</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="page-scroll" href="#contact">Contact</a>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div class="header-action d-flex">
-                    <a href="#0"> <i class="lni lni-cart"></i> </a>
-                    <a href="#0"> <i class="lni lni-alarm"></i> </a>
-                  </div>
-                  <!-- navbar collapse -->
-                </nav>
-                <!-- navbar -->
-              </div>
-            </div>
-            <!-- row -->
-          </div>
-          <!-- container -->
+<!-- Signup Modal -->
+<div id="signupModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Inscription</h3>
+            <button class="modal-close" onclick="closeModal('signupModal')">&times;</button>
         </div>
-        <!-- navbar area -->
-      </header>
-      <!-- ========================= header-6 end ========================= -->
-
-      <!-- ========================= hero-5 start ========================= -->
-      <div class="hero-section hero-style-5 img-bg" style="background-image: url('assets/img/hero/hero-5/hero-bg.svg')">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-6">
-              <div class="hero-content-wrapper">
-                <h2 class="mb-30 wow fadeInUp" data-wow-delay=".2s">You're Using Free Lite Version</h2>
-                <p class="mb-30 wow fadeInUp" data-wow-delay=".4s">Please purchase full version of the template to get all sections and permission to use with commercial projects.</p>
-                <a href="#0" class="button button-lg radius-50 wow fadeInUp" data-wow-delay=".6s">Get Started <i class="lni lni-chevron-right"></i> </a>
-              </div>
-            </div>
-            <div class="col-lg-6 align-self-end">
-              <div class="hero-image wow fadeInUp" data-wow-delay=".5s">
-                <img src="assets/img/hero/hero-5/hero-img.svg" alt="">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ========================= hero-5 end ========================= -->
-
-    </section>
-    <!-- ========================= hero-section-wrapper-6 end ========================= -->
-
-    <!-- ========================= feature style-5 start ========================= -->
-    <section id="feature" class="feature-section feature-style-5">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-8">
-            <div class="section-title text-center mb-60">
-              <h3 class="mb-15 wow fadeInUp" data-wow-delay=".2s">Specializing In</h3>
-              <p class="wow fadeInUp" data-wow-delay=".4s">Stop wasting time and money designing and managing a website that doesn’t get results. Happiness guaranteed!</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-lg-4 col-md-6">
-            <div class="single-feature wow fadeInUp" data-wow-delay=".2s">
-              <div class="icon">
-                <i class="lni lni-vector"></i>
-                <svg width="110" height="72" viewBox="0 0 110 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M110 54.7589C110 85.0014 85.3757 66.2583 55 66.2583C24.6243 66.2583 0 85.0014 0 54.7589C0 24.5164 24.6243 0 55 0C85.3757 0 110 24.5164 110 54.7589Z" fill="#EBF4FF"/>
-                  </svg>                  
-              </div>
-              <div class="content">
-                <h5>Graphics Design</h5>
-                <p>Short description for the ones who look for something new.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6">
-            <div class="single-feature wow fadeInUp" data-wow-delay=".4s">
-              <div class="icon">
-                <i class="lni lni-pallet"></i>
-                <svg width="110" height="72" viewBox="0 0 110 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M110 54.7589C110 85.0014 85.3757 66.2583 55 66.2583C24.6243 66.2583 0 85.0014 0 54.7589C0 24.5164 24.6243 0 55 0C85.3757 0 110 24.5164 110 54.7589Z" fill="#EBF4FF"/>
-                  </svg> 
-              </div>
-              <div class="content">
-                <h5>Print Design</h5>
-                <p>Short description for the ones who look for something new.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6">
-            <div class="single-feature wow fadeInUp" data-wow-delay=".6s">
-              <div class="icon">
-                <i class="lni lni-stats-up"></i>
-                <svg width="110" height="72" viewBox="0 0 110 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M110 54.7589C110 85.0014 85.3757 66.2583 55 66.2583C24.6243 66.2583 0 85.0014 0 54.7589C0 24.5164 24.6243 0 55 0C85.3757 0 110 24.5164 110 54.7589Z" fill="#EBF4FF"/>
-                  </svg> 
-              </div>
-              <div class="content">
-                <h5>Business Analysis</h5>
-                <p>Short description for the ones who look for something new.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6">
-            <div class="single-feature wow fadeInUp" data-wow-delay=".2s">
-              <div class="icon">
-                <i class="lni lni-code-alt"></i>
-                <svg width="110" height="72" viewBox="0 0 110 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M110 54.7589C110 85.0014 85.3757 66.2583 55 66.2583C24.6243 66.2583 0 85.0014 0 54.7589C0 24.5164 24.6243 0 55 0C85.3757 0 110 24.5164 110 54.7589Z" fill="#EBF4FF"/>
-                  </svg> 
-              </div>
-              <div class="content">
-                <h5>Web Development</h5>
-                <p>Short description for the ones who look for something new.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6">
-            <div class="single-feature wow fadeInUp" data-wow-delay=".4s">
-              <div class="icon">
-                <i class="lni lni-lock"></i>
-                <svg width="110" height="72" viewBox="0 0 110 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M110 54.7589C110 85.0014 85.3757 66.2583 55 66.2583C24.6243 66.2583 0 85.0014 0 54.7589C0 24.5164 24.6243 0 55 0C85.3757 0 110 24.5164 110 54.7589Z" fill="#EBF4FF"/>
-                  </svg> 
-              </div>
-              <div class="content">
-                <h5>Best Security</h5>
-                <p>Short description for the ones who look for something new.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6">
-            <div class="single-feature wow fadeInUp" data-wow-delay=".6s">
-              <div class="icon">
-                <i class="lni lni-code"></i>
-                <svg width="110" height="72" viewBox="0 0 110 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M110 54.7589C110 85.0014 85.3757 66.2583 55 66.2583C24.6243 66.2583 0 85.0014 0 54.7589C0 24.5164 24.6243 0 55 0C85.3757 0 110 24.5164 110 54.7589Z" fill="#EBF4FF"/>
-                  </svg> 
-              </div>
-              <div class="content">
-                <h5>Web Design</h5>
-                <p>Short description for the ones who look for something new.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-    <!-- ========================= feature style-5 end ========================= -->
-
-    <!-- ========================= about style-4 start ========================= -->
-    <section id="about" class="about-section about-style-4">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-xl-5 col-lg-6">
-            <div class="about-content-wrapper">
-              <div class="section-title mb-30">
-                <h3 class="mb-25 wow fadeInUp" data-wow-delay=".2s">The future of designing starts here</h3>
-                <p class="wow fadeInUp" data-wow-delay=".3s">Stop wasting time and money designing and managing a website that doesn’t get results. Happiness guaranteed,</p>
-              </div>
-              <ul>
-                <li class="wow fadeInUp" data-wow-delay=".35s">
-                  <i class="lni lni-checkmark-circle"></i>
-                  Stop wasting time and money designing and managing a website that doesn’t get results.
-                </li>
-                <li class="wow fadeInUp" data-wow-delay=".4s">
-                  <i class="lni lni-checkmark-circle"></i>
-                  Stop wasting time and money designing and managing.
-                </li>
-                <li class="wow fadeInUp" data-wow-delay=".45s">
-                  <i class="lni lni-checkmark-circle"></i>
-                  Stop wasting time and money designing and managing a website that doesn’t get results.
-                </li>
-              </ul>
-              <a href="#0" class="button button-lg radius-10 wow fadeInUp" data-wow-delay=".5s">Learn More</a>
-            </div>
-          </div>
-          <div class="col-xl-7 col-lg-6">
-            <div class="about-image text-lg-right wow fadeInUp" data-wow-delay=".5s">
-              <img src="assets/img/about/about-4/about-img.svg" alt="">
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- ========================= about style-4 end ========================= -->
-
-    <!-- ========================= pricing style-4 start ========================= -->
-    <section id="pricing" class="pricing-section pricing-style-4 bg-light">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-xl-5 col-lg-6">
-            <div class="section-title mb-60">
-              <h3 class="mb-15 wow fadeInUp" data-wow-delay=".2s">Pricing Plan</h3>
-              <p class="wow fadeInUp" data-wow-delay=".4s">Stop wasting time and money designing and managing a website that doesn’t get results. Happiness guaranteed!Stop wasting time and money designing and managing a website that doesn’t get results. Happiness guaranteed!</p>
-            </div>
-          </div>
-          <div class="col-xl-7 col-lg-6">
-            <div class="pricing-active-wrapper wow fadeInUp" data-wow-delay=".4s">
-              <div class="pricing-active">
-                <div class="single-pricing-wrapper">
-                  <div class="single-pricing">
-                    <h6>Basic Design</h6>
-                    <h4>Web Design</h4>
-                    <h3>$ 29.00</h3>
-                    <ul>
-                      <li>Carefully crafted components</li>
-                      <li>Amazing page examples</li>
-                      <li>Super friendly support team</li>
-                      <li>Awesome Support</li>
-                    </ul>
-                    <a href="#0" class="button radius-30">Get Started</a>
-                  </div>
+        <div class="modal-body">
+            <div id="signupAlert" class="alert-message"></div>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" id="signupEmail" placeholder="exemple@domaine.com">
                 </div>
-                <div class="single-pricing-wrapper">
-                  <div class="single-pricing">
-                    <h6>Standard Design</h6>
-                    <h4>Web Development</h4>
-                    <h3>$ 89.00</h3>
-                    <ul>
-                      <li>Carefully crafted components</li>
-                      <li>Amazing page examples</li>
-                      <li>Super friendly support team</li>
-                      <li>Awesome Support</li>
-                    </ul>
-                    <a href="#0" class="button radius-30">Get Started</a>
-                  </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="text" id="signupTel" placeholder="8 a 15 chiffres">
                 </div>
-                <div class="single-pricing-wrapper">
-                  <div class="single-pricing">
-                    <h6>Pro Design</h6>
-                    <h4>Design & Develop</h4>
-                    <h3>$ 199.00</h3>
-                    <ul>
-                      <li>Carefully crafted components</li>
-                      <li>Amazing page examples</li>
-                      <li>Super friendly support team</li>
-                      <li>Awesome Support</li>
-                    </ul>
-                    <a href="#0" class="button radius-30">Get Started</a>
-                  </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="signupPassword" placeholder="Minimum 6 caracteres">
+                </div>
+                <div class="form-group">
+                    <label>Confirmer mot de passe</label>
+                    <input type="password" id="signupConfirmPassword" placeholder="Confirmer le mot de passe">
                 </div>
                 
-              </div>
+                <div class="form-group">
+                    <label>Je suis :</label>
+                    <div class="role-selector">
+                        <div class="role-option" data-role="candidat" onclick="selectRole('candidat')">
+                            <i class="lni lni-user"></i> Candidat
+                        </div>
+                        <div class="role-option" data-role="entreprise" onclick="selectRole('entreprise')">
+                            <i class="lni lni-briefcase"></i> Entreprise
+                        </div>
+                        <div class="role-option" data-role="sponsor" onclick="selectRole('sponsor')">
+                            <i class="lni lni-gift"></i> Sponsor
+                        </div>
+                        <div class="role-option" data-role="admin" onclick="selectRole('admin')">
+                            <i class="lni lni-shield"></i> Admin
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="signupRole" value="candidat">
+                
+                <!-- Champs Candidat -->
+                <div id="candidatFields" class="dynamic-fields">
+                    <div class="form-group">
+                        <label>Nom</label>
+                        <input type="text" id="candidatNom">
+                    </div>
+                    <div class="form-group">
+                        <label>Prénom</label>
+                        <input type="text" id="candidatPrenom">
+                    </div>
+                    <div class="form-group">
+                        <label>Date de naissance</label>
+                        <input type="text" id="candidatDdn" placeholder="AAAA-MM-JJ">
+                    </div>
+                </div>
+                
+                <!-- Champs Entreprise -->
+                <div id="entrepriseFields" class="dynamic-fields">
+                    <div class="form-group">
+                        <label>Nom de l'entreprise</label>
+                        <input type="text" id="entrepriseNom">
+                    </div>
+                    <div class="form-group">
+                        <label>Adresse</label>
+                        <input type="text" id="entrepriseAdresse">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="entrepriseDescription" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Champs Sponsor -->
+                <div id="sponsorFields" class="dynamic-fields">
+                    <div class="form-group">
+                        <label>Nom du sponsor</label>
+                        <input type="text" id="sponsorNom">
+                    </div>
+                    <div class="form-group">
+                        <label>Prénom</label>
+                        <input type="text" id="sponsorPrenom">
+                    </div>
+                    <div class="form-group">
+                        <label>Société</label>
+                        <input type="text" id="sponsorSociete">
+                    </div>
+                </div>
+                
+                <!-- Champs Admin -->
+                <div id="adminFields" class="dynamic-fields">
+                    <div class="form-group">
+                        <label>Nom</label>
+                        <input type="text" id="adminNom">
+                    </div>
+                    <div class="form-group">
+                        <label>Prénom</label>
+                        <input type="text" id="adminPrenom">
+                    </div>
+                    <div class="form-group">
+                        <label>Code Admin</label>
+                        <input type="text" id="adminCode" placeholder="Code d'administration">
+                    </div>
+                    <div class="form-group">
+                        <label>Date de naissance</label>
+                        <input type="text" id="adminDdn" placeholder="AAAA-MM-JJ">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-submit">S'inscrire</button>
+            </form>
+            <div class="switch-form">
+                Déjà un compte ? 
+                <a class="switch-link" href="#" onclick="event.preventDefault(); switchToLogin();">Se connecter</a>
             </div>
-          </div>
         </div>
-      </div>
-    </section>
-    <!-- ========================= pricing style-4 end ========================= -->
+    </div>
+</div>
 
-    <!-- ========================= contact-style-3 start ========================= -->
-    <section id="contact" class="contact-section contact-style-3">
-      <div class="container">
+<!-- Navbar avec boutons login/signup -->
+<header class="header header-6">
+    <div class="navbar-area">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <nav class="navbar navbar-expand-lg">
+                        <a class="navbar-brand" href="#">
+                            <img src="assets/img/logo/logo.png" alt="DigiWork Hub Logo" />
+                        </a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent6" aria-controls="navbarSupportedContent6" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="toggler-icon"></span>
+                            <span class="toggler-icon"></span>
+                            <span class="toggler-icon"></span>
+                        </button>
+        
+                        <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent6">
+                            <ul id="nav6" class="navbar-nav ms-auto">
+                                <li class="nav-item"><a class="page-scroll active" href="#home">Accueil</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#Menu">Menu</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#about">À Propos</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#pricing">Tarifs</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#contact">Contact</a></li>
+                                <li class="nav-item" id="authButtons">
+                                    <a class="page-scroll-auth" href="#" onclick="event.preventDefault(); openModal('loginModal');">Connexion</a>
+                                </li>
+                                <li class="nav-item" id="signupButton">
+                                    <a class="page-scroll-auth admin-link" href="#" onclick="event.preventDefault(); openModal('signupModal');">Inscription</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Reste du contenu (Hero, Modules, etc.) -->
+<section id="home" class="hero-section-wrapper-5">
+    <div class="hero-section hero-style-5 img-bg" style="background-image: url('assets/img/hero/hero-5/hero-bg.svg')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="hero-content-wrapper">
+                        <h2 class="mb-30 wow fadeInUp" data-wow-delay=".2s">DigiWork Hub</h2>
+                        <h4 class="mb-20 wow fadeInUp" data-wow-delay=".3s" style="color:#00A651;">Plateforme intelligente d'accompagnement des entrepreneurs digitaux</h4>
+                        <p class="mb-30 wow fadeInUp" data-wow-delay=".4s">Structuration d'activité, optimisation des revenus, matching IA et développement durable. Rejoignez la nouvelle génération de plateformes digitales.</p>
+                        <a href="#contact" class="button button-lg radius-50 wow fadeInUp" data-wow-delay=".6s">Commencer <i class="lni lni-chevron-right"></i> </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 align-self-end">
+                    <div class="hero-image wow fadeInUp" data-wow-delay=".5s">
+                        <img src="assets/img/hero/hero-5/hero-img.svg" alt="DigiWork Hub illustration">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modules Section (CRUD Modules) -->
+<section id="Menu" class="feature-section feature-style-5">
+    <div class="container">
         <div class="row justify-content-center">
-          <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-10">
-            <div class="section-title text-center mb-50">
-              <h3 class="mb-15">Get in touch</h3>
-              <p>Stop wasting time and money designing and managing a website that doesn’t get results. Happiness guaranteed!</p>
+            <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-8">
+                <div class="section-title text-center mb-60">
+                    <h3 class="mb-15 wow fadeInUp" data-wow-delay=".2s">Menu</h3>
+                    <p class="wow fadeInUp" data-wow-delay=".4s">Une plateforme complète pour gérer votre activité digitale.</p>
+                </div>
             </div>
-          </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <div class="single-feature wow fadeInUp" data-wow-delay=".2s">
+                    <div class="icon">
+                        <i class="lni lni-briefcase"></i>
+                    </div>
+                    <div class="content">
+                        <h5>Gestion des Offres</h5>
+                        <p>Publiez, modifiez et consultez des missions. Matching IA pour trouver les meilleures opportunités.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="single-feature wow fadeInUp" data-wow-delay=".4s">
+                    <div class="icon">
+                        <i class="lni lni-users"></i>
+                    </div>
+                    <div class="content">
+                        <h5>Gestion des Utilisateurs</h5>
+                        <p>Inscription, profil, rôles (entrepreneur, entreprise, administrateur). Gérez vos accès simplement.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="single-feature wow fadeInUp" data-wow-delay=".6s">
+                    <div class="icon">
+                        <i class="lni lni-folder"></i>
+                    </div>
+                    <div class="content">
+                        <h5>Gestion des Projets</h5>
+                        <p>Créez des projets, suivez l'avancement, soumettez des livrables et approuvez les réalisations.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="single-feature wow fadeInUp" data-wow-delay=".2s">
+                    <div class="icon">
+                        <i class="lni lni-star"></i>
+                    </div>
+                    <div class="content">
+                        <h5>Évaluations & Réputation</h5>
+                        <p>Notez les entrepreneurs et les entreprises. Construisez votre réputation sur la plateforme.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="single-feature wow fadeInUp" data-wow-delay=".4s">
+                    <div class="icon">
+                        <i class="lni lni-comments"></i>
+                    </div>
+                    <div class="content">
+                        <h5>Forums & Communauté</h5>
+                        <p>Créez des sujets, échangez avec la communauté, signalez les abus.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="single-feature wow fadeInUp" data-wow-delay=".6s">
+                    <div class="icon">
+                        <i class="lni lni-warning"></i>
+                    </div>
+                    <div class="content">
+                        <h5>Réclamations & Support</h5>
+                        <p>Déposez une réclamation, suivez son traitement, obtenez une réponse rapide.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="about-section about-style-4">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-xl-5 col-lg-6">
+                <div class="about-content-wrapper">
+                    <div class="section-title mb-30">
+                        <h3 class="mb-25 wow fadeInUp" data-wow-delay=".2s">Intelligence Artificielle & Développement Durable</h3>
+                        <p class="wow fadeInUp" data-wow-delay=".3s">DigiWork Hub intègre l'IA pour vous accompagner tout au long de votre carrière digitale.</p>
+                    </div>
+                    <ul>
+                        <li class="wow fadeInUp" data-wow-delay=".35s">
+                            <i class="lni lni-checkmark-circle"></i>
+                            <strong>Matching intelligent :</strong> Propose les meilleures opportunités
+                        </li>
+                        <li class="wow fadeInUp" data-wow-delay=".4s">
+                            <i class="lni lni-checkmark-circle"></i>
+                            <strong>Optimisation des revenus :</strong> Suggère des tarifs adaptés
+                        </li>
+                        <li class="wow fadeInUp" data-wow-delay=".45s">
+                            <i class="lni lni-checkmark-circle"></i>
+                            <strong>Orientation de carrière :</strong> Recommande des parcours pertinents
+                        </li>
+                        <li class="wow fadeInUp" data-wow-delay=".5s">
+                            <i class="lni lni-checkmark-circle"></i>
+                            <strong>Empreinte carbone réduite :</strong> Pratiques numériques responsables
+                        </li>
+                    </ul>
+                    <a href="#contact" class="button button-lg radius-10 wow fadeInUp" data-wow-delay=".55s">Rejoindre la plateforme</a>
+                </div>
+            </div>
+            <div class="col-xl-7 col-lg-6">
+                <div class="about-image text-lg-right wow fadeInUp" data-wow-delay=".5s">
+                    <img src="assets/img/about/about-4/about-img.svg" alt="IA et développement durable">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" class="pricing-section pricing-style-4 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-xl-5 col-lg-6">
+                <div class="section-title mb-60">
+                    <h3 class="mb-15 wow fadeInUp" data-wow-delay=".2s">Nos Offres</h3>
+                    <p class="wow fadeInUp" data-wow-delay=".4s">Des formules adaptées à tous les profils.</p>
+                </div>
+            </div>
+            <div class="col-xl-7 col-lg-6">
+                <div class="pricing-active-wrapper wow fadeInUp" data-wow-delay=".4s">
+                    <div class="pricing-active">
+                        <div class="single-pricing-wrapper">
+                            <div class="single-pricing">
+                                <h6>Démarrage</h6>
+                                <h4>Freelance Essentiel</h4>
+                                <h3>Gratuit</h3>
+                                <ul>
+                                    <li>Profil professionnel</li>
+                                    <li>Consulter les offres</li>
+                                    <li>Matching IA basique</li>
+                                    <li>Forum communautaire</li>
+                                </ul>
+                                <a href="#contact" class="button radius-30">Commencer</a>
+                            </div>
+                        </div>
+                        <div class="single-pricing-wrapper">
+                            <div class="single-pricing">
+                                <h6>Professionnel</h6>
+                                <h4>Freelance Pro</h4>
+                                <h3>29€ <span>/mois</span></h3>
+                                <ul>
+                                    <li>Tout Essentiel +</li>
+                                    <li>Postuler aux missions</li>
+                                    <li>Gestion de projets avancée</li>
+                                    <li>Support prioritaire</li>
+                                </ul>
+                                <a href="#contact" class="button radius-30">Commencer</a>
+                            </div>
+                        </div>
+                        <div class="single-pricing-wrapper">
+                            <div class="single-pricing">
+                                <h6>Entreprise</h6>
+                                <h4>Solution Pro</h4>
+                                <h3>99€ <span>/mois</span></h3>
+                                <ul>
+                                    <li>Publication d'offres illimitée</li>
+                                    <li>Tableau de bord analytique</li>
+                                    <li>API & intégrations</li>
+                                    <li>Gestion d'équipe</li>
+                                </ul>
+                                <a href="#contact" class="button radius-30">Commencer</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="contact-section contact-style-3">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-10">
+                <div class="section-title text-center mb-50">
+                    <h3 class="mb-15">Contactez-nous</h3>
+                    <p>Une question ? Notre équipe est là pour vous répondre.</p>
+                </div>
+            </div>
         </div>
         <div class="row">
-          <div class="col-lg-8">
-            <div class="contact-form-wrapper">
-              <form action="" method="">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="single-input">
-                      <input type="text" id="name" name="name" class="form-input" placeholder="Name">
-                      <i class="lni lni-user"></i>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="single-input">
-                      <input type="email" id="email" name="email" class="form-input" placeholder="Email">
-                      <i class="lni lni-envelope"></i>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="single-input">
-                      <input type="text" id="number" name="number" class="form-input" placeholder="Number">
-                      <i class="lni lni-phone"></i>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="single-input">
-                      <input type="text" id="subject" name="subject" class="form-input" placeholder="Subject">
-                      <i class="lni lni-text-format"></i>
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="single-input">
-                      <textarea name="message" id="message" class="form-input" placeholder="Message" rows="6"></textarea>
-                      <i class="lni lni-comments-alt"></i>
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="form-button">
-                      <button type="submit" class="button"> <i class="lni lni-telegram-original"></i> Submit</button>
-                    </div>
-                  </div>
+            <div class="col-lg-8">
+                <div class="contact-form-wrapper">
+                    <form id="contactForm" action="" method="">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="single-input">
+                                    <input type="text" id="name" name="name" class="form-input" placeholder="Nom complet">
+                                    <i class="lni lni-user"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="single-input">
+                                    <input type="text" id="email" name="email" class="form-input" placeholder="Email">
+                                    <i class="lni lni-envelope"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="single-input">
+                                    <textarea name="message" id="message" class="form-input" placeholder="Message" rows="6"></textarea>
+                                    <i class="lni lni-comments-alt"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-button">
+                                    <button type="submit" class="button"><i class="lni lni-telegram-original"></i> Envoyer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-              </form>
             </div>
-
-          </div>
-
-          <div class="col-lg-4">
-            <div class="left-wrapper">
-              <div class="row">
-                <div class="col-lg-12 col-md-6">
-                  <div class="single-item">
-                    <div class="icon">
-                      <i class="lni lni-phone"></i>
+            <div class="col-lg-4">
+                <div class="left-wrapper">
+                    <div class="single-item">
+                        <div class="icon"><i class="lni lni-phone"></i></div>
+                        <div class="text">
+                            <p>+216 99 999 999</p>
+                        </div>
                     </div>
-                    <div class="text">
-                      <p>0045939863784</p>
-                      <p>+004389478327</p>
+                    <div class="single-item">
+                        <div class="icon"><i class="lni lni-envelope"></i></div>
+                        <div class="text">
+                            <p>contact@digiworkhub.com</p>
+                        </div>
                     </div>
-                  </div>
                 </div>
-                <div class="col-lg-12 col-md-6">
-                  <div class="single-item">
-                    <div class="icon">
-                      <i class="lni lni-envelope"></i>
-                    </div>
-                    <div class="text">
-                      <p>yourmail@gmail.com</p>
-                      <p>admin@yourwebsite.com</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-12 col-md-6">
-                  <div class="single-item">
-                    <div class="icon">
-                      <i class="lni lni-map-marker"></i>
-                    </div>
-                    <div class="text">
-                      <p>John's House, 13/5 Road, Sidny United State Of America</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
             </div>
-          </div>
         </div>
-      </div>
-    </section>
-    <!-- ========================= contact-style-3 end ========================= -->
+    </div>
+</section>
 
-    <!-- ========================= clients-logo start ========================= -->
-    <section class="clients-logo-section pt-100 pb-100">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="client-logo wow fadeInUp" data-wow-delay=".2s">
-              <img src="assets/img/clients/brands.svg" alt="" class="w-100">
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- ========================= clients-logo end ========================= -->
-
-    <!-- ========================= footer style-4 start ========================= -->
-    <footer class="footer footer-style-4">
-      <div class="container">
-        <div class="widget-wrapper">
-          <div class="row">
-            <div class="col-xl-3 col-lg-4 col-md-6">
-              <div class="footer-widget wow fadeInUp" data-wow-delay=".2s">
-                <div class="logo">
-                  <a href="#0"> <img src="assets/img/logo/logo.svg" alt=""> </a>
-                </div>
-                <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisis nulla placerat amet amet congue.</p>
-                <ul class="socials">
-                  <li> <a href="#0"> <i class="lni lni-facebook-filled"></i> </a> </li>
-                  <li> <a href="#0"> <i class="lni lni-twitter-filled"></i> </a> </li>
-                  <li> <a href="#0"> <i class="lni lni-instagram-filled"></i> </a> </li>
-                  <li> <a href="#0"> <i class="lni lni-linkedin-original"></i> </a> </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-xl-2 offset-xl-1 col-lg-2 col-md-6 col-sm-6">
-              <div class="footer-widget wow fadeInUp" data-wow-delay=".3s">
-                <h6>Quick Link</h6>
-                <ul class="links">
-                  <li> <a href="#0">Home</a> </li>
-                  <li> <a href="#0">About</a> </li>
-                  <li> <a href="#0">Service</a> </li>
-                  <li> <a href="#0">Testimonial</a> </li>
-                  <li> <a href="#0">Contact</a> </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-              <div class="footer-widget wow fadeInUp" data-wow-delay=".4s">
-                <h6>Services</h6>
-                <ul class="links">
-                  <li> <a href="#0">Web Design</a> </li>
-                  <li> <a href="#0">Web Development</a> </li>
-                  <li> <a href="#0">Seo Optimization</a> </li>
-                  <li> <a href="#0">Blog Writing</a> </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-6">
-              <div class="footer-widget wow fadeInUp" data-wow-delay=".5s">
-                <h6>Download App</h6>
-                <ul class="download-app">
-                  <li>
-                    <a href="#0">
-                      <span class="icon"><i class="lni lni-apple"></i></span>
-                      <span class="text">Download on the <b>App Store</b> </span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#0">
-                      <span class="icon"><i class="lni lni-play-store"></i></span>
-                      <span class="text">GET IT ON <b>Play Store</b> </span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- Footer -->
+<footer class="footer footer-style-4">
+    <div class="container">
         <div class="copyright-wrapper wow fadeInUp" data-wow-delay=".2s">
-          <p>Design and Developed by <a href="https://uideck.com" rel="nofollow" target="_blank">UIdeck</a> Built-with <a href="https://uideck.com" rel="nofollow" target="_blank">Lindy UI Kit</a>. Distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a></p>
+            <p>© 2024 DigiWork Hub - Plateforme intelligente d'accompagnement des entrepreneurs digitaux</p>
         </div>
-      </div>
-    </footer>
-    <!-- ========================= footer style-4 end ========================= -->
+    </div>
+</footer>
 
-    <!-- ========================= scroll-top start ========================= -->
-    <a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i> </a>
-    <!-- ========================= scroll-top end ========================= -->
-		
+<a href="#" class="scroll-top"><i class="lni lni-chevron-up"></i></a>
 
-    <!-- ========================= JS here ========================= -->
-    <script src="assets/js/bootstrap-5.0.0-beta1.min.js"></script>
-    <script src="assets/js/tiny-slider.js"></script>
-    <script src="assets/js/wow.min.js"></script>
-    <script src="assets/js/main.js"></script>
-  </body>
+<script src="assets/js/bootstrap-5.0.0-beta1.min.js"></script>
+<script src="assets/js/tiny-slider.js"></script>
+<script src="assets/js/wow.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/frontoffice-auth-forms.js"></script>
+
+</body>
 </html>

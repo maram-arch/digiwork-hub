@@ -18,6 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     // Delete Pack (form submit)
     if ($_POST['action'] === 'delete' && isset($_POST['id'])) {
         $pack->delete(intval($_POST['id']));
+        // If AJAX, return JSON
+        if (isset($_POST['ajax'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'success', 'message' => 'Pack supprimé avec succès']);
+            exit;
+        }
+
         $_SESSION['flash'] = 'Pack supprimé avec succès';
         header('Location: /view/back/dashboard_packs.php');
         exit;
@@ -33,6 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             intval($_POST['nb']),
             $_POST['support']
         );
+        if (isset($_POST['ajax'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'success', 'message' => 'Pack ajouté avec succès']);
+            exit;
+        }
+
         $_SESSION['flash'] = 'Pack ajouté avec succès';
         header('Location: /view/back/dashboard_packs.php');
         exit;
@@ -49,6 +62,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             intval($_POST['nb']),
             $_POST['support']
         );
+        if (isset($_POST['ajax'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'success', 'message' => 'Pack modifié avec succès']);
+            exit;
+        }
+
         $_SESSION['flash'] = 'Pack modifié avec succès';
         header('Location: /view/back/dashboard_packs.php');
         exit;

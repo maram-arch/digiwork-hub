@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Nos Packs - DigiWork Hub</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="front-navbar">
+        <div class="logo-container">
+            <span style="color: #0A2540;">DigiWork</span>
+            <span style="color: #84CC16;">HUB</span>
+        </div>
+        <div class="nav-links">
+            <a href="#">Accueil</a>
+            <a href="#">Projets</a>
+            <a href="packs.html">Packs & Formations</a>
+            <a href="#">Durabilité</a>
+            <a href="abonnement.html">Mon Profil</a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <h1>Trouvez les meilleures opportunités freelances pour vous !</h1>
+        <p>Boostez votre carrière digitale avec nos abonnements prioritaires, gestion de projets et support VIP.</p>
+        <div class="hero-buttons">
+            <a href="#" class="btn-white">Explorez les Projets</a>
+            <a href="#packs-container" class="btn-green">Voir les Packs</a>
+        </div>
+    </div>
+
+    <h2 class="section-title">Packs Recommandés pour Vous</h2>
+
+    <div id="packs-container" class="cards-container">
+        <!-- Packs will be injected here via Fetch API -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('../../controller/PackController.php?action=getAll')
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('packs-container');
+                let html = '';
+                data.forEach(pack => {
+                    html += `
+                        <div class="pack-card">
+                            <div class="pack-card-header">
+                                <!-- Dummy colored block or image for aesthetics -->
+                                <div style="box-sizing: border-box; background: var(--secondary); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 24px;">Pack ${pack['nom-pack']}</div>
+                            </div>
+                            <div class="pack-content">
+                                <div>
+                                    <span class="pack-tag">${pack['nb-proj-max']} Projets Max</span>
+                                    <h3 class="pack-title">${pack['nom-pack']}</h3>
+                                    <div class="pack-price">${pack.prix} dt / ${pack.duree} j</div>
+                                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+                                        Support Prioritaire: <strong>${pack['support-prioritaire']}</strong><br><br>
+                                        ${pack.description}
+                                    </p>
+                                </div>
+                                <button class="btn-accent" onclick="subscribe(${pack['id-pack']})">S'abonner</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            })
+            .catch(err => console.error(err));
+        });
+
+        function subscribe(packId) {
+            const fd = new FormData();
+            fd.append('action', 'subscribe');
+            fd.append('pack_id', packId);
+
+            fetch('../../controller/AbonnementController.php', {
+                method: 'POST',
+                body: fd
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    alert('Félicitations, abonnement réussi !');
+                    window.location.href = 'abonnement.html';
+                } else {
+                    alert('Erreur: ' + res.message);
+                }
+            })
+            .catch(err => alert('Erreur réseau.'));
+        }
+    </script>
+</body>
+</html>

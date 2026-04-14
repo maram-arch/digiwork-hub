@@ -31,7 +31,7 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-logo">
-                <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB" style="height:40px;">
+                <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:40px;">
             </div>
             <div class="sidebar-menu">
                 <a href="#" class="sidebar-item">
@@ -91,8 +91,8 @@
 
                 <div class="dashboard-panel">
                     <div class="panel-title"><?= $editPack ? 'Modifier le Pack' : 'Ajouter un nouveau Pack' ?></div>
-                    <form method="POST" action="../../controller/PackController.php">
-                        <input type="hidden" name="action" value="<?= $editPack ? 'update' : 'add' ?>">
+                    <form id="packForm" method="POST" action="../../controller/PackController.php">
+                        <input type="hidden" id="action" name="action" value="<?= $editPack ? 'update' : 'add' ?>">
                         <input type="hidden" id="id-pack" name="id-pack" value="<?= $editPack ? htmlspecialchars($editPack['id-pack']) : '' ?>">
                         
                         <div class="admin-form">
@@ -166,8 +166,6 @@
         </div>
     </div>
 
-    <!-- Non-AJAX server-rendered CRUD; JS file not required here -->
-</body>
-</html>
+    <script src="pack_crud.js"></script>
 </body>
 </html>

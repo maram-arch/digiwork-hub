@@ -23,7 +23,7 @@ try {
 <body>
     <div class="front-navbar">
         <div class="logo-container">
-            <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB" style="height:48px;">
+            <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:48px;">
         </div>
         <div class="nav-links">
             <a href="packs.php">Packs</a>

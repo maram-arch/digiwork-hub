@@ -48,34 +48,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     // Subscribe action (AJAX POST or normal form POST)
     if ($_POST['action'] === 'subscribe') {
-        // Attempt to use session user id if available
-        $id_user = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 1; // fallback to 1 for now
-        $pack_id = intval($_POST['pack_id']);
-
-        try {
-            $abo->subscribe($id_user, $pack_id);
-
-            if (isset($_POST['ajax']) || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
+        $userId = $_SESSION['user_id'] ?? null;
+        $packId = intval($_POST['pack_id']);
+        if (!$userId) {
+            if (isset($_POST['ajax'])) {
                 header('Content-Type: application/json');
-                echo json_encode(['status' => 'success', 'message' => 'Abonnement réussi !']);
+                echo json_encode(['status' => 'error', 'message' => 'Vous devez être connecté pour vous abonner.']);
                 exit;
             }
 
-            // Non-AJAX: set flash and redirect to front abonnement page
-            $_SESSION['flash'] = 'Abonnement réussi !';
-            header('Location: /view/front/abonnement.php');
-            exit;
-        } catch (PDOException $e) {
-            if (isset($_POST['ajax']) || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
-                header('Content-Type: application/json');
-                echo json_encode(['status' => 'error', 'message' => 'Erreur de base de données.']);
-                exit;
-            }
-
-            $_SESSION['flash'] = 'Erreur lors de la création de l\'abonnement.';
-            header('Location: /view/front/packs.php');
+            $_SESSION['flash'] = 'Vous devez être connecté pour vous abonner.';
+            header('Location: /view/front/login.php');
             exit;
         }
+
+        $abId = $abo->subscribe($userId, $packId);
+        if (isset($_POST['ajax'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'success', 'message' => 'Abonnement créé avec succès', 'abonnement_id' => $abId]);
+            exit;
+        }
+
+        $_SESSION['flash'] = 'Abonnement créé avec succès';
+        header('Location: /view/front/abonnement.php');
+        exit;
     }
 }
 ?>

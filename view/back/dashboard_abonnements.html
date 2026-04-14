@@ -10,7 +10,8 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-logo">
-                <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:40px;">
+                <i class="lni lni-leaf" style="color: #84CC16;"></i>
+                DigiWork <span>HUB</span>
             </div>
             <div class="sidebar-menu">
                 <a href="#" class="sidebar-item">
@@ -19,10 +20,10 @@
                 <a href="#" class="sidebar-item">
                     <i>👥</i> Gestion Utilisateurs
                 </a>
-                <a href="dashboard_packs.php" class="sidebar-item">
+                <a href="dashboard_packs.html" class="sidebar-item">
                     <i>💼</i> Projets & Offers (Packs)
                 </a>
-                <a href="dashboard_abonnements.php" class="sidebar-item active">
+                <a href="dashboard_abonnements.html" class="sidebar-item active">
                     <i>💳</i> Abonnements
                 </a>
             </div>
@@ -74,7 +75,7 @@
                             <td>${a['date-deb']} au ${a['date-fin']}</td>
                             <td><span style="background: #D1FAE5; color: #065F46; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${a.status}</span></td>
                             <td>
-                                <button class="btn-sm" style="background: var(--danger-color);" onclick="deleteAbo(${a['id-abonnement']})">Révoquer</button>
+                                <button class="btn-sm btn-delete" onclick="deleteAbo(${a['id-abonnement']})">Révoquer</button>
                             </td>
                         </tr>
                     `;

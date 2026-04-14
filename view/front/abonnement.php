@@ -19,7 +19,7 @@
 
     <div class="front-navbar">
         <div class="logo-container">
-            <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB" style="height:48px;">
+            <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:48px;">
         </div>
         <div class="nav-links">
             <a href="../frontoffice/index.php">Accueil</a>
@@ -80,9 +80,7 @@
                                 <div style="font-size:13px;color:var(--text-muted);">Projets max: <strong>${pack['nb-proj-max']}</strong> • Support prioritaire: <strong>${pack['support-prioritaire']}</strong></div>
                             </div>
                             <div style="min-width:160px;margin-left:18px;display:flex;align-items:center;">
-                                <form method="POST" action="../../controller/AbonnementController.php">
-                                    <input type="hidden" name="action" value="subscribe">
-                                    <input type="hidden" name="pack_id" value="${pack['id-pack']}">
+                                <form onsubmit="return subscribeForm(event, ${pack['id-pack']})">
                                     <button type="submit" class="btn-accent">S'abonner</button>
                                 </form>
                             </div>
@@ -134,6 +132,31 @@
                 document.getElementById('abonnements-container').innerHTML = `<p style="color:red">Erreur de chargement des abonnements.</p>`;
             });
         });
+
+        function subscribeForm(e, packId) {
+            e.preventDefault();
+            const fd = new FormData();
+            fd.append('action', 'subscribe');
+            fd.append('pack_id', packId);
+            fd.append('ajax', '1');
+
+            fetch('../../controller/AbonnementController.php', {
+                method: 'POST',
+                body: fd
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    alert('Abonnement créé avec succès.');
+                    window.location.reload();
+                } else {
+                    alert('Erreur: ' + res.message);
+                }
+            })
+            .catch(err => alert('Erreur réseau.'));
+
+            return false;
+        }
     </script>
 </body>
 </html>

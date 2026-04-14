@@ -15,7 +15,7 @@
 
     <div class="front-navbar">
         <div class="logo-container">
-            <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB" style="height:48px;">
+            <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:48px;">
         </div>
         <div class="nav-links">
             <a href="../frontoffice/index.php">Accueil</a>
@@ -79,7 +79,20 @@
         $found = $pm->getByName($def['name']);
         if (!$found) {
             // create pack
-            $pm->add($def['name'], $def['prix'], $def['duree'], $def['description'], $def['nb'], $def['support']);
+            // DB expects a date for `duree` column; convert human-friendly duration to a date string
+            $duree_str = $def['duree'];
+            $duree_db = date('Y-m-d');
+            if (preg_match('/(\d+)\s*jours?/i', $duree_str, $m)) {
+                $duree_db = date('Y-m-d', strtotime('+' . intval($m[1]) . ' days'));
+            } elseif (preg_match('/(\d+)\s*mois?/i', $duree_str, $m)) {
+                $duree_db = date('Y-m-d', strtotime('+' . intval($m[1]) . ' months'));
+            } elseif (stripos($duree_str, 'mois') !== false) {
+                $duree_db = date('Y-m-d', strtotime('+1 month'));
+            } elseif (stripos($duree_str, 'jour') !== false) {
+                $duree_db = date('Y-m-d', strtotime('+30 days'));
+            }
+
+            $pm->add($def['name'], $def['prix'], $duree_db, $def['description'], $def['nb'], $def['support']);
             $found = $pm->getByName($def['name']);
         }
         if ($found) $recommended[] = $found;
@@ -89,20 +102,15 @@
     <div style="max-width:1100px;margin:0 auto 24px auto;padding:0 20px;display:flex;gap:20px;">
         <?php foreach ($recommended as $r): ?>
             <div class="pack-card" style="width:33%;">
-                <div class="pack-card-header" style="background:linear-gradient(90deg,#E6C79C 0,#F59E0B 100%);">
-                    <div style="font-size:18px;font-weight:700;color:white;"><?= htmlspecialchars($r['nom-pack']) ?></div>
-                </div>
+                <div class="pack-image"><?= htmlspecialchars($r['nom-pack']) ?></div>
                 <div class="pack-content">
-                    <div>
-                        <h3 class="pack-title"><?= htmlspecialchars($r['nom-pack']) ?></h3>
-                        <div class="pack-price"><?= htmlspecialchars($r['prix']) ?> dt — <?= htmlspecialchars($r['duree']) ?></div>
-                            <p style="font-size:13px;color:var(--text-muted);white-space:pre-line;"><?= htmlspecialchars($r['description']) ?></p>
-                            <div style="font-size:13px;color:var(--text-muted);">Projets max: <strong><?= $r['nb-proj-max'] ?></strong> • Support prioritaire: <strong><?= htmlspecialchars($r['support-prioritaire']) ?></strong></div>
-                    </div>
-                    <form method="POST" action="../../controller/AbonnementController.php">
-                        <input type="hidden" name="action" value="subscribe">
-                        <input type="hidden" name="pack_id" value="<?= htmlspecialchars($r['id-pack']) ?>">
-                        <button type="submit" class="btn-accent">S'abonner</button>
+                    <h3 class="pack-title"><?= htmlspecialchars($r['nom-pack']) ?></h3>
+                    <div class="pack-desc"><?= htmlspecialchars($r['description']) ?></div>
+                </div>
+                <div class="pack-footer">
+                    <div class="pack-price-badge"><?= htmlspecialchars($r['prix']) ?> DT</div>
+                    <form onsubmit="return subscribeForm(event, <?= htmlspecialchars($r['id-pack']) ?>)">
+                        <button type="submit" class="pack-cta">S'abonner</button>
                     </form>
                 </div>
             </div>
@@ -142,9 +150,7 @@
                                         ${pack.description}
                                     </p>
                                 </div>
-                                <form method="POST" action="../../controller/AbonnementController.php">
-                                    <input type="hidden" name="action" value="subscribe">
-                                    <input type="hidden" name="pack_id" value="${pack['id-pack']}">
+                                <form onsubmit="return subscribeForm(event, ${pack['id-pack']})">
                                     <button type="submit" class="btn-accent">S'abonner</button>
                                 </form>
                             </div>
@@ -162,6 +168,8 @@
             const fd = new FormData();
             fd.append('action', 'subscribe');
             fd.append('pack_id', packId);
+            // Tell server we want a JSON response
+            fd.append('ajax', '1');
 
             fetch('../../controller/AbonnementController.php', {
                 method: 'POST',

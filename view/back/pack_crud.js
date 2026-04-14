@@ -1,118 +1,114 @@
-document.addEventListener('DOMContentLoaded', function() {
+/* Javascript CRUD for Dashboard Packs */
 
-    function validateForm() {
-        let isValid = true;
-        // Hide all error messages initially
-        document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+document.addEventListener('DOMContentLoaded', () => {
+    loadPacks();
 
-        const nom = document.getElementById('nom').value.trim();
-        if (!nom) {
-            document.getElementById('nomError').style.display = 'inline';
-            isValid = false;
-        }
-
-        const prix = parseFloat(document.getElementById('prix').value);
-        if (isNaN(prix) || prix < 0) {
-            document.getElementById('prixError').style.display = 'inline';
-            isValid = false;
-        }
-
-        const duree = document.getElementById('duree').value;
-        if (!duree) {
-            document.getElementById('dureeError').style.display = 'inline';
-            isValid = false;
-        }
-
-        const desc = document.getElementById('description').value.trim();
-        if (!desc) {
-            document.getElementById('descError').style.display = 'inline';
-            isValid = false;
-        }
-
-        const nb = parseInt(document.getElementById('nb').value);
-        if (isNaN(nb) || nb <= 0) {
-            document.getElementById('nbError').style.display = 'inline';
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
-    const addForm = document.getElementById('addPackForm');
-    if (addForm) {
-        addForm.addEventListener('submit', function(e) {
+    const form = document.getElementById('packForm');
+    if (form) {
+        form.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            if (validateForm()) {
-                const formData = new FormData(addForm);
-                formData.append('action', 'add');
-                formData.append('ajax', '1');
+            // Controle de saisie natively done by "required" and "type" in HTML,
+            // but we add manual JS validation as well to respect instruction:
+            const nom = document.getElementById('nom').value.trim();
+            const prix = parseFloat(document.getElementById('prix').value);
+            const duree = document.getElementById('duree').value;
+            const description = document.getElementById('description').value.trim();
+            const nb = parseInt(document.getElementById('nb').value);
+            const support = document.getElementById('support').value;
 
-                fetch('../../controller/PackController.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert(data.message);
-                        window.location.reload(); // Reload to see the appended row
-                    }
-                })
-                .catch(err => console.error("Error adding:", err));
-            }
-        });
-    }
+            if (!nom) { alert("Le nom est obligatoire"); return; }
+            if (isNaN(prix) || prix < 0) { alert("Le prix doit être un nombre positif"); return; }
+            if (!duree) { alert("La durée (date) est obligatoire"); return; }
+            if (!description) { alert("La description est obligatoire"); return; }
+            if (isNaN(nb) || nb < 0) { alert("Le nombre de projets doit être un entier positif"); return; }
+            if (support !== 'oui' && support !== 'non') { alert("Veuillez sélectionner le support prioritaire"); return; }
 
-    const updateForm = document.getElementById('updatePackForm');
-    if (updateForm) {
-        updateForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+            const fd = new FormData(form);
+            fd.append('ajax', '1');
             
-            if (validateForm()) {
-                const formData = new FormData(updateForm);
-                formData.append('action', 'update');
-                formData.append('ajax', '1');
-
-                fetch('../../controller/PackController.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert(data.message);
-                        window.location.href = 'dashboard_packs.php'; // Return to list
-                    }
-                })
-                .catch(err => console.error("Error updating:", err));
-            }
+            fetch('../../controller/PackController.php', {
+                method: 'POST',
+                body: fd
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    form.reset();
+                    document.getElementById('action').value = 'add'; // Reset to add mode
+                    document.getElementById('id-pack').value = '';
+                    loadPacks(); // Reload table dynamically
+                } else {
+                    alert("Erreur: " + data.message);
+                }
+            })
+            .catch(err => console.error("Erreur Fetch:", err));
         });
     }
 });
 
-// Global function so it can be called from onclick handlers in the HTML
-window.deletePack = function(id) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce pack ?')) {
-        const formData = new FormData();
-        formData.append('action', 'delete');
-        formData.append('id', id);
-        formData.append('ajax', '1');
+function loadPacks() {
+    fetch('../../controller/PackController.php?action=getAll')
+    .then(res => res.json())
+    .then(data => {
+        const tbody = document.querySelector('#packs-table tbody');
+        document.getElementById('count-packs').innerText = data.length;
+        
+        let html = '';
+        data.forEach(p => {
+            html += `
+                <tr id="pack-${p['id-pack']}">
+                    <td>${p['id-pack']}</td>
+                    <td style="font-weight:bold;">${p['nom-pack']}</td>
+                    <td style="color:var(--green-card); font-weight:bold;">${p.prix} dt</td>
+                    <td>${p['nb-proj-max']} Max</td>
+                    <td>
+                        <button class="btn-sm btn-edit" onclick='editPack(${JSON.stringify(p)})'>Modifier</button>
+                        <button class="btn-sm btn-delete" onclick="deletePack(${p['id-pack']})">Supprimer</button>
+                    </td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    })
+    .catch(err => console.error(err));
+}
 
-        fetch('../../controller/PackController.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success') {
-                const row = document.getElementById('pack-' + id);
-                if (row) {
-                    row.remove();
-                }
-                alert(data.message);
-            }
-        })
-        .catch(err => console.error("Error deleting:", err));
-    }
+// Global functions for inline HTML onclick handlers
+window.deletePack = function(id) {
+    if(!confirm("Supprimer ce pack définitivement ?")) return;
+    
+    const fd = new FormData();
+    fd.append('action', 'delete');
+    fd.append('id', id);
+    fd.append('ajax', '1');
+
+    fetch('../../controller/PackController.php', {
+        method: 'POST',
+        body: fd
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === 'success') {
+            document.getElementById('pack-' + id).remove();
+            let count = parseInt(document.getElementById('count-packs').innerText);
+            document.getElementById('count-packs').innerText = count - 1;
+        }
+    })
+    .catch(err => console.error(err));
+};
+
+window.editPack = function(p) {
+    // Populate form and change mode to update
+    document.getElementById('action').value = 'update';
+    document.getElementById('id-pack').value = p['id-pack'];
+    document.getElementById('nom').value = p['nom-pack'];
+    document.getElementById('prix').value = p['prix'];
+    document.getElementById('duree').value = p['duree'];
+    document.getElementById('description').value = p['description'];
+    document.getElementById('nb').value = p['nb-proj-max'];
+    document.getElementById('support').value = p['support-prioritaire'];
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };

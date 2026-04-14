@@ -11,12 +11,25 @@ class Pack {
     function add($nom, $prix, $duree, $desc, $nb, $support) {
         global $pdo;
 
+        // Ensure values fit database column sizes to avoid SQL errors (truncate if necessary)
+    // Use conservative safe lengths to avoid 'Data too long' errors.
+    // If your DB schema uses different sizes, update these constants accordingly.
+    $nom = mb_substr($nom, 0, 30);
+    $desc = mb_substr($desc, 0, 500);
+
         $sql = "INSERT INTO `pack`
         (`nom-pack`, `prix`, `duree`, `description`, `nb-proj-max`, `support-prioritaire`)
         VALUES (?, ?, ?, ?, ?, ?)";
 
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$nom, $prix, $duree, $desc, $nb, $support]);
+        try {
+            $stmt->execute([$nom, $prix, $duree, $desc, $nb, $support]);
+            return true;
+        } catch (PDOException $e) {
+            // Log and return false to avoid blowing up the front page.
+            error_log("Pack::add failed - " . $e->getMessage());
+            return false;
+        }
     }
 
     function delete($id) {
@@ -41,9 +54,19 @@ class Pack {
 
     function update($id, $nom, $prix, $duree, $desc, $nb, $support) {
         global $pdo;
+        // Truncate fields to safe lengths before update
+    $nom = mb_substr($nom, 0, 30);
+    $desc = mb_substr($desc, 0, 500);
+
         $sql = "UPDATE `pack` SET `nom-pack`=?, `prix`=?, `duree`=?, `description`=?, `nb-proj-max`=?, `support-prioritaire`=? WHERE `id-pack`=?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$nom, $prix, $duree, $desc, $nb, $support, $id]);
+        try {
+            $stmt->execute([$nom, $prix, $duree, $desc, $nb, $support, $id]);
+            return true;
+        } catch (PDOException $e) {
+            error_log("Pack::update failed - " . $e->getMessage());
+            return false;
+        }
     }
 }
 ?>

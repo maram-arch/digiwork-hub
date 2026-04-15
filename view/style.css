@@ -1,8 +1,8 @@
 :root {
   /* Primary brand colors tuned to the provided mockup */
   --primary: #0B3E6F;         /* dark navy for sidebar / header */
-  --primary-accent: #5A8DEE;  /* bright blue accent used in hero */
-  --secondary: #84CC16;       /* green accent from logo */
+  --primary-accent: #2E6EE8;  /* refined bright blue accent used in hero */
+  --secondary: #16A34A;       /* green accent (tuned) */
   --accent: #5A8DEE;
   --accent-hover: #3d6fd6;
   --bg-color: #F7FAFF;        /* slightly bluish background */
@@ -16,16 +16,17 @@
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); }
+body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); -webkit-font-smoothing:antialiased; }
 
 /* FRONT OFFICE */
 .front-navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 50px;
-  background-color: white;
-  border-bottom: 1px solid #E5E7EB;
+  padding: 12px 40px;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid rgba(14,38,60,0.04);
+  box-shadow: 0 6px 18px rgba(11,62,111,0.03);
 }
 .logo-container {
   display: flex;
@@ -34,8 +35,9 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
   font-weight: 800;
   color: var(--primary);
 }
-.logo-container img { height: 52px; margin-right: 14px; }
-.nav-links { display: flex; gap: 30px; align-items: center; font-weight: 600; font-size: 14px; color: var(--text-muted); }
+.logo-container img { height: 44px; margin-right: 12px; }
+.nav-links { display: flex; gap: 26px; align-items: center; font-weight: 600; font-size: 14px; color: var(--text-muted); }
+.nav-links a.active { color: var(--primary); border-bottom: 2px solid var(--primary-accent); padding-bottom: 6px; }
 .nav-links a { text-decoration: none; color: inherit; }
 .nav-links a:hover { color: var(--primary); }
 
@@ -43,11 +45,12 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
   background: linear-gradient(135deg, var(--primary-accent) 0%, var(--primary) 100%);
   color: white;
   text-align: left;
-  padding: 80px 20px;
+  padding: 72px 20px;
+  position: relative;
 }
 .hero .container { max-width: 1100px; margin: 0 auto; }
-.hero h1 { font-size: 48px; margin-bottom: 16px; font-weight: 800; line-height: 1.05; }
-.hero p { font-size: 18px; margin-bottom: 28px; color: rgba(255,255,255,0.9); max-width: 680px; }
+.hero h1 { font-size: 44px; margin-bottom: 12px; font-weight: 800; line-height: 1.06; letter-spacing: -0.6px; }
+.hero p { font-size: 16px; margin-bottom: 22px; color: rgba(255,255,255,0.92); max-width: 680px; }
 .hero-buttons { display: flex; gap: 15px; justify-content: flex-start; }
 .btn-accent { background: var(--primary-accent); }
 .btn-white { background: rgba(255,255,255,0.95); color: var(--primary); }
@@ -55,14 +58,14 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
 /* subtle hero decorative image placement for mockup-like look */
 .hero-visual { position: absolute; right: 6%; top: 20%; width: 420px; max-width: 36%; }
 
-.btn-white { background: white; color: var(--primary); padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none; border: none; cursor: pointer; }
-.btn-green { background: #84CC16; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none; border: none; cursor: pointer; }
-.btn-accent { background: var(--primary); color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none; border: none; cursor: pointer; width: 100%; text-align: center; }
+.btn-white { background: white; color: var(--primary); padding: 12px 22px; border-radius: 10px; font-weight: 700; text-decoration: none; border: none; cursor: pointer; box-shadow: 0 6px 18px rgba(11,62,111,0.06); }
+.btn-green { background: var(--secondary); color: white; padding: 12px 22px; border-radius: 10px; font-weight: 700; text-decoration: none; border: none; cursor: pointer; }
+.btn-accent { background: var(--primary-accent); color: white; padding: 12px 22px; border-radius: 10px; font-weight: 700; text-decoration: none; border: none; cursor: pointer; width: auto; text-align: center; }
 
 .section-title { font-size: 20px; font-weight: 700; color: var(--primary); margin: 40px 50px 20px 50px; }
 
-.cards-container { display: flex; flex-wrap: wrap; gap: 20px; padding: 0 50px 40px 50px; }
-.pack-card { background: white; border-radius: 12px; box-shadow: 0 8px 18px rgba(7,20,40,0.06); border: 1px solid rgba(14,38,60,0.06); width: calc(33.333% - 14px); overflow: hidden; display: flex; flex-direction: column; }
+.cards-container { display: flex; flex-wrap: wrap; gap: 20px; padding: 0 40px 40px 40px; justify-content: center; }
+.pack-card { background: white; border-radius: 12px; box-shadow: 0 12px 30px rgba(11,62,111,0.06); border: 1px solid rgba(14,38,60,0.04); width: calc(33.333% - 26px); max-width: 360px; overflow: hidden; display: flex; flex-direction: column; }
 .pack-card-header { height: 140px; background: #E5E7EB; display: flex; align-items: center; justify-content: center; position: relative; }
 .pack-card-header img { width: 100%; height: 100%; object-fit: cover; }
 .pack-content { padding: 20px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
@@ -71,7 +74,7 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
 .pack-tag { font-size: 11px; background: var(--primary); color: white; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
 
 /* New front pack card styling to match mockup */
-.pack-image { width: 100%; height: 140px; background: linear-gradient(135deg,#0A2540 0%, #174276 100%); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:20px; }
+.pack-image { width: 100%; height: 160px; background: linear-gradient(135deg,#07203b 0%, #123a65 100%); display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:20px; }
 .pack-card .pack-content { padding: 18px; display:flex; flex-direction:column; gap:12px; }
 .pack-card .pack-title { font-size: 18px; color: var(--primary); }
 .pack-card .pack-desc { font-size: 13px; color: var(--text-muted); min-height:48px; }
@@ -79,16 +82,20 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
 .pack-price-badge { background:#ECFDF5; color:#065F46; padding:6px 10px; border-radius:20px; font-weight:700; }
 .pack-cta { background: var(--accent); color: white; padding:10px 14px; border-radius:8px; border:none; font-weight:700; cursor:pointer; text-decoration:none; }
 
-@media (max-width: 900px) {
-  .cards-container { flex-direction:column; }
+@media (max-width: 1024px) {
+  .cards-container { gap: 16px; padding: 0 20px 30px 20px; }
+  .pack-card { width: 48%; }
+}
+
+@media (max-width: 700px) {
+  .cards-container { flex-direction: column; }
   .pack-card { width: 100%; }
-  .pack-card + .pack-card { margin-top: 16px; }
 }
 
 /* BACK OFFICE */
 .back-layout { display: flex; min-height: 100vh; overflow: hidden; }
-.sidebar { width: 300px; background: linear-gradient(180deg, var(--primary) 0%, #04243a 100%); color: white; display: flex; flex-direction: column; box-shadow: 4px 0 12px rgba(3,12,24,0.08); }
-.sidebar-logo { padding: 20px; font-size: 20px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+.sidebar { width: 260px; background: linear-gradient(180deg, var(--primary) 0%, #04243a 100%); color: white; display: flex; flex-direction: column; box-shadow: 6px 0 18px rgba(3,12,24,0.08); }
+.sidebar-logo { padding: 18px; font-size: 18px; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 10px; }
 .sidebar-logo span { color: var(--secondary); }
 .sidebar-menu { padding: 20px 0; flex: 1; overflow: auto; }
 .sidebar-item { display: flex; align-items: center; padding: 14px 22px; color: rgba(255,255,255,0.9); text-decoration: none; font-size: 14px; border-left: 4px solid transparent; transition: background 0.2s, padding-left 0.2s; }
@@ -96,9 +103,9 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
 .sidebar-item i { margin-right: 14px; width: 20px; text-align: center; }
 
 .main-wrapper { flex: 1; display: flex; flex-direction: column; background-color: #F7FAFF; overflow-y: auto; }
-.topbar { height: 64px; background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0)); display: flex; justify-content: flex-end; align-items: center; padding: 0 24px; color: #0b2133; font-size: 14px; }
+.topbar { height: 64px; background: #FFFFFF; display: flex; justify-content: flex-end; align-items: center; padding: 0 24px; color: #0b2133; font-size: 14px; box-shadow: 0 6px 18px rgba(11,62,111,0.03); }
 
-.content { padding: 30px; }
+.content { padding: 28px; }
 .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
 .stat-card { padding: 18px; border-radius: 10px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 20px rgba(11,62,111,0.06); }
 .stat-card.blue { background: linear-gradient(90deg, #2E6EE8, #1E90FF); }
@@ -117,7 +124,7 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
 .btn-primary { background: var(--primary-accent); color: #fff; }
 
 
-.dashboard-panel { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; }
+.dashboard-panel { background: white; border-radius: 10px; box-shadow: 0 8px 24px rgba(11,62,111,0.04); padding: 20px; margin-bottom: 20px; }
 .panel-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; color: var(--primary); border-bottom: 1px solid #E5E7EB; padding-bottom: 10px; }
 
 .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -131,6 +138,6 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
 
 .admin-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .form-group label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px; }
-.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-family: inherit; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #E6EEF8; border-radius: 8px; font-family: inherit; background: #FBFDFF; }
 .error-msg { color: var(--danger-color); font-size: 12px; margin-top: 5px; display: none; }
 

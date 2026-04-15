@@ -63,6 +63,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
 
         $abId = $abo->subscribe($userId, $packId);
+        // If subscription creation failed, return an error for AJAX and non-AJAX flows
+        if ($abId === false) {
+            if (isset($_POST['ajax'])) {
+                header('Content-Type: application/json');
+                http_response_code(500);
+                echo json_encode(['status' => 'error', 'message' => 'Impossible de créer l\'abonnement. Veuillez réessayer plus tard.']);
+                exit;
+            }
+
+            $_SESSION['flash'] = 'Impossible de créer l\'abonnement. Veuillez réessayer plus tard.';
+            header('Location: /view/front/abonnement.php');
+            exit;
+        }
+
         if (isset($_POST['ajax'])) {
             header('Content-Type: application/json');
             echo json_encode(['status' => 'success', 'message' => 'Abonnement créé avec succès', 'abonnement_id' => $abId]);

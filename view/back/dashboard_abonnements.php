@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>BO - Gestion des Abonnements</title>
     <link rel="stylesheet" href="../style.css">
+    <!-- Template assets to match frontoffice look -->
+    <link rel="stylesheet" href="../frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css">
+    <link rel="stylesheet" href="../frontoffice/assets/css/LineIcons.2.0.css">
+    <link rel="stylesheet" href="../frontoffice/assets/css/lindy-uikit.css">
 </head>
 <body>
     <div class="back-layout">
@@ -106,5 +110,7 @@
             .catch(err => alert("Erreur"));
         }
     </script>
+    <script src="../frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js"></script>
+    <script src="../frontoffice/assets/js/main.js"></script>
 </body>
 </html>

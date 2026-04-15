@@ -2,170 +2,464 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>BO - Gestion des Packs</title>
-    <link rel="stylesheet" href="../style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BO - Gestion des Packs | DigiWork HUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
 </head>
 <body>
     <?php
-    // Server-rendered Back Office Packs dashboard (non-AJAX forms)
-    session_start();
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
     require_once(__DIR__ . '/../../model/Pack.php');
-
+    
     $packModel = new Pack();
     $packs = $packModel->getAll()->fetchAll(PDO::FETCH_ASSOC);
-
-    // flash message
+    
     $flash = isset($_SESSION['flash']) ? $_SESSION['flash'] : null;
     if ($flash) unset($_SESSION['flash']);
-
-    // Edit mode
-    $editPack = null;
-    if (isset($_GET['edit'])) {
-        $id = intval($_GET['edit']);
-        $editPack = $packModel->getById($id);
-    }
-
     ?>
 
-    <div class="back-layout">
+    <div class="admin-container">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:40px;">
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-logo">
+                <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" onerror="this.src='https://via.placeholder.com/120x40?text=DigiWork+HUB'">
+                <h2>DigiWork <span>HUB</span></h2>
+                <p style="font-size: 12px; opacity: 0.7; margin-top: 8px;">Administration</p>
             </div>
-            <div class="sidebar-menu">
-                <a href="#" class="sidebar-item">
-                    <i>📊</i> Tableau de Bord
+            <nav class="admin-sidebar-menu">
+                <a href="dashboard.php" class="admin-sidebar-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Tableau de Bord</span>
                 </a>
-                <a href="#" class="sidebar-item">
-                    <i>👥</i> Gestion Utilisateurs
+                <a href="#" class="admin-sidebar-item">
+                    <i class="fas fa-users"></i>
+                    <span>Gestion Utilisateurs</span>
                 </a>
-                <a href="dashboard_packs.php" class="sidebar-item active">
-                    <i>💼</i> Projets & Offers (Packs)
+                <a href="dashboard_packs.php" class="admin-sidebar-item active">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Projets & Offers (Packs)</span>
                 </a>
-                <a href="dashboard_abonnements.php" class="sidebar-item">
-                    <i>💳</i> Abonnements
+                <a href="dashboard_abonnements.php" class="admin-sidebar-item">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Abonnements</span>
                 </a>
-            </div>
-        </div>
-        
-        <div class="main-wrapper">
-            <div class="topbar">
-                <span>Admin | Messages ▾ | Profil ▾</span>
-            </div>
+            </nav>
+        </aside>
 
-            <div class="content">
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Top Bar -->
+            <header class="admin-topbar">
+                <h1 class="admin-topbar-title">Gestion des Packs</h1>
+                <div class="admin-topbar-actions">
+                    <i class="fas fa-bell"></i>
+                    <i class="fas fa-envelope"></i>
+                    <div class="admin-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <span>Admin</span>
+                    <a href="../../controller/AuthController.php?action=logout" style="color: var(--danger); text-decoration: none;">Déconnexion</a>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="admin-content">
+                <!-- Flash Message -->
                 <?php if ($flash): ?>
-                    <div style="margin-bottom:16px;"><div style="background:#FEF3C7;padding:12px;border-radius:8px;color:#92400E;font-weight:700;"><?= htmlspecialchars($flash) ?></div></div>
+                    <div style="background: #FEF3C7; padding: 12px 20px; border-radius: 12px; color: #92400E; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                        <span><?= htmlspecialchars($flash) ?></span>
+                        <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+                    </div>
                 <?php endif; ?>
-                <div class="stat-cards">
-                    <div class="stat-card blue">
-                        <div>
-                            <div class="stat-title">Packs Actifs</div>
-                            <div class="stat-value" id="count-packs">0</div>
+
+                <!-- Stats Cards -->
+                <div class="admin-stats">
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>Packs Actifs</h4>
+                            <div class="admin-stat-value" id="count-packs"><?= count($packs) ?></div>
                         </div>
-                        <i style="font-size: 30px;">💼</i>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
                     </div>
-                    <div class="stat-card green">
-                        <div>
-                            <div class="stat-title">Revenus Totals</div>
-                            <div class="stat-value">$120,500</div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>Revenus Totals</h4>
+                            <div class="admin-stat-value">$120,500</div>
                         </div>
-                        <i style="font-size: 30px;">💰</i>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
                     </div>
-                    <div class="stat-card light-green">
-                        <div>
-                            <div class="stat-title">Abonnements</div>
-                            <div class="stat-value">680</div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>Abonnements</h4>
+                            <div class="admin-stat-value" id="subscriptions-count">680</div>
                         </div>
-                        <i style="font-size: 30px;">📈</i>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
                     </div>
-                    <div class="stat-card dark-green">
-                        <div>
-                            <div class="stat-title">Score Durabilité</div>
-                            <div class="stat-value">82</div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>Score Durabilité</h4>
+                            <div class="admin-stat-value">82</div>
                         </div>
-                        <i style="font-size: 30px;">⏱️</i>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
                     </div>
                 </div>
 
-                <div class="dashboard-panel">
-                    <div class="panel-title"><?= $editPack ? 'Modifier le Pack' : 'Ajouter un nouveau Pack' ?></div>
-                    <form id="packForm" method="POST" action="../../controller/PackController.php">
-                        <input type="hidden" id="action" name="action" value="<?= $editPack ? 'update' : 'add' ?>">
-                        <input type="hidden" id="id-pack" name="id-pack" value="<?= $editPack ? htmlspecialchars($editPack['id-pack']) : '' ?>">
+                <!-- Add/Edit Pack Panel -->
+                <div class="admin-panel">
+                    <h3 class="admin-panel-title" id="form-title">Ajouter un nouveau Pack</h3>
+                    <form id="packForm">
+                        <input type="hidden" id="action" name="action" value="add">
+                        <input type="hidden" id="id-pack" name="id-pack" value="">
                         
                         <div class="admin-form">
                             <div class="form-group">
-                                <label>Nom du Pack :</label>
-                                <input type="text" id="nom" name="nom" required value="<?= $editPack ? htmlspecialchars($editPack['nom-pack']) : '' ?>">
+                                <label>Nom du Pack : <span style="color: red;">*</span></label>
+                                <input type="text" id="nom" name="nom" maxlength="20" placeholder="ex: Premium, Basic, Pro">
+                                <div class="error-message" id="nom-error">Le nom est requis (max 20 caractères)</div>
                             </div>
                             <div class="form-group">
-                                <label>Prix (dt) :</label>
-                                <input type="number" step="0.01" id="prix" name="prix" required value="<?= $editPack ? htmlspecialchars($editPack['prix']) : '' ?>">
+                                <label>Prix (dt) : <span style="color: red;">*</span></label>
+                                <input type="number" step="0.01" id="prix" name="prix" placeholder="0.00">
+                                <div class="error-message" id="prix-error">Le prix doit être un nombre positif</div>
                             </div>
                             <div class="form-group">
-                                <label>Durée (date de début recommandé) :</label>
-                                <input type="date" id="duree" name="duree" required value="<?= $editPack ? htmlspecialchars($editPack['duree']) : '' ?>">
+                                <label>Durée (date de début recommandé) : <span style="color: red;">*</span></label>
+                                <input type="date" id="duree" name="duree">
+                                <div class="error-message" id="duree-error">La date est requise</div>
                             </div>
                             <div class="form-group">
-                                <label>Nombre de projets max :</label>
-                                <input type="number" id="nb" name="nb" required value="<?= $editPack ? htmlspecialchars($editPack['nb-proj-max']) : '' ?>">
+                                <label>Nombre de projets max : <span style="color: red;">*</span></label>
+                                <input type="number" id="nb" name="nb" min="1" max="999" placeholder="ex: 10">
+                                <div class="error-message" id="nb-error">Entre 1 et 999 projets</div>
                             </div>
-                            <div class="form-group" style="grid-column: 1 / -1;">
-                                <label>Description :</label>
-                                <textarea id="description" name="description" rows="3" required><?= $editPack ? htmlspecialchars($editPack['description']) : '' ?></textarea>
+                            <div class="form-group full-width">
+                                <label>Description : <span style="color: red;">*</span></label>
+                                <textarea id="description" name="description" rows="3" maxlength="500" placeholder="Décrivez les avantages du pack..."></textarea>
+                                <div class="error-message" id="description-error">La description est requise (max 500 caractères)</div>
                             </div>
                             <div class="form-group">
-                                <label>Support Prioritaire :</label>
+                                <label>Support Prioritaire : <span style="color: red;">*</span></label>
                                 <select id="support" name="support">
-                                    <option value="oui" <?= $editPack && $editPack['support-prioritaire'] === 'oui' ? 'selected' : '' ?>>Oui</option>
-                                    <option value="non" <?= $editPack && $editPack['support-prioritaire'] === 'non' ? 'selected' : '' ?>>Non</option>
+                                    <option value="">-- Sélectionnez --</option>
+                                    <option value="oui">Oui</option>
+                                    <option value="non">Non</option>
                                 </select>
+                                <div class="error-message" id="support-error">Veuillez sélectionner une option</div>
                             </div>
                         </div>
-                        <div style="margin-top:12px;display:flex;gap:12px;">
-                            <button type="submit" class="btn-sm" style="background: var(--accent);"><?= $editPack ? 'Mettre à jour' : 'Enregistrer le Pack' ?></button>
-                            <?php if ($editPack): ?>
-                                <a href="dashboard_packs.php" class="btn-sm" style="background:#94A3B8;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;">Annuler</a>
-                            <?php endif; ?>
+                        <div style="margin-top: 24px; display: flex; gap: 12px;">
+                            <button type="submit" class="btn btn-primary" id="submit-btn">Enregistrer le Pack</button>
+                            <button type="button" class="btn" id="cancel-btn" style="background: #9CA3AF; color: white; display: none;" onclick="resetForm()">Annuler</button>
                         </div>
                     </form>
                 </div>
 
-                <div class="dashboard-panel">
-                    <div class="panel-title">Liste des Packs Récents</div>
-                    <table class="admin-table" id="packs-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nom</th>
-                                <th>Prix</th>
-                                <th>Projets Max</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($packs as $p): ?>
-                                <tr id="pack-<?= htmlspecialchars($p['id-pack']) ?>">
-                                    <td><?= htmlspecialchars($p['id-pack']) ?></td>
-                                    <td style="font-weight:bold;"><?= htmlspecialchars($p['nom-pack']) ?></td>
-                                    <td style="color:var(--green-card); font-weight:bold;"><?= htmlspecialchars($p['prix']) ?> dt</td>
-                                    <td><?= htmlspecialchars($p['nb-proj-max']) ?> Max</td>
-                                    <td>
-                                        <a class="btn-sm" href="dashboard_packs.php?edit=<?= htmlspecialchars($p['id-pack']) ?>" style="background:#3B82F6;color:white;padding:6px 10px;border-radius:6px;text-decoration:none;margin-right:8px;">Modifier</a>
-                                        <a class="btn-sm" href="../../controller/PackController.php?delete=1&id=<?= htmlspecialchars($p['id-pack']) ?>" style="background:var(--danger-color);color:white;padding:6px 10px;border-radius:6px;text-decoration:none;">Supprimer</a>
-                                    </td>
+                <!-- Packs List Panel -->
+                <div class="admin-panel">
+                    <h3 class="admin-panel-title">Liste des Packs Récents</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="admin-table" id="packs-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>Prix</th>
+                                    <th>Durée</th>
+                                    <th>Projets Max</th>
+                                    <th>Support</th>
+                                    <th>Actions</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody id="packs-tbody">
+                                <?php foreach ($packs as $p): ?>
+                                    <tr id="pack-<?= htmlspecialchars($p['id-pack']) ?>">
+                                        <td><?= htmlspecialchars($p['id-pack']) ?></td>
+                                        <td><strong><?= htmlspecialchars($p['nom-pack']) ?></strong></td>
+                                        <td><span style="color: var(--primary); font-weight: bold;"><?= htmlspecialchars($p['prix']) ?> dt</span></td>
+                                        <td><?= htmlspecialchars($p['duree']) ?></td>
+                                        <td><?= htmlspecialchars($p['nb-proj-max']) ?> Max</td>
+                                        <td><?= htmlspecialchars($p['support-prioritaire']) ?></td>
+                                        <td>
+                                            <button class="btn btn-sm" onclick='editPack(<?= json_encode($p) ?>)' style="background: #3B82F6; color: white; margin-right: 8px;">
+                                                <i class="fas fa-edit"></i> Modifier
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="deletePack(<?= $p['id-pack'] ?>)">
+                                                <i class="fas fa-trash"></i> Supprimer
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
             </div>
-        </div>
+        </main>
     </div>
 
-    <script src="pack_crud.js"></script>
+    <script>
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `admin-toast ${type === 'error' ? 'error' : ''}`;
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            
+            document.querySelectorAll('.form-error').forEach(el => el.classList.remove('form-error'));
+            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+            
+            const nom = document.getElementById('nom').value.trim();
+            if (!nom || nom.length === 0) {
+                document.getElementById('nom').classList.add('form-error');
+                document.getElementById('nom-error').classList.add('show');
+                isValid = false;
+            } else if (nom.length > 20) {
+                document.getElementById('nom').classList.add('form-error');
+                document.getElementById('nom-error').textContent = 'Max 20 caractères';
+                document.getElementById('nom-error').classList.add('show');
+                isValid = false;
+            }
+            
+            const prix = parseFloat(document.getElementById('prix').value);
+            if (isNaN(prix) || prix <= 0) {
+                document.getElementById('prix').classList.add('form-error');
+                document.getElementById('prix-error').classList.add('show');
+                isValid = false;
+            }
+            
+            const duree = document.getElementById('duree').value;
+            if (!duree) {
+                document.getElementById('duree').classList.add('form-error');
+                document.getElementById('duree-error').classList.add('show');
+                isValid = false;
+            }
+            
+            const nb = parseInt(document.getElementById('nb').value);
+            if (isNaN(nb) || nb < 1 || nb > 999) {
+                document.getElementById('nb').classList.add('form-error');
+                document.getElementById('nb-error').classList.add('show');
+                isValid = false;
+            }
+            
+            const description = document.getElementById('description').value.trim();
+            if (!description || description.length === 0) {
+                document.getElementById('description').classList.add('form-error');
+                document.getElementById('description-error').classList.add('show');
+                isValid = false;
+            } else if (description.length > 500) {
+                document.getElementById('description').classList.add('form-error');
+                document.getElementById('description-error').textContent = 'Max 500 caractères';
+                document.getElementById('description-error').classList.add('show');
+                isValid = false;
+            }
+            
+            const support = document.getElementById('support').value;
+            if (!support || (support !== 'oui' && support !== 'non')) {
+                document.getElementById('support').classList.add('form-error');
+                document.getElementById('support-error').classList.add('show');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Submit form
+        async function submitForm(event) {
+            event.preventDefault();
+            
+            if (!validateForm()) {
+                showToast('Veuillez corriger les erreurs', 'error');
+                return;
+            }
+            
+            const form = document.getElementById('packForm');
+            const submitBtn = document.getElementById('submit-btn');
+            const originalText = submitBtn ? submitBtn.textContent : '';
+            
+            if (submitBtn) {
+                submitBtn.textContent = 'Envoi en cours...';
+                submitBtn.disabled = true;
+            }
+            
+            const formData = new FormData(form);
+            formData.append('ajax', '1');
+            
+            try {
+                const response = await fetch('../../controller/PackController.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showToast(data.message);
+                    resetForm();
+                    await loadPacks();
+                } else {
+                    showToast(data.message || 'Erreur', 'error');
+                }
+            } catch (error) {
+                showToast('Erreur réseau', 'error');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+        }
+        
+        // Load packs
+        async function loadPacks() {
+            try {
+                const response = await fetch('../../controller/PackController.php?action=getAll');
+                const packs = await response.json();
+                
+                const tbody = document.getElementById('packs-tbody');
+                document.getElementById('count-packs').innerText = packs.length;
+                
+                let html = '';
+                packs.forEach(p => {
+                    html += `
+                        <tr id="pack-${p['id-pack']}">
+                            <td>${p['id-pack']}</td>
+                            <td><strong>${escapeHtml(p['nom-pack'])}</strong></td>
+                            <td><span style="color: var(--primary); font-weight: bold;">${p.prix} dt</span></td>
+                            <td>${escapeHtml(p.duree)}</td>
+                            <td>${p['nb-proj-max']} Max</td>
+                            <td>${escapeHtml(p['support-prioritaire'])}</td>
+                            <td>
+                                <button class="btn btn-sm" onclick='editPack(${JSON.stringify(p)})' style="background: #3B82F6; color: white; margin-right: 8px;">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deletePack(${p['id-pack']})">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        
+        // Reset form
+        function resetForm() {
+            document.getElementById('packForm').reset();
+            document.getElementById('action').value = 'add';
+            document.getElementById('id-pack').value = '';
+            document.getElementById('form-title').textContent = 'Ajouter un nouveau Pack';
+            document.getElementById('submit-btn').textContent = 'Enregistrer le Pack';
+            document.getElementById('cancel-btn').style.display = 'none';
+            
+            document.querySelectorAll('.form-error').forEach(el => el.classList.remove('form-error'));
+            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+        }
+        
+        // Edit pack
+        function editPack(pack) {
+            document.getElementById('action').value = 'update';
+            document.getElementById('id-pack').value = pack['id-pack'];
+            document.getElementById('nom').value = pack['nom-pack'];
+            document.getElementById('prix').value = pack['prix'];
+            document.getElementById('duree').value = pack['duree'];
+            document.getElementById('description').value = pack['description'];
+            document.getElementById('nb').value = pack['nb-proj-max'];
+            document.getElementById('support').value = pack['support-prioritaire'];
+            document.getElementById('form-title').textContent = 'Modifier le Pack';
+            document.getElementById('submit-btn').textContent = 'Mettre à jour';
+            document.getElementById('cancel-btn').style.display = 'inline-block';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Delete pack
+        async function deletePack(id) {
+            if (!confirm('⚠️ Supprimer ce pack définitivement ?')) return;
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'delete');
+                formData.append('id', id);
+                formData.append('ajax', '1');
+                
+                const response = await fetch('../../controller/PackController.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showToast('Pack supprimé');
+                    document.getElementById('pack-' + id).remove();
+                    let count = parseInt(document.getElementById('count-packs').innerText);
+                    document.getElementById('count-packs').innerText = count - 1;
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('Erreur', 'error');
+            }
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // Real-time validation
+        document.getElementById('nom').addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('form-error');
+                document.getElementById('nom-error').classList.remove('show');
+            }
+        });
+        
+        document.getElementById('prix').addEventListener('input', function() {
+            if (parseFloat(this.value) > 0) {
+                this.classList.remove('form-error');
+                document.getElementById('prix-error').classList.remove('show');
+            }
+        });
+        
+        document.getElementById('packForm').addEventListener('submit', submitForm);
+        
+        // Load subscriptions count
+        async function loadSubscriptionsCount() {
+            try {
+                const response = await fetch('../../controller/AbonnementController.php?action=getAll');
+                const subs = await response.json();
+                document.getElementById('subscriptions-count').innerText = subs.length;
+            } catch(e) {}
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSubscriptionsCount();
+        });
+    </script>
 </body>
 </html>

@@ -44,12 +44,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_event'])) {
     // Reload event data
     $event = $eventController->showEvent($id);
 }
+
+// Prepare default date and time parts for the form
+$date_day = '';
+$date_month = '';
+$date_year = '';
+$heure_hour = '';
+$heure_minute = '';
+$date_event = '';
+$heure_event = '';
+
+if ($event) {
+    $date_event = isset($event['date_event']) ? $event['date_event'] : '';
+    $heure_event = isset($event['heure_event']) ? $event['heure_event'] : '';
+
+    if ($date_event) {
+        $dateParts = explode('-', $date_event);
+        if (count($dateParts) === 3) {
+            list($date_year, $date_month, $date_day) = $dateParts;
+        }
+    }
+
+    if ($heure_event) {
+        $heureParts = explode(':', $heure_event);
+        if (count($heureParts) >= 2) {
+            list($heure_hour, $heure_minute) = $heureParts;
+        }
+    }
+}
 ?>
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>DigiWork HUB - Modifier Événement</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_event'])) {
         .form-row .form-group { flex: 1; }
         
         label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-dark); font-size: 14px; }
-        input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea {
+        input, textarea, select {
             width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px;
             font-size: 15px; color: var(--text-dark); transition: all 0.3s; background-color: #fdfdfd;
         }
@@ -155,26 +182,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_event'])) {
 </head>
 <body>
 
-    <nav class="navbar">
-        <a href="../home.php" class="logo">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            DigiWork <span>HUB</span>
-        </a>
-        <div class="nav-links">
-            <a href="#">Accueil</a>
-            <a href="#">Projets</a>
-            <a href="#">Formations</a>
-            <a href="#">Durabilité</a>
-            <a href="event.php">Événements</a>
-        </div>
-        <div class="nav-actions">
-            <a href="#">Messages</a>
-            <a href="#">Profil</a>
-        </div>
-    </nav>
-
     <div class="page-content">
         <div class="form-container">
             <?php echo $message; ?>
@@ -185,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_event'])) {
                 <p>Mettez à jour les détails de votre événement</p>
             </div>
 
-            <form method="POST">
+            <form method="POST" id="eventForm">
                 <input type="hidden" name="id_event" value="<?php echo htmlspecialchars($event['id_event']); ?>">
                 
                 <div class="form-group">
@@ -205,29 +212,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_event'])) {
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="date_event">Date</label>
-                        <input type="date" id="date_event" name="date_event" value="<?php echo htmlspecialchars($event['date_event']); ?>" required>
+                        <label for="date_day">Date</label>
+                        <div style="display:flex; gap:10px;">
+                            <select id="date_day" name="date_day" required>
+                                <option value="">Jour</option>
+                                <?php for ($d = 1; $d <= 31; $d++): $dayValue = str_pad($d, 2, '0', STR_PAD_LEFT); ?>
+                                    <option value="<?php echo $dayValue; ?>" <?php echo ($dayValue === $date_day) ? 'selected' : ''; ?>><?php echo $dayValue; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                            <select id="date_month" name="date_month" required>
+                                <option value="">Mois</option>
+                                <?php for ($m = 1; $m <= 12; $m++): $monthValue = str_pad($m, 2, '0', STR_PAD_LEFT); ?>
+                                    <option value="<?php echo $monthValue; ?>" <?php echo ($monthValue === $date_month) ? 'selected' : ''; ?>><?php echo $monthValue; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                            <select id="date_year" name="date_year" required>
+                                <option value="">Année</option>
+                                <?php for ($y = date('Y') - 1; $y <= date('Y') + 5; $y++): ?>
+                                    <option value="<?php echo $y; ?>" <?php echo ($y === (int)$date_year) ? 'selected' : ''; ?>><?php echo $y; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        <input type="hidden" id="date_event" name="date_event" value="<?php echo htmlspecialchars($date_event); ?>">
                     </div>
                     <div class="form-group">
-                        <label for="heure_event">Heure</label>
-                        <input type="time" id="heure_event" name="heure_event" value="<?php echo htmlspecialchars($event['heure_event']); ?>" required>
+                        <label for="heure_hour">Heure</label>
+                        <div style="display:flex; gap:10px;">
+                            <select id="heure_hour" name="heure_hour" required>
+                                <option value="">Heure</option>
+                                <?php for ($h = 0; $h <= 23; $h++): $hourValue = str_pad($h, 2, '0', STR_PAD_LEFT); ?>
+                                    <option value="<?php echo $hourValue; ?>" <?php echo ($hourValue === $heure_hour) ? 'selected' : ''; ?>><?php echo $hourValue; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                            <select id="heure_minute" name="heure_minute" required>
+                                <option value="">Minute</option>
+                                <?php foreach (['00','15','30','45'] as $min): ?>
+                                    <option value="<?php echo $min; ?>" <?php echo ($min === $heure_minute) ? 'selected' : ''; ?>><?php echo $min; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <input type="hidden" id="heure_event" name="heure_event" value="<?php echo htmlspecialchars($heure_event); ?>">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="capacite">Capacité</label>
-                        <input type="number" id="capacite" name="capacite" placeholder="Ex: 50" value="<?php echo (int)$event['capacite']; ?>" required>
+                        <input type="text" id="capacite" name="capacite" placeholder="Ex: 50" value="<?php echo (int)$event['capacite']; ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="id_organisateur">ID Organisateur</label>
-                        <input type="number" id="id_organisateur" name="id_organisateur" placeholder="Ex: 1" value="<?php echo (int)$event['id_organisateur']; ?>">
+                        <input type="text" id="id_organisateur" name="id_organisateur" placeholder="Ex: 1" value="<?php echo (int)$event['id_organisateur']; ?>">
                     </div>
                 </div>
 
                 <div class="form-buttons">
                     <button type="submit" name="update_event" class="btn-submit">Mettre à jour</button>
-                    <a href="event.php" class="btn-cancel">Annuler</a>
+                    <a href="manageEvents.php" class="btn-cancel">Annuler</a>
                 </div>
             </form>
             <?php else: ?>
@@ -236,11 +277,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_event'])) {
                 <p>Impossible de charger l'événement</p>
             </div>
             <div class="form-buttons">
-                <a href="event.php" class="btn-cancel">Retour aux événements</a>
+                <a href="manageEvents.php" class="btn-cancel">Retour aux événements</a>
             </div>
             <?php endif; ?>
+
         </div>
     </div>
 
+    <script type="text/javascript">
+        function setDateTimeHiddenFields() {
+            var dateDay = document.getElementById('date_day').value;
+            var dateMonth = document.getElementById('date_month').value;
+            var dateYear = document.getElementById('date_year').value;
+            var heureHour = document.getElementById('heure_hour').value;
+            var heureMinute = document.getElementById('heure_minute').value;
+
+            var hiddenDate = document.getElementById('date_event');
+            var hiddenHour = document.getElementById('heure_event');
+
+            if (dateDay && dateMonth && dateYear) {
+                hiddenDate.value = dateYear + '-' + dateMonth + '-' + dateDay;
+            }
+
+            if (heureHour && heureMinute) {
+                hiddenHour.value = heureHour + ':' + heureMinute;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setDateTimeHiddenFields();
+
+            var editForm = document.getElementById('eventForm');
+            if (editForm) {
+                editForm.addEventListener('submit', function(event) {
+                    setDateTimeHiddenFields();
+                });
+            }
+        });
+    </script>
 </body>
 </html>

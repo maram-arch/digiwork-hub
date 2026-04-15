@@ -3,10 +3,6 @@ require_once __DIR__ . '/../../controller/EventController.php';
 
 $eventController = new EventController();
 $message = '';
-$listEvents = [];
-
-// Récupérer la liste des événements
-$listEvents = $eventController->listEvents();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_event'])) {
     
@@ -37,23 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_event'])) {
         $eventController->addEvent($event);
 
         $message = '<div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb; font-weight: 500; text-align:center;">✅ L\'événement a été enregistré avec succès dans la base de données !</div>';
-        
-        // Rafraîchir la liste des événements
-        $listEvents = $eventController->listEvents();
     }
 }
-
-$images = [
-    'https://images.unsplash.com/photo-1591453089816-0fefbcce48f1?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80'
-];
 ?>
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>DigiWork HUB - Ajouter un Événement</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -104,7 +90,7 @@ $images = [
         .form-row .form-group { flex: 1; }
         
         label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-dark); font-size: 14px; }
-        input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea {
+        input, textarea, select {
             width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px;
             font-size: 15px; color: var(--text-dark); transition: all 0.3s; background-color: #fdfdfd;
         }
@@ -187,57 +173,47 @@ $images = [
             align-items: center;
         }
 
-        .event-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+        .table-wrapper {
+            overflow-x: auto;
             margin-bottom: 50px;
         }
 
-        .event-card {
+        .event-table {
+            width: 100%;
+            border-collapse: collapse;
             background-color: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 16px;
+            overflow: hidden;
         }
 
-        .event-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        .event-table th,
+        .event-table td {
+            padding: 16px 18px;
+            text-align: left;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 14px;
+            color: var(--text-dark);
         }
 
-        .event-img {
-            height: 160px;
-            background-color: #ddd;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-
-        .event-card:nth-child(1) .event-img {
-            background-image: url('https://images.unsplash.com/photo-1591453089816-0fefbcce48f1?auto=format&fit=crop&w=600&q=80');
-        }
-        
-        .event-card:nth-child(2) .event-img {
-            background-image: url('https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=600&q=80');
-        }
-        
-        .event-card:nth-child(3) .event-img {
-            background-image: url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80');
-        }
-
-        .event-date-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--white);
-            color: var(--primary-blue);
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 13px;
+        .event-table th {
+            background-color: #f7fafc;
             font-weight: 700;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: var(--primary-blue);
+        }
+
+        .event-table tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .event-table td:last-child {
+            white-space: nowrap;
+        }
+
+        .event-table .event-actions {
+            justify-content: flex-start;
+            gap: 10px;
+            margin: 0;
         }
 
         .event-content {
@@ -283,26 +259,6 @@ $images = [
 </head>
 <body>
 
-    <nav class="navbar">
-        <a href="../home.php" class="logo">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            DigiWork <span>HUB</span>
-        </a>
-        <div class="nav-links">
-            <a href="#">Accueil</a>
-            <a href="#">Projets</a>
-            <a href="#">Formations</a>
-            <a href="#">Durabilité</a>
-            <a href="event.php" class="active">Événements</a>
-        </div>
-        <div class="nav-actions">
-            <a href="#">Messages</a>
-            <a href="#">Profil</a>
-        </div>
-    </nav>
-
     <div class="page-content">
         <div class="form-container">
             <div class="form-header">
@@ -319,45 +275,79 @@ $images = [
                 
                 <div class="form-group">
                     <label for="titre">Titre (titre)</label>
-                    <input type="text" id="titre" name="titre" placeholder="Ex: Atelier Web React" required>
+                    <input type="text" id="titre" name="titre" placeholder="Ex: Atelier Web React">
                 </div>
 
                 <div class="form-group">
                     <label for="description">Description (description)</label>
-                    <textarea id="description" name="description" placeholder="Description de l'événement..." required></textarea>
+                    <textarea id="description" name="description" placeholder="Description de l'événement..."></textarea>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="date_event">Date (date_event)</label>
-                        <input type="date" id="date_event" name="date_event" required>
+                        <label for="date_day">Date (date_event)</label>
+                        <div style="display:flex; gap:10px;">
+                            <select id="date_day" name="date_day">
+                                <option value="">Jour</option>
+                                <?php for ($d = 1; $d <= 31; $d++): $dayValue = str_pad($d, 2, '0', STR_PAD_LEFT); ?>
+                                    <option value="<?php echo $dayValue; ?>"><?php echo $dayValue; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                            <select id="date_month" name="date_month">
+                                <option value="">Mois</option>
+                                <?php for ($m = 1; $m <= 12; $m++): $monthValue = str_pad($m, 2, '0', STR_PAD_LEFT); ?>
+                                    <option value="<?php echo $monthValue; ?>"><?php echo $monthValue; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                            <select id="date_year" name="date_year">
+                                <option value="">Année</option>
+                                <?php for ($y = date('Y'); $y <= date('Y') + 5; $y++): ?>
+                                    <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        <input type="hidden" id="date_event" name="date_event">
                     </div>
                     <div class="form-group">
-                        <label for="heure_event">Heure (heure_event)</label>
-                        <input type="time" id="heure_event" name="heure_event" required>
+                        <label for="heure_hour">Heure (heure_event)</label>
+                        <div style="display:flex; gap:10px;">
+                            <select id="heure_hour" name="heure_hour">
+                                <option value="">Heure</option>
+                                <?php for ($h = 0; $h <= 23; $h++): $hourValue = str_pad($h, 2, '0', STR_PAD_LEFT); ?>
+                                    <option value="<?php echo $hourValue; ?>"><?php echo $hourValue; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                            <select id="heure_minute" name="heure_minute">
+                                <option value="">Minute</option>
+                                <?php foreach (['00','15','30','45'] as $min): ?>
+                                    <option value="<?php echo $min; ?>"><?php echo $min; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <input type="hidden" id="heure_event" name="heure_event">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="lieu">Lieu (lieu)</label>
-                    <input type="text" id="lieu" name="lieu" placeholder="Ex: Sousse ou En ligne" required>
+                    <input type="text" id="lieu" name="lieu" placeholder="Ex: Sousse ou En ligne">
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="capacite">Capacité (capacite)</label>
-                        <input type="number" id="capacite" name="capacite" placeholder="Ex: 50" required>
+                        <input type="text" id="capacite" name="capacite" placeholder="Ex: 50">
                     </div>
                     <div class="form-group">
                         <label for="id_organisateur">ID Organisateur (id_organisateur)</label>
-                        <input type="number" id="id_organisateur" name="id_organisateur" placeholder="Ex: 1" required>
+                        <input type="text" id="id_organisateur" name="id_organisateur" placeholder="Ex: 1">
                     </div>
                 </div>
 
                 <button type="submit" name="submit_event" class="btn-submit">Enregistrer l'événement</button>
             </form>
 
-            <a href="event.php" class="back-link">
+            <a href="../front/event.php" class="back-link">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                 Retour aux événements
             </a>
@@ -365,57 +355,20 @@ $images = [
     </div>
 
     <!-- Events List Section -->
-    <div style="background: linear-gradient(135deg, rgba(34, 112, 193, 0.05), rgba(105, 184, 59, 0.05)); padding: 50px 20px;">
-        <div class="container">
-            <div class="section-title">
-                Événements Enregistrés
-                <span style="font-size: 14px; color: var(--text-light);">Total: <?php echo count($listEvents); ?></span>
-            </div>
-
-            <div class="event-grid">
-                <?php
-                if (count($listEvents) > 0) {
-                    $i = 0;
-                    foreach ($listEvents as $event) {
-                        $img = $images[$i % count($images)];
-                        $dateStr = isset($event['date_event']) ? htmlspecialchars($event['date_event']) : 'À définir';
-                        $titreStr = isset($event['titre']) ? htmlspecialchars($event['titre']) : 'Sans titre';
-                        $descStr = isset($event['description']) ? htmlspecialchars($event['description']) : '...';
-                        $lieuStr = isset($event['lieu']) ? htmlspecialchars($event['lieu']) : 'En ligne';
-                        $idEvent = isset($event['id_event']) ? htmlspecialchars($event['id_event']) : '';
-                        
-                        echo '
-                        <div class="event-card">
-                            <div class="event-img" style="background-image: url(\''.$img.'\');">
-                                <div class="event-date-badge">'.$dateStr.'</div>
-                            </div>
-                            <div class="event-content">
-                                <h3 class="event-title">'.$titreStr.'</h3>
-                                <p class="event-desc">'.$descStr.'</p>
-                                <div class="event-footer">
-                                    <span class="event-location" style="color: var(--primary-blue);">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                        '.$lieuStr.'
-                                    </span>
-                                </div>
-                                <div class="event-actions" style="margin-top: 15px;">
-                                    <a href="editEvent.php?id='.$idEvent.'" class="btn-modifier">Modifier</a>
-                                    <button class="btn-supprimer" onclick="deleteEvent('.$idEvent.')">Supprimer</button>
-                                </div>
-                            </div>
-                        </div>';
-                        $i++;
-                    }
-                } else {
-                    echo '<p style="text-align:center; grid-column: 1 / -1; color: var(--text-light); padding: 50px 0;">Aucun événement enregistré pour le moment.</p>';
-                }
-                ?>
-            </div>
-        </div>
+    <div style="padding: 30px 20px; text-align:center;">
+        <a href="manageEvents.php" class="btn-submit" style="max-width:260px; margin: 0 auto; display:inline-block;">Gérer les événements</a>
     </div>
     <script>
         document.getElementById('ajouterEventForm').addEventListener('submit', function(e) {
             let titre = document.getElementById('titre').value.trim();
+            let dateDay = document.getElementById('date_day').value;
+            let dateMonth = document.getElementById('date_month').value;
+            let dateYear = document.getElementById('date_year').value;
+            let heureHour = document.getElementById('heure_hour').value;
+            let heureMinute = document.getElementById('heure_minute').value;
+            document.getElementById('date_event').value = dateYear + '-' + dateMonth + '-' + dateDay;
+            document.getElementById('heure_event').value = heureHour + ':' + heureMinute;
+
             let description = document.getElementById('description').value.trim();
             let capacite = document.getElementById('capacite').value.trim();
             let idOrga = document.getElementById('id_organisateur').value.trim();

@@ -7,12 +7,12 @@ if (isset($_GET['id'])) {
     $eventController = new EventController();
     $eventController->deleteEvent($id);
     
-    // Redirect back to event list after deletion
-    header('Location: event.php?message=deleted');
+    // Redirect back to back manage page after deletion
+    header('Location: manageEvents.php?message=deleted');
     exit();
 } else {
-    // If no ID provided, redirect back to event list
-    header('Location: event.php');
+    // If no ID provided, redirect back to back manage page
+    header('Location: manageEvents.php');
     exit();
 }
 ?>

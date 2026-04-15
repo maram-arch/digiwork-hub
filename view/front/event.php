@@ -377,7 +377,6 @@ $images = [
                     $descStr = isset($event['description']) ? htmlspecialchars($event['description']) : '...';
                     $lieuStr = isset($event['lieu']) ? htmlspecialchars($event['lieu']) : 'En ligne';
                     $idEvent = isset($event['id_event']) ? htmlspecialchars($event['id_event']) : '';
-                    
                     echo '
                     <div class="event-card" data-title="'.$titreStr.'" data-lieu="'.$lieuStr.'" data-description="'.$descStr.'">
                         <div class="event-img" style="background-image: url(\''.$img.'\');">

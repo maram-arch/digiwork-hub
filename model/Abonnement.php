@@ -44,21 +44,165 @@ class Abonnement {
 
     function getAllAbonnements() {
         global $pdo;
-        return $pdo->query("SELECT a.*, p.`nom-pack`, u.nom, u.tel FROM `abonnement` a
+        // We can't assume the `user` table column names across all installs.
+        // Strategy: fetch abonnements + pack info, then resolve the user row per-abonnement
+        // by trying multiple common ID column names and mapping user fields to a stable
+        // shape (nom, tel) so views/controllers keep working.
+        try {
+            $sql = "SELECT a.*, p.`nom-pack` FROM `abonnement` a
                             JOIN `abon-pack` ap ON a.`id-abonnement` = ap.`id-abonnement`
-                            JOIN `pack` p ON ap.`id-pack` = p.`id-pack`
-                            JOIN `user` u ON a.`id-user` = u.id_user")->fetchAll(PDO::FETCH_ASSOC);
+                            JOIN `pack` p ON ap.`id-pack` = p.`id-pack`";
+            $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            return [];
+        }
+
+        // helper to map user fields to canonical keys
+        $mapUserFields = function($user) {
+            $out = ['nom' => '', 'tel' => ''];
+            if (!$user || !is_array($user)) return $out;
+            // name variants
+            foreach (['nom', 'name', 'fullname', 'full_name', 'prenom'] as $k) {
+                if (array_key_exists($k, $user) && $user[$k] !== null && $user[$k] !== '') {
+                    $out['nom'] = $user[$k];
+                    break;
+                }
+            }
+            // phone variants
+            foreach (['tel', 'telephone', 'phone', 'mobile'] as $k) {
+                if (array_key_exists($k, $user) && $user[$k] !== null && $user[$k] !== '') {
+                    $out['tel'] = $user[$k];
+                    break;
+                }
+            }
+            return $out;
+        };
+
+        // try to fetch a user row given an id value by trying common id column names
+        $fetchUserByIdValue = function($idValue) use ($pdo) {
+            if ($idValue === null || $idValue === '') return null;
+            $candidates = ['id-user','id_user','id','user_id','uid'];
+            foreach ($candidates as $col) {
+                try {
+                    $sql = "SELECT * FROM `user` WHERE `" . $col . "` = ? LIMIT 1";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([$idValue]);
+                    $u = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if ($u) return $u;
+                } catch (\PDOException $e) {
+                    // column doesn't exist or query failed - try the next candidate
+                    continue;
+                }
+            }
+            return null;
+        };
+
+        $out = [];
+        foreach ($rows as $r) {
+            // find the user id field in the abonnement row
+            $userId = null;
+            foreach (['id-user','id_user','id','user_id','uid'] as $k) {
+                if (array_key_exists($k, $r) && $r[$k] !== null && $r[$k] !== '') {
+                    $userId = $r[$k];
+                    break;
+                }
+            }
+
+            $user = $fetchUserByIdValue($userId);
+            $mapped = $mapUserFields($user);
+            // attach normalized fields so existing views (expecting 'nom' and 'tel') work
+            $r['nom'] = $mapped['nom'];
+            $r['tel'] = $mapped['tel'];
+
+            $out[] = $r;
+        }
+
+        return $out;
     }
 
     function getByUser($userId) {
         global $pdo;
-        $stmt = $pdo->prepare("SELECT a.*, p.`nom-pack`, u.nom, u.tel FROM `abonnement` a
+        // Try multiple likely column names for the user id on the abonnement table.
+        $candidates = ['id-user','id_user','id','user_id','uid'];
+        foreach ($candidates as $col) {
+            try {
+                $sql = "SELECT a.*, p.`nom-pack` FROM `abonnement` a
                             JOIN `abon-pack` ap ON a.`id-abonnement` = ap.`id-abonnement`
                             JOIN `pack` p ON ap.`id-pack` = p.`id-pack`
-                            JOIN `user` u ON a.`id-user` = u.id_user
-                            WHERE a.`id-user` = ?");
-        $stmt->execute([$userId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            WHERE a.`" . $col . "` = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$userId]);
+                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // normalize user fields per row using same mapping as in getAllAbonnements
+                $mapUserFields = function($user) {
+                    $out = ['nom' => '', 'tel' => ''];
+                    if (!$user || !is_array($user)) return $out;
+                    foreach (['nom', 'name', 'fullname', 'full_name', 'prenom'] as $k) {
+                        if (array_key_exists($k, $user) && $user[$k] !== null && $user[$k] !== '') {
+                            $out['nom'] = $user[$k];
+                            break;
+                        }
+                    }
+                    foreach (['tel', 'telephone', 'phone', 'mobile'] as $k) {
+                        if (array_key_exists($k, $user) && $user[$k] !== null && $user[$k] !== '') {
+                            $out['tel'] = $user[$k];
+                            break;
+                        }
+                    }
+                    return $out;
+                };
+
+                // helper to fetch user row by id value
+                $fetchUserByIdValue = function($idValue) use ($pdo) {
+                    if ($idValue === null || $idValue === '') return null;
+                    $candidates = ['id-user','id_user','id','user_id','uid'];
+                    foreach ($candidates as $c) {
+                        try {
+                            $sql = "SELECT * FROM `user` WHERE `" . $c . "` = ? LIMIT 1";
+                            $stmt = $pdo->prepare($sql);
+                            $stmt->execute([$idValue]);
+                            $u = $stmt->fetch(PDO::FETCH_ASSOC);
+                            if ($u) return $u;
+                        } catch (\PDOException $e) {
+                            continue;
+                        }
+                    }
+                    return null;
+                };
+
+                $out = [];
+                foreach ($rows as $r) {
+                    $userIdDetected = null;
+                    foreach (['id-user','id_user','id','user_id','uid'] as $k) {
+                        if (array_key_exists($k, $r) && $r[$k] !== null && $r[$k] !== '') {
+                            $userIdDetected = $r[$k];
+                            break;
+                        }
+                    }
+                    $user = $fetchUserByIdValue($userIdDetected);
+                    $mapped = $mapUserFields($user);
+                    $r['nom'] = $mapped['nom'];
+                    $r['tel'] = $mapped['tel'];
+                    $out[] = $r;
+                }
+
+                return $out;
+            } catch (\PDOException $e) {
+                // try next candidate column
+                continue;
+            }
+        }
+
+        // As a last resort, fall back to fetching all and filtering in PHP (safe, but less efficient).
+        $all = $this->getAllAbonnements();
+        $filtered = array_filter($all, function($r) use ($userId) {
+            foreach (['id-user','id_user','id','user_id','uid'] as $k) {
+                if (array_key_exists($k, $r) && (string)$r[$k] === (string)$userId) return true;
+            }
+            return false;
+        });
+        return array_values($filtered);
     }
 
     function delete($id) {
@@ -80,12 +224,76 @@ class Abonnement {
     
     function getActiveByUser($userId) {
         global $pdo;
-        $stmt = $pdo->prepare("SELECT a.*, p.`nom-pack`, p.`nb-proj-max` FROM `abonnement` a
+        $candidates = ['id-user','id_user','id','user_id','uid'];
+        foreach ($candidates as $col) {
+            try {
+                $sql = "SELECT a.*, p.`nom-pack`, p.`nb-proj-max` FROM `abonnement` a
                             JOIN `abon-pack` ap ON a.`id-abonnement` = ap.`id-abonnement`
                             JOIN `pack` p ON ap.`id-pack` = p.`id-pack`
-                            WHERE a.`id-user` = ? AND a.`status` = 'actif' AND a.`date-fin` >= NOW()");
-        $stmt->execute([(int)$userId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            WHERE a.`" . $col . "` = ? AND a.`status` = 'actif' AND a.`date-fin` >= NOW()";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([(int)$userId]);
+                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // normalize user fields by attempting to load the user row for each abonnement
+                $fetchUserByIdValue = function($idValue) use ($pdo) {
+                    if ($idValue === null || $idValue === '') return null;
+                    $candidates = ['id-user','id_user','id','user_id','uid'];
+                    foreach ($candidates as $c) {
+                        try {
+                            $sql = "SELECT * FROM `user` WHERE `" . $c . "` = ? LIMIT 1";
+                            $stmt = $pdo->prepare($sql);
+                            $stmt->execute([$idValue]);
+                            $u = $stmt->fetch(PDO::FETCH_ASSOC);
+                            if ($u) return $u;
+                        } catch (\PDOException $e) {
+                            continue;
+                        }
+                    }
+                    return null;
+                };
+
+                $mapUserFields = function($user) {
+                    $out = ['nom' => '', 'tel' => ''];
+                    if (!$user || !is_array($user)) return $out;
+                    foreach (['nom', 'name', 'fullname', 'full_name', 'prenom'] as $k) {
+                        if (array_key_exists($k, $user) && $user[$k] !== null && $user[$k] !== '') {
+                            $out['nom'] = $user[$k];
+                            break;
+                        }
+                    }
+                    foreach (['tel', 'telephone', 'phone', 'mobile'] as $k) {
+                        if (array_key_exists($k, $user) && $user[$k] !== null && $user[$k] !== '') {
+                            $out['tel'] = $user[$k];
+                            break;
+                        }
+                    }
+                    return $out;
+                };
+
+                $out = [];
+                foreach ($rows as $r) {
+                    $userIdDetected = null;
+                    foreach (['id-user','id_user','id','user_id','uid'] as $k) {
+                        if (array_key_exists($k, $r) && $r[$k] !== null && $r[$k] !== '') {
+                            $userIdDetected = $r[$k];
+                            break;
+                        }
+                    }
+                    $user = $fetchUserByIdValue($userIdDetected);
+                    $mapped = $mapUserFields($user);
+                    $r['nom'] = $mapped['nom'];
+                    $r['tel'] = $mapped['tel'];
+                    $out[] = $r;
+                }
+
+                return $out;
+            } catch (\PDOException $e) {
+                continue;
+            }
+        }
+
+        return [];
     }
 }
 ?>

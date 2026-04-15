@@ -2,115 +2,251 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>BO - Gestion des Abonnements</title>
-    <link rel="stylesheet" href="../style.css">
-    <!-- Template assets to match frontoffice look -->
-    <link rel="stylesheet" href="../frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css">
-    <link rel="stylesheet" href="../frontoffice/assets/css/LineIcons.2.0.css">
-    <link rel="stylesheet" href="../frontoffice/assets/css/lindy-uikit.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BO - Gestion des Abonnements | DigiWork HUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <style>
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-actif { background: #D1FAE5; color: #065F46; }
+        .status-expire { background: #FEE2E2; color: #991B1B; }
+        .status-en_attente { background: #FEF3C7; color: #92400E; }
+    </style>
 </head>
 <body>
-    <div class="back-layout">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:40px;">
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-logo">
+                <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" onerror="this.src='https://via.placeholder.com/120x40?text=DigiWork+HUB'">
+                <h2>DigiWork <span>HUB</span></h2>
+                <p style="font-size: 12px; opacity: 0.7; margin-top: 8px;">Administration</p>
             </div>
-            <div class="sidebar-menu">
-                <a href="#" class="sidebar-item">
-                    <i>📊</i> Tableau de Bord
+            <nav class="admin-sidebar-menu">
+                <a href="dashboard.php" class="admin-sidebar-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Tableau de Bord</span>
                 </a>
-                <a href="#" class="sidebar-item">
-                    <i>👥</i> Gestion Utilisateurs
+                <a href="#" class="admin-sidebar-item">
+                    <i class="fas fa-users"></i>
+                    <span>Gestion Utilisateurs</span>
                 </a>
-                <a href="dashboard_packs.php" class="sidebar-item">
-                    <i>💼</i> Projets & Offers (Packs)
+                <a href="dashboard_packs.php" class="admin-sidebar-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Projets & Offers (Packs)</span>
                 </a>
-                <a href="dashboard_abonnements.php" class="sidebar-item active">
-                    <i>💳</i> Abonnements
+                <a href="dashboard_abonnements.php" class="admin-sidebar-item active">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Abonnements</span>
                 </a>
-            </div>
-        </div>
-        
-        <div class="main-wrapper">
-            <div class="topbar">
-                <span>Admin | Messages ▾ | Profil ▾</span>
-            </div>
+            </nav>
+        </aside>
 
-            <div class="content">
-                <div class="dashboard-panel">
-                    <div class="panel-title">Toutes les souscriptions actives</div>
-                    <table class="admin-table" id="abo-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Client</th>
-                                <th>Téléphone</th>
-                                <th>Pack Associé</th>
-                                <th>Période</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Filled by JS -->
-                        </tbody>
-                    </table>
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <h1 class="admin-topbar-title">Gestion des Abonnements</h1>
+                <div class="admin-topbar-actions">
+                    <i class="fas fa-bell"></i>
+                    <i class="fas fa-envelope"></i>
+                    <div class="admin-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <span>Admin</span>
+                    <a href="../../controller/AuthController.php?action=logout" style="color: var(--danger); text-decoration: none;">Déconnexion</a>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <div class="admin-stats">
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>Total Abonnements</h4>
+                            <div class="admin-stat-value" id="total-subs">0</div>
+                        </div>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>Abonnements Actifs</h4>
+                            <div class="admin-stat-value" id="active-subs">0</div>
+                        </div>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>Expirés</h4>
+                            <div class="admin-stat-value" id="expired-subs">0</div>
+                        </div>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>Revenus Mensuels</h4>
+                            <div class="admin-stat-value">$12,450</div>
+                        </div>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 class="admin-panel-title" style="margin-bottom: 0;">Tous les Abonnements</h3>
+                        <button onclick="refreshSubscriptions()" class="btn btn-sm" style="background: var(--primary); color: white;">
+                            <i class="fas fa-sync-alt"></i> Actualiser
+                        </button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="admin-table" id="abo-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Client</th>
+                                    <th>Téléphone</th>
+                                    <th>Pack</th>
+                                    <th>Date Début</th>
+                                    <th>Date Fin</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="abo-tbody">
+                                <tr><td colspan="8" style="text-align: center;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('../../controller/AbonnementController.php?action=getAll')
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.querySelector('#abo-table tbody');
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `admin-toast ${type === 'error' ? 'error' : ''}`;
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        function getStatusClass(status) {
+            switch(status) {
+                case 'actif': return 'status-actif';
+                case 'expiré': return 'status-expire';
+                default: return 'status-en_attente';
+            }
+        }
+        
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            return new Date(dateStr).toLocaleDateString('fr-FR');
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        async function loadSubscriptions() {
+            try {
+                const response = await fetch('../../controller/AbonnementController.php?action=getAll');
+                const subs = await response.json();
+                
+                const total = subs.length;
+                const active = subs.filter(s => s.status === 'actif').length;
+                const expired = subs.filter(s => s.status === 'expiré' || (s.status === 'actif' && new Date(s['date-fin']) < new Date())).length;
+                
+                document.getElementById('total-subs').innerText = total;
+                document.getElementById('active-subs').innerText = active;
+                document.getElementById('expired-subs').innerText = expired;
+                
+                const tbody = document.getElementById('abo-tbody');
+                if (subs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Aucun abonnement</td></tr>';
+                    return;
+                }
+                
                 let html = '';
-                data.forEach(a => {
+                subs.forEach(sub => {
+                    const isExpired = new Date(sub['date-fin']) < new Date() && sub.status === 'actif';
+                    const displayStatus = isExpired ? 'expiré' : sub.status;
+                    const statusClass = getStatusClass(displayStatus);
+                    const statusText = displayStatus === 'actif' ? 'Actif' : (displayStatus === 'expiré' ? 'Expiré' : 'En attente');
+                    
                     html += `
-                        <tr id="abo-${a['id-abonnement']}">
-                            <td>${a['id-abonnement']}</td>
-                            <td>${a.nom}</td>
-                            <td>${a.tel}</td>
-                            <td style="font-weight: bold; color: var(--primary);">${a['nom-pack']}</td>
-                            <td>${a['date-deb']} au ${a['date-fin']}</td>
-                            <td><span style="background: #D1FAE5; color: #065F46; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${a.status}</span></td>
+                        <tr id="abo-${sub['id-abonnement']}">
+                            <td>${sub['id-abonnement']}</td>
+                            <td><strong>${escapeHtml(sub.nom)}</strong></td>
+                            <td>${escapeHtml(sub.tel)}</td>
+                            <td><span style="color: var(--primary);">${escapeHtml(sub['nom-pack'])}</span></td>
+                            <td>${formatDate(sub['date-deb'])}</td>
+                            <td>${formatDate(sub['date-fin'])}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                             <td>
-                                <button class="btn-sm" style="background: var(--danger-color);" onclick="deleteAbo(${a['id-abonnement']})">Révoquer</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteAbo(${sub['id-abonnement']})" ${isExpired ? 'disabled style="opacity:0.5;"' : ''}>
+                                    <i class="fas fa-ban"></i> Révoquer
+                                </button>
                             </td>
                         </tr>
                     `;
                 });
                 tbody.innerHTML = html;
-            })
-            .catch(err => console.error(err));
-        });
-
-        function deleteAbo(id) {
-            if(!confirm('Êtes-vous sûr de vouloir supprimer cet abonnement ?')) return;
-
-            const fd = new FormData();
-            fd.append('action', 'delete');
-            fd.append('id', id);
-
-            fetch('../../controller/AbonnementController.php', {
-                method: 'POST',
-                body: fd
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    document.getElementById('abo-' + id).remove();
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(err => alert("Erreur"));
+            } catch (error) {
+                console.error(error);
+                showToast('Erreur de chargement', 'error');
+            }
         }
+        
+        async function deleteAbo(id) {
+            if (!confirm('⚠️ Révoquer cet abonnement ?')) return;
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'delete');
+                formData.append('id', id);
+                formData.append('ajax', '1');
+                
+                const response = await fetch('../../controller/AbonnementController.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showToast('Abonnement révoqué');
+                    document.getElementById('abo-' + id).remove();
+                    loadSubscriptions(); // Refresh stats
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('Erreur', 'error');
+            }
+        }
+        
+        function refreshSubscriptions() {
+            showToast('Actualisation...');
+            loadSubscriptions();
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadSubscriptions);
     </script>
-    <script src="../frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js"></script>
-    <script src="../frontoffice/assets/js/main.js"></script>
 </body>
 </html>

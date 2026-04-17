@@ -5,9 +5,14 @@ $eventController = new EventController();
 $listEvents = $eventController->listEvents();
 
 $images = [
-    'https://images.unsplash.com/photo-1591453089816-0fefbcce48f1?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80'
+    '../assets/Leadership flyer _ Sunday.jpg',
+    '../assets/Marketing agency Momentum.webp',
+    '../assets/Piano Musical Concert Poster Design for social media.jpg',
+    '../assets/Premium Vector _ Open mic neon signs style text.jpg',
+    '../assets/Pub bans quiz team trio that keep winning.jpg',
+    '../assets/Staff_.jpg',
+    '../assets/THIS SATURDAY at 7pm, watch @intermiamicf in their….jpg',
+    '../assets/We’re bringing the IWP community together for an….jpg'
 ];
 ?>
 <!DOCTYPE html>
@@ -146,79 +151,109 @@ $images = [
         /* Event Cards */
         .event-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 32px;
             margin-bottom: 50px;
         }
 
         .event-card {
             background-color: var(--white);
-            border-radius: 12px;
+            border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .event-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
         }
 
         .event-img {
-            height: 160px;
+            height: 220px;
             background-color: #ddd;
             background-size: cover;
             background-position: center;
             position: relative;
         }
 
-        /* Mock images for events */
-        .event-card:nth-child(1) .event-img {
-            background-image: url('https://images.unsplash.com/photo-1591453089816-0fefbcce48f1?auto=format&fit=crop&w=600&q=80');
-        }
-        
-        .event-card:nth-child(2) .event-img {
-            background-image: url('https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=600&q=80');
-        }
-        
-        .event-card:nth-child(3) .event-img {
-            background-image: url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80');
-        }
-
         .event-date-badge {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 18px;
+            right: 18px;
             background: var(--white);
             color: var(--primary-blue);
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 13px;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 700;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
         }
 
         .event-content {
-            padding: 20px;
+            padding: 26px;
         }
 
         .event-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: var(--primary-blue);
         }
 
         .event-desc {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--text-light);
-            margin-bottom: 20px;
-            line-height: 1.5;
-            height: 42px;
+            margin-bottom: 22px;
+            line-height: 1.7;
+            min-height: 54px;
             overflow: hidden;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
+        }
+
+        .event-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 18px;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .event-meta svg {
+            min-width: 18px;
+            min-height: 18px;
+        }
+
+        .event-status-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .event-status-badge.coming {
+            background: #10b981;
+        }
+
+        .event-status-badge.past {
+            background: #ef4444;
+        }
+
+        .event-countdown {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--secondary-blue);
         }
 
         .event-footer {
@@ -242,15 +277,16 @@ $images = [
             background-color: var(--primary-blue);
             color: var(--white);
             text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            transition: background 0.3s;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            transition: background 0.3s, transform 0.2s;
         }
 
         .btn-inscrire:hover {
             background-color: var(--secondary-blue);
+            transform: translateY(-1px);
         }
 
         /* Search Bar */
@@ -373,19 +409,51 @@ $images = [
                     $img = $images[$i % count($images)];
                     // Ensure attributes exist
                     $dateStr = isset($event['date_event']) ? htmlspecialchars($event['date_event']) : 'À définir';
+                    $heureStr = isset($event['heure_event']) ? htmlspecialchars($event['heure_event']) : '';
+                    if ($heureStr) {
+                        $dateStr .= ' à ' . $heureStr;
+                    }
                     $titreStr = isset($event['titre']) ? htmlspecialchars($event['titre']) : 'Sans titre';
                     $descStr = isset($event['description']) ? htmlspecialchars($event['description']) : '...';
                     $lieuStr = isset($event['lieu']) ? htmlspecialchars($event['lieu']) : 'En ligne';
                     $idEvent = isset($event['id_event']) ? htmlspecialchars($event['id_event']) : '';
+                    $status = 'À venir';
+                    $countdown = 'Date non précisée';
+                    if (isset($event['date_event'])) {
+                        $eventTime = strtotime($event['date_event'] . ' ' . ($event['heure_event'] ?? '00:00'));
+                        $current = time();
+                        $diff = $eventTime - $current;
+                        if ($diff > 0) {
+                            $status = 'À venir';
+                            $days = floor($diff / 86400);
+                            $hours = floor(($diff % 86400) / 3600);
+                            $minutes = floor(($diff % 3600) / 60);
+                            $countdown = 'Dans ' . ($days > 0 ? $days . 'j ' : '') . sprintf('%02d:%02d', $hours, $minutes);
+                        } else {
+                            $status = 'Passé';
+                            $diff = abs($diff);
+                            $days = floor($diff / 86400);
+                            $hours = floor(($diff % 86400) / 3600);
+                            $minutes = floor(($diff % 3600) / 60);
+                            $countdown = 'Il y a ' . ($days > 0 ? $days . 'j ' : '') . sprintf('%02d:%02d', $hours, $minutes);
+                        }
+                    }
                     echo '
                     <div class="event-card" data-title="'.$titreStr.'" data-lieu="'.$lieuStr.'" data-description="'.$descStr.'">
                         <div class="event-img" style="background-image: url(\''.$img.'\');">
-                            <div class="event-date-badge">'.$dateStr.'</div>
+                            <div class="event-status-badge '.($status === 'Passé' ? 'past' : 'coming').'">'.$status.'</div>
                         </div>
                         <div class="event-content">
                             <h3 class="event-title">'.$titreStr.'</h3>
                             <p class="event-desc">'.$descStr.'</p>
+                            <div class="event-meta">
+                                <span class="event-date-text">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7V3M16 7V3M3 11H21M5 21H19A2 2 0 0 0 21 19V7A2 2 0 0 0 19 5H5A2 2 0 0 0 3 7V19A2 2 0 0 0 5 21Z"></path></svg>
+                                    '.$dateStr.'
+                                </span>
+                            </div>
                             <div class="event-footer">
+                                <span class="event-countdown">'.$countdown.'</span>
                                 <span class="event-location" style="color: var(--primary-blue);">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                                     '.$lieuStr.'

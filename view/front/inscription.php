@@ -8,6 +8,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_inscription'])
 
     $message = '<div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb; font-weight: 500; text-align:center;">Inscription enregistrée pour l\'utilisateur ID : '.$id_user.' (Statut : '.$statut.')</div>';
 }
+
+require_once __DIR__ . '/../../controller/EventController.php';
+
+$eventTitle = 'Aucun événement sélectionné';
+if (isset($_GET['id_event'])) {
+    $eventController = new EventController();
+    $event = $eventController->showEvent($_GET['id_event']);
+    if ($event) {
+        $eventTitle = htmlspecialchars($event['titre']);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -280,7 +291,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_inscription'])
                     <input type="number" id="id_event" name="id_event" placeholder="Ex: 2" value="<?php echo isset($_GET['id_event']) ? htmlspecialchars($_GET['id_event']) : ''; ?>" required>
                 </div>
 
-
+                <div class="event-info" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #b3d9ff;">
+                    <strong>Événement sélectionné :</strong> <?php echo $eventTitle; ?>
+                </div>
 
                 <div class="form-group">
                     <label for="statut">Statut (statut)</label>
@@ -322,7 +335,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_inscription'])
                 e.preventDefault(); // Stop form submission
                 errorContainer.innerHTML = errors.join('<br>');
                 errorContainer.style.display = 'block';
-                
                 // Add red borders to inputs
                 if(!regex8.test(idUser)) document.getElementById('id_user').style.borderColor = 'var(--error-color)';
                 if(!regex8.test(idEvent)) document.getElementById('id_event').style.borderColor = 'var(--error-color)';

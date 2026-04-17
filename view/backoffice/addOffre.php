@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../controller/OffreController.php';
-require_once __DIR__ . '/../../model/Offre.php';
+require_once __DIR__  . '/../../controller/OffreController.php';
+require_once __DIR__  . '/../../model/Offre.php';
  
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (

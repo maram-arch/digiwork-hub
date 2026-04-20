@@ -5,26 +5,40 @@
 
 session_start();
 require_once __DIR__ . '/../../model/Abonnement.php';
+require_once __DIR__ . '/../../model/Pack.php';
 
 $abo = new Abonnement();
+$packModel = new Pack();
+
+function redirectTo(string $path): void {
+	header('Location: ' . $path);
+	exit;
+}
+
+function jsonResponse(array $payload, int $status = 200): void {
+	http_response_code($status);
+	header('Content-Type: application/json');
+	echo json_encode($payload);
+	exit;
+}
 
 // GET actions
 if (isset($_GET['action'])) {
 	if ($_GET['action'] === 'getAll') {
-		header('Content-Type: application/json');
-		echo json_encode($abo->getAllAbonnements());
-		exit;
+		if (($_SESSION['role'] ?? '') !== 'admin') {
+			jsonResponse(['status' => 'error', 'message' => 'Accès refusé'], 403);
+		}
+		$abo->updateExpiredStatus();
+		jsonResponse($abo->getAllAbonnements());
 	}
 
 	if ($_GET['action'] === 'getMine') {
-		header('Content-Type: application/json');
+		$abo->updateExpiredStatus();
 		if (!isset($_SESSION['user_id'])) {
-			echo json_encode([]);
-			exit;
+			jsonResponse([]);
 		}
 		$userId = intval($_SESSION['user_id']);
-		echo json_encode($abo->getByUser($userId));
-		exit;
+		jsonResponse($abo->getByUser($userId));
 	}
 }
 
@@ -32,15 +46,27 @@ if (isset($_GET['action'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 	// Delete (admin)
 	if ($_POST['action'] === 'delete' && isset($_POST['id'])) {
+		if (($_SESSION['role'] ?? '') !== 'admin') {
+			jsonResponse(['status' => 'error', 'message' => 'Accès refusé'], 403);
+		}
 		$abo->delete(intval($_POST['id']));
 		if (isset($_POST['ajax'])) {
-			header('Content-Type: application/json');
-			echo json_encode(['status' => 'success', 'message' => 'Abonnement supprimé']);
-			exit;
+			jsonResponse(['status' => 'success', 'message' => 'Abonnement supprimé']);
 		}
 		$_SESSION['flash'] = 'Abonnement supprimé';
-		header('Location: /view/back/dashboard_abonnements.php');
-		exit;
+		redirectTo('/back/dashboard_abonnements.php');
+	}
+
+	// Status update (admin)
+	if ($_POST['action'] === 'setStatus' && isset($_POST['id']) && isset($_POST['status'])) {
+		if (($_SESSION['role'] ?? '') !== 'admin') {
+			jsonResponse(['status' => 'error', 'message' => 'Accès refusé'], 403);
+		}
+		$ok = $abo->setStatus((int)$_POST['id'], (string)$_POST['status']);
+		if (!$ok) {
+			jsonResponse(['status' => 'error', 'message' => 'Statut invalide'], 400);
+		}
+		jsonResponse(['status' => 'success', 'message' => 'Statut mis à jour']);
 	}
 
 	// Subscribe
@@ -49,25 +75,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 		$packId = intval($_POST['pack_id']);
 		if (!$userId) {
 			if (isset($_POST['ajax'])) {
-				header('Content-Type: application/json');
-				echo json_encode(['status' => 'error', 'message' => 'Vous devez être connecté pour vous abonner.']);
-				exit;
+				jsonResponse(['status' => 'error', 'message' => 'Vous devez être connecté pour vous abonner.'], 401);
 			}
 
 			$_SESSION['flash'] = 'Vous devez être connecté pour vous abonner.';
-			header('Location: /view/front/login.php');
-			exit;
+			redirectTo('/front/login.php');
+		}
+
+		$pack = $packModel->getById($packId);
+		if (!$pack) {
+			if (isset($_POST['ajax'])) {
+				jsonResponse(['status' => 'error', 'message' => 'Pack introuvable.'], 400);
+			}
+			$_SESSION['flash'] = 'Pack introuvable.';
+			redirectTo('/front/packs.php');
 		}
 
 		$abId = $abo->subscribe($userId, $packId);
+		if ($abId === false) {
+			if (isset($_POST['ajax'])) {
+				jsonResponse(['status' => 'error', 'message' => 'Abonnement déjà actif ou création impossible.'], 400);
+			}
+			$_SESSION['flash'] = 'Abonnement déjà actif ou création impossible.';
+			redirectTo('/front/abonnement.php');
+		}
+
 		if (isset($_POST['ajax'])) {
-			header('Content-Type: application/json');
-			echo json_encode(['status' => 'success', 'message' => 'Abonnement créé', 'abonnement_id' => $abId]);
-			exit;
+			jsonResponse(['status' => 'success', 'message' => 'Abonnement créé', 'abonnement_id' => $abId]);
 		}
 
 		$_SESSION['flash'] = 'Abonnement créé avec succès';
-		header('Location: /view/front/abonnement.php');
-		exit;
+		redirectTo('/front/abonnement.php');
 	}
 }

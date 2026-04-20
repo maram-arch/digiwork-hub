@@ -13,6 +13,14 @@ class Abonnement {
         try {
             $pdo->beginTransaction();
 
+            // Prevent multiple active subscriptions for the same user
+            $check = $pdo->prepare("SELECT 1 FROM `abonnement` WHERE `id-user` = ? AND `status` = 'actif' AND `date-fin` >= CURDATE() LIMIT 1");
+            $check->execute([$user]);
+            if ($check->fetchColumn()) {
+                $pdo->rollBack();
+                return false;
+            }
+
             $sql1 = "INSERT INTO `abonnement`
             (`id-user`, `date-deb`, `date-fin`, `status`)
             VALUES (?, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 'actif')";
@@ -62,7 +70,7 @@ class Abonnement {
             $out = ['nom' => '', 'tel' => ''];
             if (!$user || !is_array($user)) return $out;
             // name variants
-            foreach (['nom', 'name', 'fullname', 'full_name', 'prenom'] as $k) {
+            foreach (['nom', 'name', 'fullname', 'full_name', 'prenom', 'email'] as $k) {
                 if (array_key_exists($k, $user) && $user[$k] !== null && $user[$k] !== '') {
                     $out['nom'] = $user[$k];
                     break;
@@ -138,7 +146,7 @@ class Abonnement {
                 $mapUserFields = function($user) {
                     $out = ['nom' => '', 'tel' => ''];
                     if (!$user || !is_array($user)) return $out;
-                    foreach (['nom', 'name', 'fullname', 'full_name', 'prenom'] as $k) {
+                    foreach (['nom', 'name', 'fullname', 'full_name', 'prenom', 'email'] as $k) {
                         if (array_key_exists($k, $user) && $user[$k] !== null && $user[$k] !== '') {
                             $out['nom'] = $user[$k];
                             break;
@@ -215,6 +223,16 @@ class Abonnement {
         $stmt2->execute([$id]);
     }
 
+    function setStatus($id, $status) {
+        global $pdo;
+        $allowed = ['actif', 'expiré', 'en_attente', 'inactif'];
+        if (!in_array($status, $allowed, true)) {
+            return false;
+        }
+        $stmt = $pdo->prepare("UPDATE `abonnement` SET `status` = ? WHERE `id-abonnement` = ?");
+        return $stmt->execute([$status, (int)$id]);
+    }
+
     // Check and update expired subscriptions. Returns number of rows updated.
     function updateExpiredStatus() {
         global $pdo;
@@ -256,7 +274,7 @@ class Abonnement {
                 $mapUserFields = function($user) {
                     $out = ['nom' => '', 'tel' => ''];
                     if (!$user || !is_array($user)) return $out;
-                    foreach (['nom', 'name', 'fullname', 'full_name', 'prenom'] as $k) {
+                    foreach (['nom', 'name', 'fullname', 'full_name', 'prenom', 'email'] as $k) {
                         if (array_key_exists($k, $user) && $user[$k] !== null && $user[$k] !== '') {
                             $out['nom'] = $user[$k];
                             break;

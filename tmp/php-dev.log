@@ -1,0 +1,69 @@
+nohup: ignoring input
+[Wed Apr 15 11:05:57 2026] PHP 8.2.30 Development Server (http://localhost:8000) started
+[Wed Apr 15 11:06:16 2026] [::1]:36090 Accepted
+[Wed Apr 15 11:06:16 2026] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/tetro/Desktop/DigiworkHub/view/front/index.php on line 45
+[Wed Apr 15 11:06:16 2026] [::1]:36090 [200]: GET /front/index.php
+[Wed Apr 15 11:06:16 2026] [::1]:36090 Closing
+[Wed Apr 15 11:07:19 2026] [::1]:54514 Accepted
+[Wed Apr 15 11:07:19 2026] [::1]:54514 [200]: GET /front/login.php
+[Wed Apr 15 11:07:19 2026] [::1]:54514 Closing
+[Wed Apr 15 11:07:35 2026] [::1]:29198 Accepted
+[Wed Apr 15 11:07:35 2026] [::1]:29198 [200]: GET /back/dashboard.php
+[Wed Apr 15 11:07:35 2026] [::1]:29198 Closing
+[Wed Apr 15 11:07:45 2026] [::1]:48120 Accepted
+[Wed Apr 15 11:07:45 2026] [::1]:48120 [200]: GET /front/login.php
+[Wed Apr 15 11:07:45 2026] [::1]:48120 Closing
+[Wed Apr 15 11:07:49 2026] [::1]:48128 Accepted
+[Wed Apr 15 11:07:49 2026] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/tetro/Desktop/DigiworkHub/view/front/index.php on line 45
+[Wed Apr 15 11:07:49 2026] [::1]:48128 [200]: GET /front/index.php
+[Wed Apr 15 11:07:49 2026] [::1]:48128 Closing
+[Wed Apr 15 11:07:49 2026] [::1]:48142 Accepted
+[Wed Apr 15 11:07:49 2026] [::1]:48142 [404]: GET /front/assets/css/bootstrap-5.0.0-beta1.min.css - No such file or directory
+[Wed Apr 15 11:07:49 2026] [::1]:48142 Closing
+[Wed Apr 15 11:07:49 2026] [::1]:48146 Accepted
+[Wed Apr 15 11:07:49 2026] [::1]:48150 Accepted
+[Wed Apr 15 11:07:49 2026] [::1]:48146 [404]: GET /front/assets/css/LineIcons.2.0.css - No such file or directory
+[Wed Apr 15 11:07:49 2026] [::1]:48146 Closing
+[Wed Apr 15 11:07:49 2026] [::1]:48150 [404]: GET /front/assets/css/tiny-slider.css - No such file or directory
+[Wed Apr 15 11:07:49 2026] [::1]:48158 Accepted
+[Wed Apr 15 11:07:49 2026] [::1]:48150 Closing
+[Wed Apr 15 11:07:49 2026] [::1]:48162 Accepted
+[Wed Apr 15 11:07:49 2026] [::1]:48164 Accepted
+[Wed Apr 15 11:07:49 2026] [::1]:48158 [404]: GET /front/assets/css/animate.css - No such file or directory
+[Wed Apr 15 11:07:49 2026] [::1]:48158 Closing
+[Wed Apr 15 11:07:49 2026] [::1]:48162 [404]: GET /front/assets/css/lindy-uikit.css - No such file or directory
+[Wed Apr 15 11:07:49 2026] [::1]:48162 Closing
+[Wed Apr 15 11:07:49 2026] [::1]:48164 [200]: GET /front/assets/css/style.css
+[Wed Apr 15 11:07:49 2026] [::1]:48164 Closing
+[Wed Apr 15 11:07:49 2026] [::1]:48170 Accepted
+[Wed Apr 15 11:07:49 2026] [::1]:48172 Accepted
+[Wed Apr 15 11:07:49 2026] [::1]:48170 [404]: GET /front/assets/img/logo/logo.svg - No such file or directory
+[Wed Apr 15 11:07:49 2026] [::1]:48170 Closing
+[Wed Apr 15 11:07:49 2026] [::1]:48172 [404]: GET /front/assets/img/logo/logo.png - No such file or directory
+[Wed Apr 15 11:07:49 2026] [::1]:48172 Closing
+[Wed Apr 15 11:07:52 2026] [::1]:60672 Accepted
+[Wed Apr 15 11:07:52 2026] [::1]:60672 [200]: GET /front/login.php
+[Wed Apr 15 11:07:52 2026] [::1]:60672 Closing
+[Wed Apr 15 11:07:56 2026] [::1]:60674 Accepted
+[Wed Apr 15 11:07:56 2026] [::1]:60674 [404]: POST /controller/AuthController.php - No such file or directory
+[Wed Apr 15 11:07:56 2026] [::1]:60674 Closing
+[Wed Apr 15 11:08:02 2026] [::1]:62012 Accepted
+[Wed Apr 15 11:08:02 2026] [::1]:62012 [404]: GET /front/mes_abonnements.php - No such file or directory
+[Wed Apr 15 11:08:02 2026] [::1]:62012 Closing
+[Wed Apr 15 11:08:06 2026] [::1]:62024 Accepted
+[Wed Apr 15 11:08:06 2026] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/tetro/Desktop/DigiworkHub/view/front/index.php on line 45
+[Wed Apr 15 11:08:06 2026] [::1]:62024 [200]: GET /front/index.php
+[Wed Apr 15 11:08:06 2026] [::1]:62024 Closing
+[Wed Apr 15 11:08:16 2026] [::1]:20100 Accepted
+[Wed Apr 15 11:08:16 2026] [::1]:20100 [404]: GET /front/mes_abonnements.php - No such file or directory
+[Wed Apr 15 11:08:16 2026] [::1]:20100 Closing
+[Wed Apr 15 11:10:11 2026] [::1]:36744 Accepted
+[Wed Apr 15 11:10:11 2026] [::1]:36744 [404]: GET /front/mes_abonnements.php - No such file or directory
+[Wed Apr 15 11:10:11 2026] [::1]:36744 Closing
+[Wed Apr 15 11:10:12 2026] [::1]:36746 Accepted
+[Wed Apr 15 11:10:12 2026] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/tetro/Desktop/DigiworkHub/view/front/index.php on line 45
+[Wed Apr 15 11:10:12 2026] [::1]:36746 [200]: GET /front/index.php
+[Wed Apr 15 11:10:12 2026] [::1]:36746 Closing
+[Wed Apr 15 11:28:36 2026] [::1]:22008 Accepted
+[Wed Apr 15 11:28:36 2026] [::1]:22008 [404]: POST /controller/AuthController.php - No such file or directory
+[Wed Apr 15 11:28:36 2026] [::1]:22008 Closing

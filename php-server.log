@@ -1,204 +1,959 @@
-[Tue Apr 14 15:58:04 2026] PHP 8.2.30 Development Server (http://127.0.0.1:8000) started
-[Tue Apr 14 15:58:16 2026] 127.0.0.1:60312 Accepted
-[Tue Apr 14 15:58:16 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
-[Tue Apr 14 15:58:17 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
-[Tue Apr 14 15:58:17 2026] 127.0.0.1:60312 [200]: HEAD /front/packs.php
-[Tue Apr 14 15:58:17 2026] 127.0.0.1:60312 Closing
-[Tue Apr 14 15:58:36 2026] 127.0.0.1:20416 Accepted
-[Tue Apr 14 15:58:36 2026] 127.0.0.1:20416 [200]: HEAD /back/dashboard_packs.php
-[Tue Apr 14 15:58:36 2026] 127.0.0.1:20416 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54960 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54960 [200]: GET /frontoffice/index.php
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54960 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54968 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54968 [200]: GET /frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54974 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54968 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54974 [200]: GET /frontoffice/assets/css/LineIcons.2.0.css
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54974 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54988 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54988 [200]: GET /frontoffice/assets/css/tiny-slider.css
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55000 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:54988 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55000 [200]: GET /frontoffice/assets/css/animate.css
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55016 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55020 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55016 [200]: GET /frontoffice/assets/css/lindy-uikit.css
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55000 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55026 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55020 [200]: GET /frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55042 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55026 [200]: GET /frontoffice/assets/js/tiny-slider.js
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55016 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55042 [200]: GET /frontoffice/assets/js/wow.min.js
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55044 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55020 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55026 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55044 [200]: GET /frontoffice/assets/js/main.js
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55042 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55044 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55050 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55062 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55050 [404]: GET /frontoffice/assets/img/logo/logo.svg - No such file or directory
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55050 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55062 [200]: GET /frontoffice/assets/img/hero/hero-5/hero-img.svg
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55062 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55066 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55066 [200]: GET /frontoffice/assets/img/hero/hero-5/hero-bg.svg
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55066 Closing
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55068 Accepted
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55068 [200]: GET /frontoffice/assets/fonts/LineIcons.woff2
-[Tue Apr 14 15:58:54 2026] 127.0.0.1:55068 Closing
-[Tue Apr 14 15:59:02 2026] 127.0.0.1:55080 Accepted
-[Tue Apr 14 15:59:02 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
-[Tue Apr 14 15:59:02 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
-[Tue Apr 14 15:59:02 2026] 127.0.0.1:55080 [200]: GET /front/packs.php
-[Tue Apr 14 15:59:02 2026] 127.0.0.1:55080 Closing
-[Tue Apr 14 15:59:02 2026] 127.0.0.1:55094 Accepted
-[Tue Apr 14 15:59:02 2026] 127.0.0.1:55094 [200]: GET /style.css
-[Tue Apr 14 15:59:02 2026] 127.0.0.1:55094 Closing
-[Tue Apr 14 15:59:02 2026] 127.0.0.1:55110 Accepted
-[Tue Apr 14 15:59:02 2026] 127.0.0.1:55110 [200]: GET /frontoffice/assets/img/logo/logo.png
-[Tue Apr 14 15:59:02 2026] 127.0.0.1:55110 Closing
-[Tue Apr 14 15:59:02 2026] 127.0.0.1:55120 Accepted
-[Tue Apr 14 15:59:03 2026] 127.0.0.1:55120 [200]: GET /controller/PackController.php?action=getAll
-[Tue Apr 14 15:59:03 2026] 127.0.0.1:55120 Closing
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40874 Accepted
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40874 [200]: GET /back/dashboard_abonnements.php
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40874 Closing
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40876 Accepted
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40890 Accepted
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40876 [200]: GET /style.css
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40876 Closing
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40890 [200]: GET /frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40890 Closing
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40904 Accepted
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40916 Accepted
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40926 Accepted
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40940 Accepted
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40916 [200]: GET /frontoffice/assets/css/lindy-uikit.css
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40904 [200]: GET /frontoffice/assets/css/LineIcons.2.0.css
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40916 Closing
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40940 [200]: GET /frontoffice/assets/js/main.js
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40926 [200]: GET /frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40904 Closing
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40940 Closing
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40926 Closing
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40950 Accepted
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40950 [200]: GET /frontoffice/assets/img/logo/logo.png
-[Tue Apr 14 15:59:11 2026] 127.0.0.1:40950 Closing
-[Tue Apr 14 15:59:12 2026] 127.0.0.1:40966 Accepted
-[Tue Apr 14 15:59:12 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'u.nom' in 'field list' in /home/tetro/Desktop/DigiworkHub/model/Abonnement.php:28
-Stack trace:
-#0 /home/tetro/Desktop/DigiworkHub/model/Abonnement.php(28): PDO->query()
-#1 /home/tetro/Desktop/DigiworkHub/view/controller/AbonnementController.php(15): Abonnement->getAllAbonnements()
-#2 {main}
-  thrown in /home/tetro/Desktop/DigiworkHub/model/Abonnement.php on line 28
-[Tue Apr 14 15:59:12 2026] 127.0.0.1:40966 [500]: GET /controller/AbonnementController.php?action=getAll - Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'u.nom' in 'field list' in /home/tetro/Desktop/DigiworkHub/model/Abonnement.php:28
-Stack trace:
-#0 /home/tetro/Desktop/DigiworkHub/model/Abonnement.php(28): PDO->query()
-#1 /home/tetro/Desktop/DigiworkHub/view/controller/AbonnementController.php(15): Abonnement->getAllAbonnements()
-#2 {main}
-  thrown in /home/tetro/Desktop/DigiworkHub/model/Abonnement.php on line 28
-[Tue Apr 14 15:59:12 2026] 127.0.0.1:40966 Closing
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50438 Accepted
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50438 [200]: GET /back/dashboard_packs.php
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50438 Closing
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50440 Accepted
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50440 [200]: GET /style.css
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50442 Accepted
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50440 Closing
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50454 Accepted
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50442 [200]: GET /frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50454 [200]: GET /frontoffice/assets/css/LineIcons.2.0.css
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50442 Closing
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50454 Closing
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50470 Accepted
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50480 Accepted
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50470 [200]: GET /frontoffice/assets/css/lindy-uikit.css
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50480 [200]: GET /frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50470 Closing
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50480 Closing
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50492 Accepted
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50492 [200]: GET /back/pack_crud.js
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50492 Closing
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50504 Accepted
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50504 [200]: GET /frontoffice/assets/img/logo/logo.png
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50504 Closing
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50514 Accepted
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50514 [200]: GET /frontoffice/assets/js/main.js
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50514 Closing
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50528 Accepted
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50528 [200]: GET /controller/PackController.php?action=getAll
-[Tue Apr 14 15:59:15 2026] 127.0.0.1:50528 Closing
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57778 Accepted
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57778 [200]: GET /back/dashboard_abonnements.php
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57778 Closing
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57786 Accepted
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57786 [200]: GET /style.css
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57802 Accepted
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57814 Accepted
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57786 Closing
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57802 [200]: GET /frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57802 Closing
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57814 [200]: GET /frontoffice/assets/css/LineIcons.2.0.css
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57814 Closing
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57818 Accepted
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57830 Accepted
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57818 [200]: GET /frontoffice/assets/css/lindy-uikit.css
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57818 Closing
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57830 [200]: GET /frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57830 Closing
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57838 Accepted
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57838 [200]: GET /frontoffice/assets/js/main.js
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57838 Closing
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57844 Accepted
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57844 [200]: GET /frontoffice/assets/img/logo/logo.png
-[Tue Apr 14 15:59:26 2026] 127.0.0.1:57844 Closing
-[Tue Apr 14 15:59:27 2026] 127.0.0.1:57848 Accepted
-[Tue Apr 14 15:59:27 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'u.nom' in 'field list' in /home/tetro/Desktop/DigiworkHub/model/Abonnement.php:28
-Stack trace:
-#0 /home/tetro/Desktop/DigiworkHub/model/Abonnement.php(28): PDO->query()
-#1 /home/tetro/Desktop/DigiworkHub/view/controller/AbonnementController.php(15): Abonnement->getAllAbonnements()
-#2 {main}
-  thrown in /home/tetro/Desktop/DigiworkHub/model/Abonnement.php on line 28
-[Tue Apr 14 15:59:27 2026] 127.0.0.1:57848 [500]: GET /controller/AbonnementController.php?action=getAll - Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'u.nom' in 'field list' in /home/tetro/Desktop/DigiworkHub/model/Abonnement.php:28
-Stack trace:
-#0 /home/tetro/Desktop/DigiworkHub/model/Abonnement.php(28): PDO->query()
-#1 /home/tetro/Desktop/DigiworkHub/view/controller/AbonnementController.php(15): Abonnement->getAllAbonnements()
-#2 {main}
-  thrown in /home/tetro/Desktop/DigiworkHub/model/Abonnement.php on line 28
-[Tue Apr 14 15:59:27 2026] 127.0.0.1:57848 Closing
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57850 Accepted
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57850 [200]: GET /back/dashboard_packs.php
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57850 Closing
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57856 Accepted
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57856 [200]: GET /style.css
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57856 Closing
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57870 Accepted
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57886 Accepted
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57870 [200]: GET /frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57886 [200]: GET /frontoffice/assets/css/LineIcons.2.0.css
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57870 Closing
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57886 Closing
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57890 Accepted
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57890 [200]: GET /frontoffice/assets/css/lindy-uikit.css
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57890 Closing
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57894 Accepted
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57894 [200]: GET /back/pack_crud.js
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57894 Closing
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57904 Accepted
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57904 [200]: GET /frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57904 Closing
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57916 Accepted
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57916 [200]: GET /frontoffice/assets/js/main.js
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57916 Closing
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57920 Accepted
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57920 [200]: GET /frontoffice/assets/img/logo/logo.png
-[Tue Apr 14 15:59:28 2026] 127.0.0.1:57920 Closing
-[Tue Apr 14 15:59:29 2026] 127.0.0.1:57936 Accepted
-[Tue Apr 14 15:59:29 2026] 127.0.0.1:57936 [200]: GET /controller/PackController.php?action=getAll
-[Tue Apr 14 15:59:29 2026] 127.0.0.1:57936 Closing
-[Tue Apr 14 16:03:46 2026] 127.0.0.1:53842 Accepted
-[Tue Apr 14 16:03:46 2026] 127.0.0.1:53842 [200]: POST /controller/AbonnementController.php
-[Tue Apr 14 16:03:46 2026] 127.0.0.1:53842 Closing
+[Fri Apr 17 09:22:30 2026] PHP 8.2.30 Development Server (http://127.0.0.1:8000) started
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28060 Accepted
+[Fri Apr 17 09:23:08 2026] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/tetro/Desktop/DigiworkHub/view/front/index.php on line 45
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28060 [200]: GET /front/index.php
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28060 Closing
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28064 Accepted
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28072 Accepted
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28080 Accepted
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28084 Accepted
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28094 Accepted
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28108 Accepted
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28064 [404]: GET /front/assets/css/bootstrap-5.0.0-beta1.min.css - No such file or directory
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28064 Closing
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28072 [404]: GET /front/assets/css/LineIcons.2.0.css - No such file or directory
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28072 Closing
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28080 [404]: GET /front/assets/css/tiny-slider.css - No such file or directory
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28080 Closing
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28084 [404]: GET /front/assets/css/animate.css - No such file or directory
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28084 Closing
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28094 [404]: GET /front/assets/css/lindy-uikit.css - No such file or directory
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28094 Closing
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28108 [200]: GET /front/assets/css/style.css
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28108 Closing
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28120 Accepted
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28130 Accepted
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28120 [404]: GET /front/assets/img/logo/logo.svg - No such file or directory
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28120 Closing
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28130 [404]: GET /front/assets/img/logo/logo.png - No such file or directory
+[Fri Apr 17 09:23:08 2026] 127.0.0.1:28130 Closing
+[Fri Apr 17 09:23:15 2026] 127.0.0.1:61054 Accepted
+[Fri Apr 17 09:23:15 2026] 127.0.0.1:61054 [200]: GET /front/login.php
+[Fri Apr 17 09:23:15 2026] 127.0.0.1:61054 Closing
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61064 Accepted
+[Fri Apr 17 09:23:20 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:23:20 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61064 [200]: GET /front/packs.php
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61064 Closing
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61078 Accepted
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61080 Accepted
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61078 [200]: GET /style.css
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61080 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61078 Closing
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61080 Closing
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61092 Accepted
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61092 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:23:20 2026] 127.0.0.1:61092 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18042 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18042 [200]: GET /frontoffice/index.php
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18042 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18056 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18062 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18078 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18092 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18102 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18056 [200]: GET /frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18062 [200]: GET /frontoffice/assets/css/LineIcons.2.0.css
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18078 [200]: GET /frontoffice/assets/css/tiny-slider.css
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18056 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18092 [200]: GET /frontoffice/assets/css/animate.css
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18062 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18078 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18092 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18102 [200]: GET /frontoffice/assets/css/lindy-uikit.css
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18102 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18116 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18132 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18136 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18116 [200]: GET /frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18116 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18140 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18144 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18158 Accepted
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18132 [404]: GET /frontoffice/assets/img/logo/logo.svg - No such file or directory
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18132 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18136 [200]: GET /frontoffice/assets/img/hero/hero-5/hero-img.svg
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18136 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18140 [200]: GET /frontoffice/assets/js/tiny-slider.js
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18144 [200]: GET /frontoffice/assets/js/wow.min.js
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18140 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18144 Closing
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18158 [200]: GET /frontoffice/assets/js/main.js
+[Fri Apr 17 09:23:27 2026] 127.0.0.1:18158 Closing
+[Fri Apr 17 09:23:28 2026] 127.0.0.1:18166 Accepted
+[Fri Apr 17 09:23:28 2026] 127.0.0.1:18166 [200]: GET /frontoffice/assets/img/hero/hero-5/hero-bg.svg
+[Fri Apr 17 09:23:28 2026] 127.0.0.1:18166 Closing
+[Fri Apr 17 09:23:30 2026] 127.0.0.1:18174 Accepted
+[Fri Apr 17 09:23:30 2026] 127.0.0.1:18174 [200]: GET /frontoffice/assets/fonts/LineIcons.woff2
+[Fri Apr 17 09:23:30 2026] 127.0.0.1:18174 Closing
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20600 Accepted
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20600 [200]: GET /back/dashboard_abonnements.php
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20600 Closing
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20608 Accepted
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20608 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20608 Closing
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20616 Accepted
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20616 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20616 Closing
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20620 Accepted
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20620 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:23:38 2026] 127.0.0.1:20620 Closing
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20628 Accepted
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20628 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20628 Closing
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20638 Accepted
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20640 Accepted
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20638 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20640 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20638 Closing
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20640 Closing
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20642 Accepted
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20642 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:23:42 2026] 127.0.0.1:20642 Closing
+[Fri Apr 17 09:24:14 2026] 127.0.0.1:44102 Accepted
+[Fri Apr 17 09:24:14 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:24:14 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:24:14 2026] 127.0.0.1:44102 [200]: GET /front/packs.php
+[Fri Apr 17 09:24:14 2026] 127.0.0.1:44102 Closing
+[Fri Apr 17 09:24:14 2026] 127.0.0.1:44114 Accepted
+[Fri Apr 17 09:24:14 2026] 127.0.0.1:44130 Accepted
+[Fri Apr 17 09:24:14 2026] 127.0.0.1:44114 [200]: GET /style.css
+[Fri Apr 17 09:24:14 2026] 127.0.0.1:44114 Closing
+[Fri Apr 17 09:24:14 2026] 127.0.0.1:44130 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:24:14 2026] 127.0.0.1:44130 Closing
+[Fri Apr 17 09:24:15 2026] 127.0.0.1:44142 Accepted
+[Fri Apr 17 09:24:15 2026] 127.0.0.1:44142 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:24:15 2026] 127.0.0.1:44142 Closing
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44154 Accepted
+[Fri Apr 17 09:24:16 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:24:16 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44154 [200]: GET /front/packs.php
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44154 Closing
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44166 Accepted
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44168 Accepted
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44166 [200]: GET /style.css
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44166 Closing
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44168 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44168 Closing
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44180 Accepted
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44180 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:24:16 2026] 127.0.0.1:44180 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44196 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44196 [200]: GET /frontoffice/index.php
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44196 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44206 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44214 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44222 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44232 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44238 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44206 [200]: GET /frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44214 [200]: GET /frontoffice/assets/css/LineIcons.2.0.css
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44206 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44222 [200]: GET /frontoffice/assets/css/tiny-slider.css
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44214 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44232 [200]: GET /frontoffice/assets/css/animate.css
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44222 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44232 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44238 [200]: GET /frontoffice/assets/css/lindy-uikit.css
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44238 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44244 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44258 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44274 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44278 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44286 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44290 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44244 [404]: GET /frontoffice/assets/img/logo/logo.svg - No such file or directory
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44244 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44258 [200]: GET /frontoffice/assets/img/hero/hero-5/hero-img.svg
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44274 [200]: GET /frontoffice/assets/js/tiny-slider.js
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44258 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44274 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44278 [200]: GET /frontoffice/assets/js/wow.min.js
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44278 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44286 [200]: GET /frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44290 [200]: GET /frontoffice/assets/js/main.js
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44286 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44290 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44304 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44304 [200]: GET /frontoffice/assets/img/hero/hero-5/hero-bg.svg
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44304 Closing
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44312 Accepted
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44312 [200]: GET /frontoffice/assets/fonts/LineIcons.woff2
+[Fri Apr 17 09:24:18 2026] 127.0.0.1:44312 Closing
+[Fri Apr 17 09:24:21 2026] 127.0.0.1:44326 Accepted
+[Fri Apr 17 09:24:21 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:24:21 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:24:21 2026] 127.0.0.1:44326 [200]: GET /front/packs.php
+[Fri Apr 17 09:24:21 2026] 127.0.0.1:44326 Closing
+[Fri Apr 17 09:24:21 2026] 127.0.0.1:44328 Accepted
+[Fri Apr 17 09:24:21 2026] 127.0.0.1:44328 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:24:21 2026] 127.0.0.1:44328 Closing
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26236 Accepted
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26236 [200]: GET /back/dashboard_abonnements.php
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26236 Closing
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26252 Accepted
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26268 Accepted
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26252 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26268 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26252 Closing
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26268 Closing
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26276 Accepted
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26276 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:24:31 2026] 127.0.0.1:26276 Closing
+[Fri Apr 17 09:24:34 2026] 127.0.0.1:26290 Accepted
+[Fri Apr 17 09:24:34 2026] 127.0.0.1:26290 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:24:34 2026] 127.0.0.1:26290 Closing
+[Fri Apr 17 09:24:34 2026] 127.0.0.1:26302 Accepted
+[Fri Apr 17 09:24:34 2026] 127.0.0.1:26302 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:24:34 2026] 127.0.0.1:26302 Closing
+[Fri Apr 17 09:24:34 2026] 127.0.0.1:20884 Accepted
+[Fri Apr 17 09:24:34 2026] 127.0.0.1:20884 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:24:34 2026] 127.0.0.1:20884 Closing
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20886 Accepted
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20886 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20886 Closing
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20896 Accepted
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20902 Accepted
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20896 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20902 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20896 Closing
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20902 Closing
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20910 Accepted
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20910 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:24:36 2026] 127.0.0.1:20910 Closing
+[Fri Apr 17 09:24:44 2026] 127.0.0.1:26268 Accepted
+[Fri Apr 17 09:24:44 2026] 127.0.0.1:26268 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:24:44 2026] 127.0.0.1:26268 Closing
+[Fri Apr 17 09:24:44 2026] 127.0.0.1:26284 Accepted
+[Fri Apr 17 09:24:44 2026] 127.0.0.1:26284 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:24:44 2026] 127.0.0.1:26284 Closing
+[Fri Apr 17 09:24:44 2026] 127.0.0.1:26288 Accepted
+[Fri Apr 17 09:24:44 2026] 127.0.0.1:26288 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:24:44 2026] 127.0.0.1:26288 Closing
+[Fri Apr 17 09:24:45 2026] 127.0.0.1:26290 Accepted
+[Fri Apr 17 09:24:45 2026] 127.0.0.1:26290 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:24:45 2026] 127.0.0.1:26290 Closing
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26304 Accepted
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26304 [200]: GET /back/dashboard_abonnements.php
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26304 Closing
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26314 Accepted
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26314 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26314 Closing
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26320 Accepted
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26320 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26320 Closing
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26322 Accepted
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26322 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:24:49 2026] 127.0.0.1:26322 Closing
+[Fri Apr 17 09:26:24 2026] 127.0.0.1:42742 Accepted
+[Fri Apr 17 09:26:24 2026] 127.0.0.1:42742 [404]: POST /controller/AuthController.php - No such file or directory
+[Fri Apr 17 09:26:24 2026] 127.0.0.1:42742 Closing
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47396 Accepted
+[Fri Apr 17 09:26:40 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:26:40 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47396 [200]: GET /front/packs.php
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47396 Closing
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47406 Accepted
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47408 Accepted
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47406 [200]: GET /style.css
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47406 Closing
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47408 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47408 Closing
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47422 Accepted
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47422 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:26:40 2026] 127.0.0.1:47422 Closing
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47438 Accepted
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47438 [200]: GET /front/abonnement.php
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47438 Closing
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47448 Accepted
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47456 Accepted
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47448 [200]: GET /style.css
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47456 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47448 Closing
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47456 Closing
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47460 Accepted
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47470 Accepted
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47460 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47460 Closing
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47470 [200]: GET /controller/AbonnementController.php?action=getMine
+[Fri Apr 17 09:26:42 2026] 127.0.0.1:47470 Closing
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30632 Accepted
+[Fri Apr 17 09:26:49 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:26:49 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30632 [200]: GET /front/packs.php
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30632 Closing
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30634 Accepted
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30636 Accepted
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30634 [200]: GET /style.css
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30636 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30634 Closing
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30636 Closing
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30642 Accepted
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30642 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:26:49 2026] 127.0.0.1:30642 Closing
+[Fri Apr 17 09:31:05 2026] 127.0.0.1:53022 Accepted
+[Fri Apr 17 09:31:05 2026] 127.0.0.1:53022 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:31:05 2026] 127.0.0.1:53022 Closing
+[Fri Apr 17 09:31:06 2026] 127.0.0.1:53026 Accepted
+[Fri Apr 17 09:31:06 2026] 127.0.0.1:53026 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:31:06 2026] 127.0.0.1:53026 Closing
+[Fri Apr 17 09:31:06 2026] 127.0.0.1:53034 Accepted
+[Fri Apr 17 09:31:06 2026] 127.0.0.1:53034 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:31:06 2026] 127.0.0.1:53034 Closing
+[Fri Apr 17 09:31:07 2026] 127.0.0.1:53036 Accepted
+[Fri Apr 17 09:31:07 2026] 127.0.0.1:53036 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:31:07 2026] 127.0.0.1:53036 Closing
+[Fri Apr 17 09:31:09 2026] 127.0.0.1:53046 Accepted
+[Fri Apr 17 09:31:09 2026] 127.0.0.1:53046 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:31:09 2026] 127.0.0.1:53046 Closing
+[Fri Apr 17 09:31:09 2026] 127.0.0.1:53058 Accepted
+[Fri Apr 17 09:31:09 2026] 127.0.0.1:53058 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:31:09 2026] 127.0.0.1:53058 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55016 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55016 [200]: GET /frontoffice/index.php
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55016 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55022 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55038 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55052 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55068 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55070 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55022 [200]: GET /frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55038 [200]: GET /frontoffice/assets/css/LineIcons.2.0.css
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55022 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55038 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55052 [200]: GET /frontoffice/assets/css/tiny-slider.css
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55052 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55068 [200]: GET /frontoffice/assets/css/animate.css
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55068 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55070 [200]: GET /frontoffice/assets/css/lindy-uikit.css
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55070 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55082 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55094 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55100 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55106 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55114 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55082 [200]: GET /frontoffice/assets/js/tiny-slider.js
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55094 [200]: GET /frontoffice/assets/js/wow.min.js
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55082 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55094 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55122 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55100 [404]: GET /frontoffice/assets/img/logo/logo.svg - No such file or directory
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55100 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55106 [200]: GET /frontoffice/assets/img/hero/hero-5/hero-img.svg
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55114 [200]: GET /frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55106 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55114 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55122 [200]: GET /frontoffice/assets/js/main.js
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55122 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55128 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55128 [200]: GET /frontoffice/assets/img/hero/hero-5/hero-bg.svg
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55128 Closing
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55138 Accepted
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55138 [200]: GET /frontoffice/assets/fonts/LineIcons.woff2
+[Fri Apr 17 09:31:14 2026] 127.0.0.1:55138 Closing
+[Fri Apr 17 09:33:28 2026] 127.0.0.1:53326 Accepted
+[Fri Apr 17 09:33:28 2026] 127.0.0.1:53326 [200]: GET /back/dashboard_abonnements.php
+[Fri Apr 17 09:33:28 2026] 127.0.0.1:53326 Closing
+[Fri Apr 17 09:33:29 2026] 127.0.0.1:53336 Accepted
+[Fri Apr 17 09:33:29 2026] 127.0.0.1:53352 Accepted
+[Fri Apr 17 09:33:29 2026] 127.0.0.1:53336 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:33:29 2026] 127.0.0.1:53336 Closing
+[Fri Apr 17 09:33:29 2026] 127.0.0.1:53352 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:33:29 2026] 127.0.0.1:53352 Closing
+[Fri Apr 17 09:33:29 2026] 127.0.0.1:53354 Accepted
+[Fri Apr 17 09:33:29 2026] 127.0.0.1:53354 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:33:29 2026] 127.0.0.1:53354 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57616 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57616 [200]: GET /frontoffice/index.php
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57616 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57622 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57630 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57632 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57646 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57654 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57660 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57622 [200]: GET /frontoffice/assets/css/bootstrap-5.0.0-beta1.min.css
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57630 [200]: GET /frontoffice/assets/css/LineIcons.2.0.css
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57622 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57632 [200]: GET /frontoffice/assets/css/tiny-slider.css
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57630 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57646 [200]: GET /frontoffice/assets/css/animate.css
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57632 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57654 [200]: GET /frontoffice/assets/css/lindy-uikit.css
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57646 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57654 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57660 [404]: GET /frontoffice/assets/img/logo/logo.svg - No such file or directory
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57660 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57664 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57670 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57664 [200]: GET /frontoffice/assets/img/hero/hero-5/hero-img.svg
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57664 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57670 [200]: GET /frontoffice/assets/js/bootstrap-5.0.0-beta1.min.js
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57670 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57684 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57698 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57704 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57684 [200]: GET /frontoffice/assets/js/tiny-slider.js
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57698 [200]: GET /frontoffice/assets/js/wow.min.js
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57704 [200]: GET /frontoffice/assets/js/main.js
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57684 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57698 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57704 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57712 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57712 [200]: GET /frontoffice/assets/img/hero/hero-5/hero-bg.svg
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57712 Closing
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57722 Accepted
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57722 [200]: GET /frontoffice/assets/fonts/LineIcons.woff2
+[Fri Apr 17 09:33:41 2026] 127.0.0.1:57722 Closing
+[Fri Apr 17 09:33:53 2026] 127.0.0.1:39406 Accepted
+[Fri Apr 17 09:33:53 2026] 127.0.0.1:39406 [200]: GET /front/login.php
+[Fri Apr 17 09:33:53 2026] 127.0.0.1:39406 Closing
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58884 Accepted
+[Fri Apr 17 09:33:57 2026] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/tetro/Desktop/DigiworkHub/view/front/index.php on line 45
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58884 [200]: GET /front/index.php
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58884 Closing
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58886 Accepted
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58902 Accepted
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58908 Accepted
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58920 Accepted
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58928 Accepted
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58930 Accepted
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58886 [404]: GET /front/assets/css/bootstrap-5.0.0-beta1.min.css - No such file or directory
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58886 Closing
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58902 [404]: GET /front/assets/css/LineIcons.2.0.css - No such file or directory
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58902 Closing
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58908 [404]: GET /front/assets/css/tiny-slider.css - No such file or directory
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58908 Closing
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58920 [404]: GET /front/assets/css/animate.css - No such file or directory
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58920 Closing
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58928 [404]: GET /front/assets/css/lindy-uikit.css - No such file or directory
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58928 Closing
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58930 [200]: GET /front/assets/css/style.css
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58930 Closing
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58934 Accepted
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58934 [404]: GET /front/assets/img/logo/logo.svg - No such file or directory
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58934 Closing
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58950 Accepted
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58950 [404]: GET /front/assets/img/logo/logo.png - No such file or directory
+[Fri Apr 17 09:33:57 2026] 127.0.0.1:58950 Closing
+[Fri Apr 17 09:34:07 2026] 127.0.0.1:22336 Accepted
+[Fri Apr 17 09:34:07 2026] 127.0.0.1:22336 [404]: GET /front/mes_abonnements.php - No such file or directory
+[Fri Apr 17 09:34:07 2026] 127.0.0.1:22336 Closing
+[Fri Apr 17 09:34:09 2026] 127.0.0.1:22348 Accepted
+[Fri Apr 17 09:34:09 2026] 127.0.0.1:22348 [404]: GET /front/mes_abonnements.php - No such file or directory
+[Fri Apr 17 09:34:09 2026] 127.0.0.1:22348 Closing
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22358 Accepted
+[Fri Apr 17 09:34:11 2026] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/tetro/Desktop/DigiworkHub/view/front/index.php on line 45
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22358 [200]: GET /front/index.php
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22358 Closing
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22372 Accepted
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22382 Accepted
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22396 Accepted
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22372 [404]: GET /front/assets/css/LineIcons.2.0.css - No such file or directory
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22372 Closing
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22382 [404]: GET /front/assets/css/animate.css - No such file or directory
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22382 Closing
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22396 [404]: GET /front/assets/css/lindy-uikit.css - No such file or directory
+[Fri Apr 17 09:34:11 2026] 127.0.0.1:22396 Closing
+[Fri Apr 17 09:52:14 2026] 127.0.0.1:9494 Accepted
+[Fri Apr 17 09:52:14 2026] 127.0.0.1:9494 [200]: GET /frontoffice/index.php
+[Fri Apr 17 09:52:14 2026] 127.0.0.1:9494 Closing
+[Fri Apr 17 09:52:14 2026] 127.0.0.1:9502 Accepted
+[Fri Apr 17 09:52:14 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:52:14 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:52:14 2026] 127.0.0.1:9502 [200]: GET /front/packs.php
+[Fri Apr 17 09:52:14 2026] 127.0.0.1:9502 Closing
+[Fri Apr 17 09:52:14 2026] 127.0.0.1:9510 Accepted
+[Fri Apr 17 09:52:14 2026] 127.0.0.1:9510 [200]: GET /front/login.php
+[Fri Apr 17 09:52:14 2026] 127.0.0.1:9510 Closing
+[Fri Apr 17 09:52:25 2026] 127.0.0.1:37886 Accepted
+[Fri Apr 17 09:52:25 2026] 127.0.0.1:37886 [200]: GET /frontoffice/index.php
+[Fri Apr 17 09:52:25 2026] 127.0.0.1:37886 Closing
+[Fri Apr 17 09:53:57 2026] 127.0.0.1:35912 Accepted
+[Fri Apr 17 09:53:57 2026] 127.0.0.1:35912 [200]: GET /frontoffice/index.php
+[Fri Apr 17 09:53:57 2026] 127.0.0.1:35912 Closing
+[Fri Apr 17 09:53:57 2026] 127.0.0.1:35914 Accepted
+[Fri Apr 17 09:53:57 2026] 127.0.0.1:35930 Accepted
+[Fri Apr 17 09:53:57 2026] 127.0.0.1:35914 [200]: GET /style.css
+[Fri Apr 17 09:53:57 2026] 127.0.0.1:35914 Closing
+[Fri Apr 17 09:53:57 2026] 127.0.0.1:35930 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:53:57 2026] 127.0.0.1:35930 Closing
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61156 Accepted
+[Fri Apr 17 09:54:04 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:54:04 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61156 [200]: GET /front/packs.php
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61156 Closing
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61164 Accepted
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61168 Accepted
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61164 [200]: GET /style.css
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61168 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61164 Closing
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61168 Closing
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61184 Accepted
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61184 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:54:04 2026] 127.0.0.1:61184 Closing
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61196 Accepted
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61196 [200]: GET /front/abonnement.php
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61196 Closing
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61204 Accepted
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61214 Accepted
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61204 [200]: GET /style.css
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61214 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61204 Closing
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61214 Closing
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61216 Accepted
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61230 Accepted
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61216 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61216 Closing
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61230 [200]: GET /controller/AbonnementController.php?action=getMine
+[Fri Apr 17 09:54:06 2026] 127.0.0.1:61230 Closing
+[Fri Apr 17 09:54:08 2026] 127.0.0.1:61246 Accepted
+[Fri Apr 17 09:54:08 2026] 127.0.0.1:61246 [200]: GET /front/login.php
+[Fri Apr 17 09:54:08 2026] 127.0.0.1:61246 Closing
+[Fri Apr 17 09:54:23 2026] 127.0.0.1:57118 Accepted
+[Fri Apr 17 09:54:23 2026] 127.0.0.1:57118 [200]: GET /back/dashboard_abonnements.php
+[Fri Apr 17 09:54:23 2026] 127.0.0.1:57118 Closing
+[Fri Apr 17 09:54:23 2026] 127.0.0.1:57130 Accepted
+[Fri Apr 17 09:54:23 2026] 127.0.0.1:57130 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:54:23 2026] 127.0.0.1:57130 Closing
+[Fri Apr 17 09:54:23 2026] 127.0.0.1:57144 Accepted
+[Fri Apr 17 09:54:23 2026] 127.0.0.1:57144 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:54:23 2026] 127.0.0.1:57144 Closing
+[Fri Apr 17 09:54:24 2026] 127.0.0.1:36168 Accepted
+[Fri Apr 17 09:54:24 2026] 127.0.0.1:36168 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:54:24 2026] 127.0.0.1:36168 Closing
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36184 Accepted
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36184 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36184 Closing
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36200 Accepted
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36202 Accepted
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36200 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36202 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36200 Closing
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36202 Closing
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36206 Accepted
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36206 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:54:27 2026] 127.0.0.1:36206 Closing
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36220 Accepted
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36220 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36220 Closing
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36230 Accepted
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36230 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36230 Closing
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36232 Accepted
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36232 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36232 Closing
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36242 Accepted
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36242 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36242 Closing
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36256 Accepted
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36256 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36256 Closing
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36266 Accepted
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36266 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:54:29 2026] 127.0.0.1:36266 Closing
+[Fri Apr 17 09:54:31 2026] 127.0.0.1:36272 Accepted
+[Fri Apr 17 09:54:31 2026] 127.0.0.1:36272 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:54:31 2026] 127.0.0.1:36272 Closing
+[Fri Apr 17 09:54:58 2026] 127.0.0.1:19942 Accepted
+[Fri Apr 17 09:54:58 2026] 127.0.0.1:19942 [404]: POST /controller/AuthController.php - No such file or directory
+[Fri Apr 17 09:54:58 2026] 127.0.0.1:19942 Closing
+[Fri Apr 17 09:56:14 2026] 127.0.0.1:20740 Accepted
+[Fri Apr 17 09:56:14 2026] 127.0.0.1:20740 [200]: GET /frontoffice/index.php
+[Fri Apr 17 09:56:14 2026] 127.0.0.1:20740 Closing
+[Fri Apr 17 09:56:14 2026] 127.0.0.1:20744 Accepted
+[Fri Apr 17 09:56:14 2026] 127.0.0.1:20752 Accepted
+[Fri Apr 17 09:56:14 2026] 127.0.0.1:20744 [200]: GET /style.css
+[Fri Apr 17 09:56:14 2026] 127.0.0.1:20744 Closing
+[Fri Apr 17 09:56:14 2026] 127.0.0.1:20752 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:56:14 2026] 127.0.0.1:20752 Closing
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20768 Accepted
+[Fri Apr 17 09:56:17 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:56:17 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20768 [200]: GET /front/packs.php
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20768 Closing
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20770 Accepted
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20786 Accepted
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20770 [200]: GET /style.css
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20770 Closing
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20786 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20786 Closing
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20792 Accepted
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20792 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:56:17 2026] 127.0.0.1:20792 Closing
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20808 Accepted
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20808 [200]: GET /front/abonnement.php
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20808 Closing
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20816 Accepted
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20822 Accepted
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20816 [200]: GET /style.css
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20822 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20816 Closing
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20822 Closing
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20834 Accepted
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20842 Accepted
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20834 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20834 Closing
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20842 [200]: GET /controller/AbonnementController.php?action=getMine
+[Fri Apr 17 09:56:22 2026] 127.0.0.1:20842 Closing
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20858 Accepted
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20858 [200]: GET /front/abonnement.php
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20858 Closing
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20870 Accepted
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20886 Accepted
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20870 [200]: GET /style.css
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20886 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20870 Closing
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20886 Closing
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20900 Accepted
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20916 Accepted
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20900 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20900 Closing
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20916 [200]: GET /controller/AbonnementController.php?action=getMine
+[Fri Apr 17 09:56:24 2026] 127.0.0.1:20916 Closing
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45534 Accepted
+[Fri Apr 17 09:56:25 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:56:25 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45534 [200]: GET /front/packs.php
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45534 Closing
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45548 Accepted
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45554 Accepted
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45548 [200]: GET /style.css
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45554 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45548 Closing
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45554 Closing
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45570 Accepted
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45570 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45570 Closing
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45574 Accepted
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45574 [200]: GET /frontoffice/index.php
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45574 Closing
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45590 Accepted
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45600 Accepted
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45590 [200]: GET /style.css
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45600 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45590 Closing
+[Fri Apr 17 09:56:25 2026] 127.0.0.1:45600 Closing
+[Fri Apr 17 09:56:27 2026] 127.0.0.1:45614 Accepted
+[Fri Apr 17 09:56:27 2026] 127.0.0.1:45614 [200]: GET /front/login.php
+[Fri Apr 17 09:56:27 2026] 127.0.0.1:45614 Closing
+[Fri Apr 17 09:57:51 2026] 127.0.0.1:53070 Accepted
+[Fri Apr 17 09:57:51 2026] 127.0.0.1:53070 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:57:51 2026] 127.0.0.1:53070 Closing
+[Fri Apr 17 09:57:58 2026] 127.0.0.1:21124 Accepted
+[Fri Apr 17 09:57:58 2026] 127.0.0.1:21124 [200]: GET /frontoffice/index.php
+[Fri Apr 17 09:57:58 2026] 127.0.0.1:21124 Closing
+[Fri Apr 17 09:57:58 2026] 127.0.0.1:21132 Accepted
+[Fri Apr 17 09:57:58 2026] 127.0.0.1:21142 Accepted
+[Fri Apr 17 09:57:58 2026] 127.0.0.1:21132 [200]: GET /style.css
+[Fri Apr 17 09:57:58 2026] 127.0.0.1:21132 Closing
+[Fri Apr 17 09:57:58 2026] 127.0.0.1:21142 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:57:58 2026] 127.0.0.1:21142 Closing
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33516 Accepted
+[Fri Apr 17 09:58:06 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:58:06 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33516 [200]: GET /front/packs.php
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33516 Closing
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33530 Accepted
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33546 Accepted
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33530 [200]: GET /style.css
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33530 Closing
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33546 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33546 Closing
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33558 Accepted
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33558 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:58:06 2026] 127.0.0.1:33558 Closing
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33566 Accepted
+[Fri Apr 17 09:58:10 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:58:10 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33566 [200]: GET /front/packs.php
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33566 Closing
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33576 Accepted
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33592 Accepted
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33576 [200]: GET /style.css
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33576 Closing
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33592 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33592 Closing
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33602 Accepted
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33602 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:58:10 2026] 127.0.0.1:33602 Closing
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33604 Accepted
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33604 [200]: GET /front/abonnement.php
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33604 Closing
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33608 Accepted
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33616 Accepted
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33608 [200]: GET /style.css
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33616 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33608 Closing
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33616 Closing
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33630 Accepted
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33646 Accepted
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33630 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33630 Closing
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33646 [200]: GET /controller/AbonnementController.php?action=getMine
+[Fri Apr 17 09:58:13 2026] 127.0.0.1:33646 Closing
+[Fri Apr 17 09:58:17 2026] 127.0.0.1:28200 Accepted
+[Fri Apr 17 09:58:17 2026] 127.0.0.1:28200 [200]: GET /front/login.php
+[Fri Apr 17 09:58:17 2026] 127.0.0.1:28200 Closing
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28212 Accepted
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28212 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28212 Closing
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28228 Accepted
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28228 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28228 Closing
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28236 Accepted
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28236 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28236 Closing
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28242 Accepted
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28242 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:58:19 2026] 127.0.0.1:28242 Closing
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28258 Accepted
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28258 [200]: GET /back/dashboard_abonnements.php
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28258 Closing
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28262 Accepted
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28264 Accepted
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28262 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28264 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28262 Closing
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28264 Closing
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28272 Accepted
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28272 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:58:23 2026] 127.0.0.1:28272 Closing
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57254 Accepted
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57254 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57254 Closing
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57266 Accepted
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57268 Accepted
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57266 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57266 Closing
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57268 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57268 Closing
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57272 Accepted
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57272 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:58:24 2026] 127.0.0.1:57272 Closing
+[Fri Apr 17 09:58:33 2026] 127.0.0.1:57284 Accepted
+[Fri Apr 17 09:58:33 2026] 127.0.0.1:57284 [200]: POST /controller/AbonnementController.php
+[Fri Apr 17 09:58:33 2026] 127.0.0.1:57284 Closing
+[Fri Apr 17 09:58:34 2026] 127.0.0.1:11766 Accepted
+[Fri Apr 17 09:58:34 2026] 127.0.0.1:11766 [200]: POST /controller/AbonnementController.php
+[Fri Apr 17 09:58:34 2026] 127.0.0.1:11766 Closing
+[Fri Apr 17 09:58:34 2026] 127.0.0.1:11776 Accepted
+[Fri Apr 17 09:58:34 2026] 127.0.0.1:11776 [200]: POST /controller/AbonnementController.php
+[Fri Apr 17 09:58:34 2026] 127.0.0.1:11776 Closing
+[Fri Apr 17 09:58:34 2026] 127.0.0.1:11786 Accepted
+[Fri Apr 17 09:58:34 2026] 127.0.0.1:11786 [200]: POST /controller/AbonnementController.php
+[Fri Apr 17 09:58:34 2026] 127.0.0.1:11786 Closing
+[Fri Apr 17 09:58:35 2026] 127.0.0.1:11794 Accepted
+[Fri Apr 17 09:58:35 2026] 127.0.0.1:11794 [200]: POST /controller/AbonnementController.php
+[Fri Apr 17 09:58:35 2026] 127.0.0.1:11794 Closing
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31874 Accepted
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31874 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31874 Closing
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31886 Accepted
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31894 Accepted
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31886 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31886 Closing
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31894 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31894 Closing
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31902 Accepted
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31902 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:58:57 2026] 127.0.0.1:31902 Closing
+[Fri Apr 17 09:59:00 2026] 127.0.0.1:31904 Accepted
+[Fri Apr 17 09:59:00 2026] 127.0.0.1:31904 [200]: POST /controller/PackController.php
+[Fri Apr 17 09:59:00 2026] 127.0.0.1:31904 Closing
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58808 Accepted
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58808 [200]: GET /back/dashboard_abonnements.php
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58808 Closing
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58816 Accepted
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58828 Accepted
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58816 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58828 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58816 Closing
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58828 Closing
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58844 Accepted
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58844 [200]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 09:59:08 2026] 127.0.0.1:58844 Closing
+[Fri Apr 17 10:08:45 2026] 127.0.0.1:57038 Accepted
+[Fri Apr 17 10:08:45 2026] 127.0.0.1:57038 [200]: GET /back/dashboard_abonnements.php
+[Fri Apr 17 10:08:45 2026] 127.0.0.1:57038 Closing
+[Fri Apr 17 10:08:45 2026] 127.0.0.1:57046 Accepted
+[Fri Apr 17 10:08:45 2026] 127.0.0.1:57046 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 10:08:45 2026] 127.0.0.1:57046 Closing
+[Fri Apr 17 10:08:45 2026] 127.0.0.1:57062 Accepted
+[Fri Apr 17 10:08:45 2026] 127.0.0.1:57062 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:08:45 2026] 127.0.0.1:57062 Closing
+[Fri Apr 17 10:08:47 2026] 127.0.0.1:57066 Accepted
+[Fri Apr 17 10:08:47 2026] 127.0.0.1:57066 [200]: GET /back/dashboard_abonnements.php
+[Fri Apr 17 10:08:47 2026] 127.0.0.1:57066 Closing
+[Fri Apr 17 10:08:47 2026] 127.0.0.1:57068 Accepted
+[Fri Apr 17 10:08:47 2026] 127.0.0.1:57068 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 10:08:47 2026] 127.0.0.1:57068 Closing
+[Fri Apr 17 10:08:47 2026] 127.0.0.1:57072 Accepted
+[Fri Apr 17 10:08:47 2026] 127.0.0.1:57072 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:08:47 2026] 127.0.0.1:57072 Closing
+[Fri Apr 17 10:08:51 2026] 127.0.0.1:57074 Accepted
+[Fri Apr 17 10:08:51 2026] 127.0.0.1:57074 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 10:08:51 2026] 127.0.0.1:57074 Closing
+[Fri Apr 17 10:08:51 2026] 127.0.0.1:57088 Accepted
+[Fri Apr 17 10:08:51 2026] 127.0.0.1:57088 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 10:08:51 2026] 127.0.0.1:57088 Closing
+[Fri Apr 17 10:08:52 2026] 127.0.0.1:57090 Accepted
+[Fri Apr 17 10:08:52 2026] 127.0.0.1:57090 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:08:52 2026] 127.0.0.1:57090 Closing
+[Fri Apr 17 10:08:53 2026] 127.0.0.1:57102 Accepted
+[Fri Apr 17 10:08:54 2026] 127.0.0.1:57102 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 10:08:54 2026] 127.0.0.1:57102 Closing
+[Fri Apr 17 10:08:54 2026] 127.0.0.1:57116 Accepted
+[Fri Apr 17 10:08:54 2026] 127.0.0.1:57116 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 10:08:54 2026] 127.0.0.1:57116 Closing
+[Fri Apr 17 10:08:54 2026] 127.0.0.1:57118 Accepted
+[Fri Apr 17 10:08:54 2026] 127.0.0.1:57118 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:08:54 2026] 127.0.0.1:57118 Closing
+[Fri Apr 17 10:09:15 2026] 127.0.0.1:58590 Accepted
+[Fri Apr 17 10:09:15 2026] 127.0.0.1:58590 [403]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 10:09:15 2026] 127.0.0.1:58590 Closing
+[Fri Apr 17 10:29:38 2026] 127.0.0.1:23328 Accepted
+[Fri Apr 17 10:29:38 2026] 127.0.0.1:23328 [200]: POST /controller/PackController.php
+[Fri Apr 17 10:29:38 2026] 127.0.0.1:23328 Closing
+[Fri Apr 17 10:29:38 2026] 127.0.0.1:23332 Accepted
+[Fri Apr 17 10:29:38 2026] 127.0.0.1:23332 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 10:29:38 2026] 127.0.0.1:23332 Closing
+[Fri Apr 17 10:29:44 2026] 127.0.0.1:14422 Accepted
+[Fri Apr 17 10:29:44 2026] 127.0.0.1:14422 [200]: POST /controller/PackController.php
+[Fri Apr 17 10:29:44 2026] 127.0.0.1:14422 Closing
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57542 Accepted
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57542 [200]: GET /front/abonnement.php
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57542 Closing
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57544 Accepted
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57554 Accepted
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57544 [200]: GET /style.css
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57554 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57544 Closing
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57554 Closing
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57568 Accepted
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57580 Accepted
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57568 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57568 Closing
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57580 [200]: GET /controller/AbonnementController.php?action=getMine
+[Fri Apr 17 10:48:42 2026] 127.0.0.1:57580 Closing
+[Fri Apr 17 10:48:48 2026] 127.0.0.1:57588 Accepted
+[Fri Apr 17 10:48:48 2026] 127.0.0.1:57588 [401]: POST /controller/AbonnementController.php
+[Fri Apr 17 10:48:48 2026] 127.0.0.1:57588 Closing
+[Fri Apr 17 10:48:48 2026] 127.0.0.1:52204 Accepted
+[Fri Apr 17 10:48:48 2026] 127.0.0.1:52204 [401]: POST /controller/AbonnementController.php
+[Fri Apr 17 10:48:48 2026] 127.0.0.1:52204 Closing
+[Fri Apr 17 10:48:49 2026] 127.0.0.1:52206 Accepted
+[Fri Apr 17 10:48:49 2026] 127.0.0.1:52206 [401]: POST /controller/AbonnementController.php
+[Fri Apr 17 10:48:49 2026] 127.0.0.1:52206 Closing
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52216 Accepted
+[Fri Apr 17 10:48:52 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 10:48:52 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52216 [200]: GET /front/packs.php
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52216 Closing
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52224 Accepted
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52232 Accepted
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52224 [200]: GET /style.css
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52232 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52224 Closing
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52232 Closing
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52246 Accepted
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52246 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 10:48:52 2026] 127.0.0.1:52246 Closing
+[Fri Apr 17 10:48:54 2026] 127.0.0.1:52262 Accepted
+[Fri Apr 17 10:48:54 2026] 127.0.0.1:52262 [200]: GET /frontoffice/index.php
+[Fri Apr 17 10:48:54 2026] 127.0.0.1:52262 Closing
+[Fri Apr 17 10:48:54 2026] 127.0.0.1:52278 Accepted
+[Fri Apr 17 10:48:54 2026] 127.0.0.1:52288 Accepted
+[Fri Apr 17 10:48:54 2026] 127.0.0.1:52278 [200]: GET /style.css
+[Fri Apr 17 10:48:54 2026] 127.0.0.1:52278 Closing
+[Fri Apr 17 10:48:54 2026] 127.0.0.1:52288 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:48:54 2026] 127.0.0.1:52288 Closing
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37550 Accepted
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37550 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37550 Closing
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37562 Accepted
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37562 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37562 Closing
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37574 Accepted
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37574 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37574 Closing
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37582 Accepted
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37582 [403]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 10:48:59 2026] 127.0.0.1:37582 Closing
+[Fri Apr 17 10:49:05 2026] 127.0.0.1:37594 Accepted
+[Fri Apr 17 10:49:05 2026] 127.0.0.1:37594 [200]: GET /frontoffice/index.php
+[Fri Apr 17 10:49:05 2026] 127.0.0.1:37594 Closing
+[Fri Apr 17 10:49:05 2026] 127.0.0.1:37610 Accepted
+[Fri Apr 17 10:49:05 2026] 127.0.0.1:37618 Accepted
+[Fri Apr 17 10:49:05 2026] 127.0.0.1:37610 [200]: GET /style.css
+[Fri Apr 17 10:49:05 2026] 127.0.0.1:37618 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:49:05 2026] 127.0.0.1:37610 Closing
+[Fri Apr 17 10:49:05 2026] 127.0.0.1:37618 Closing
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37620 Accepted
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37620 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37620 Closing
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37634 Accepted
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37634 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37634 Closing
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37636 Accepted
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37636 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37636 Closing
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37652 Accepted
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37652 [403]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 10:49:07 2026] 127.0.0.1:37652 Closing
+[Fri Apr 17 10:49:13 2026] 127.0.0.1:14938 Accepted
+[Fri Apr 17 10:49:13 2026] 127.0.0.1:14938 [200]: GET /frontoffice/index.php
+[Fri Apr 17 10:49:13 2026] 127.0.0.1:14938 Closing
+[Fri Apr 17 10:49:13 2026] 127.0.0.1:14948 Accepted
+[Fri Apr 17 10:49:13 2026] 127.0.0.1:14950 Accepted
+[Fri Apr 17 10:49:13 2026] 127.0.0.1:14948 [200]: GET /style.css
+[Fri Apr 17 10:49:13 2026] 127.0.0.1:14948 Closing
+[Fri Apr 17 10:49:13 2026] 127.0.0.1:14950 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:49:13 2026] 127.0.0.1:14950 Closing
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14956 Accepted
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14956 [200]: GET /front/abonnement.php
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14956 Closing
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14970 Accepted
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14980 Accepted
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14970 [200]: GET /style.css
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14980 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14970 Closing
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14980 Closing
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14986 Accepted
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14990 Accepted
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14986 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14986 Closing
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14990 [200]: GET /controller/AbonnementController.php?action=getMine
+[Fri Apr 17 10:49:18 2026] 127.0.0.1:14990 Closing
+[Fri Apr 17 10:49:20 2026] 127.0.0.1:57668 Accepted
+[Fri Apr 17 10:49:20 2026] 127.0.0.1:57668 [200]: GET /frontoffice/index.php
+[Fri Apr 17 10:49:20 2026] 127.0.0.1:57668 Closing
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57676 Accepted
+[Fri Apr 17 10:49:22 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 10:49:22 2026] Pack::add failed - SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'nom-pack' at row 1
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57676 [200]: GET /front/packs.php
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57676 Closing
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57690 Accepted
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57698 Accepted
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57690 [200]: GET /style.css
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57698 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57690 Closing
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57698 Closing
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57710 Accepted
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57710 [200]: GET /controller/PackController.php?action=getAll
+[Fri Apr 17 10:49:22 2026] 127.0.0.1:57710 Closing
+[Fri Apr 17 10:49:27 2026] 127.0.0.1:57718 Accepted
+[Fri Apr 17 10:49:27 2026] 127.0.0.1:57718 [200]: GET /frontoffice/index.php
+[Fri Apr 17 10:49:27 2026] 127.0.0.1:57718 Closing
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12208 Accepted
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12208 [200]: GET /back/dashboard_packs.php
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12208 Closing
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12212 Accepted
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12224 Accepted
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12212 [200]: GET /back/assets/css/admin.css
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12212 Closing
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12224 [200]: GET /frontoffice/assets/img/logo/logo.png
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12224 Closing
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12230 Accepted
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12230 [403]: GET /controller/AbonnementController.php?action=getAll
+[Fri Apr 17 10:49:30 2026] 127.0.0.1:12230 Closing

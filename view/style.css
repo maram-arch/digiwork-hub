@@ -1,8 +1,8 @@
 :root {
-  /* Primary brand colors tuned to the provided mockup */
+  /* Primary brand colors (original palette) */
   --primary: #0B3E6F;         /* dark navy for sidebar / header */
   --primary-accent: #2E6EE8;  /* refined bright blue accent used in hero */
-  --secondary: #16A34A;       /* green accent (tuned) */
+  --secondary: #16A34A;       /* green accent */
   --accent: #5A8DEE;
   --accent-hover: #3d6fd6;
   --bg-color: #F7FAFF;        /* slightly bluish background */
@@ -37,9 +37,9 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
 }
 .logo-container img { height: 44px; margin-right: 12px; }
 .nav-links { display: flex; gap: 26px; align-items: center; font-weight: 600; font-size: 14px; color: var(--text-muted); }
-.nav-links a.active { color: var(--primary); border-bottom: 2px solid var(--primary-accent); padding-bottom: 6px; }
-.nav-links a { text-decoration: none; color: inherit; }
-.nav-links a:hover { color: var(--primary); }
+.nav-links a { text-decoration: none; color: inherit; padding: 0; border-radius: 0; }
+.nav-links a:hover { color: var(--primary); background: transparent; }
+.nav-links a.active { color: var(--primary); border-bottom: 2px solid var(--primary-accent); padding-bottom: 6px; background: transparent; }
 
 .hero {
   background: linear-gradient(135deg, var(--primary-accent) 0%, var(--primary) 100%);

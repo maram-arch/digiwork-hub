@@ -17,24 +17,10 @@
     if ($flash) unset($_SESSION['flash']);
     ?>
 
-    <div class="front-navbar">
-        <div class="logo-container">
-            <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:48px;">
-        </div>
-        <div class="nav-links">
-            <a href="../frontoffice/index.php">Accueil</a>
-            <a href="#">Projets</a>
-            <a href="packs.php">Packs & Formations</a>
-            <a href="#">Durabilité</a>
-            <a href="abonnement.php" style="color: var(--primary);">Mon Profil</a>
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <span style="color: #FFF; margin-left: 12px; font-weight:600;">Bonjour, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Utilisateur') ?></span>
-                <a href="../../controller/AuthController.php?action=logout" style="margin-left:8px;">Se déconnecter</a>
-            <?php else: ?>
-                <a href="login.php" style="margin-left:8px;">Se connecter</a>
-            <?php endif; ?>
-        </div>
-    </div>
+    <?php
+    $active = 'profile';
+    require_once(__DIR__ . '/../partials/front_nav.php');
+    ?>
 
     <?php if ($flash): ?>
         <div style="max-width:900px;margin:20px auto;">

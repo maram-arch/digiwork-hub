@@ -13,26 +13,26 @@
 <body>
     <?php
     session_start();
+    if (!isset($_SESSION['user_id'])) {
+        $_SESSION['flash'] = 'Veuillez vous connecter pour accéder à votre profil.';
+        header('Location: /view/front/login.php');
+        exit;
+    }
     $flash = isset($_SESSION['flash']) ? $_SESSION['flash'] : null;
     if ($flash) unset($_SESSION['flash']);
     ?>
 
     <div class="front-navbar">
         <div class="logo-container">
-            <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:48px;">
+            <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB" style="height:52px;">
         </div>
         <div class="nav-links">
-            <a href="../frontoffice/index.php">Accueil</a>
-            <a href="#">Projets</a>
-            <a href="packs.php">Packs & Formations</a>
-            <a href="#">Durabilité</a>
-            <a href="abonnement.php" style="color: var(--primary);">Mon Profil</a>
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <span style="color: #FFF; margin-left: 12px; font-weight:600;">Bonjour, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Utilisateur') ?></span>
-                <a href="../../controller/AuthController.php?action=logout" style="margin-left:8px;">Se déconnecter</a>
-            <?php else: ?>
-                <a href="login.php" style="margin-left:8px;">Se connecter</a>
-            <?php endif; ?>
+            <a href="../frontoffice/index.php">Home</a>
+            <a href="packs.php">Packs</a>
+            <a href="abonnement.php">Abonnement</a>
+            <a href="abonnement.php" style="color: #fff; text-decoration: underline;">Profile</a>
+            <span style="color: rgba(255,255,255,0.9); margin-left: 12px; font-weight:700;"><?= htmlspecialchars($_SESSION['user_name'] ?? 'Utilisateur') ?></span>
+            <a href="../../controller/AuthController.php?action=logout" style="margin-left:8px;">Se déconnecter</a>
         </div>
     </div>
 

@@ -1,171 +1,205 @@
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (($_SESSION['role'] ?? '') !== 'admin') {
+    $_SESSION['flash'] = 'Accès refusé. Veuillez vous connecter en tant qu’administrateur.';
+    header('Location: /view/front/login.php');
+    exit;
+}
+
+require_once(__DIR__ . '/../../model/Pack.php');
+$packModel = new Pack();
+$packs = $packModel->getAll()->fetchAll(PDO::FETCH_ASSOC);
+
+$flash = $_SESSION['flash'] ?? null;
+if ($flash) unset($_SESSION['flash']);
+
+$editPack = null;
+if (isset($_GET['edit'])) {
+    $id = intval($_GET['edit']);
+    $editPack = $packModel->getById($id);
+}
+
+$totalPacks = is_array($packs) ? count($packs) : 0;
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>BO - Gestion des Packs</title>
-    <link rel="stylesheet" href="../style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BO - Gestion des Packs | DigiWork HUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
 </head>
 <body>
-    <?php
-    // Server-rendered Back Office Packs dashboard (non-AJAX forms)
-    session_start();
-    require_once(__DIR__ . '/../../model/Pack.php');
-
-    $packModel = new Pack();
-    $packs = $packModel->getAll()->fetchAll(PDO::FETCH_ASSOC);
-
-    // flash message
-    $flash = isset($_SESSION['flash']) ? $_SESSION['flash'] : null;
-    if ($flash) unset($_SESSION['flash']);
-
-    // Edit mode
-    $editPack = null;
-    if (isset($_GET['edit'])) {
-        $id = intval($_GET['edit']);
-        $editPack = $packModel->getById($id);
-    }
-
-    ?>
-
-    <div class="back-layout">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:40px;">
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-logo">
+                <img src="assets/img/logo.png" alt="DigiWork HUB" style="height:56px;width:auto;display:block;margin:0 auto;filter:brightness(0) invert(1);">
             </div>
-            <div class="sidebar-menu">
-                <a href="#" class="sidebar-item">
-                    <i>📊</i> Tableau de Bord
+            <nav class="admin-sidebar-menu">
+                <a href="dashboard_packs.php" class="admin-sidebar-item active">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Packs</span>
                 </a>
-                <a href="#" class="sidebar-item">
-                    <i>👥</i> Gestion Utilisateurs
+                <a href="dashboard_abonnements.php" class="admin-sidebar-item">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Abonnements</span>
                 </a>
-                <a href="dashboard_packs.php" class="sidebar-item active">
-                    <i>💼</i> Projets & Offers (Packs)
-                </a>
-                <a href="dashboard_abonnements.php" class="sidebar-item">
-                    <i>💳</i> Abonnements
-                </a>
-            </div>
-        </div>
-        
-        <div class="main-wrapper">
-            <div class="topbar">
-                <span>Admin | Messages ▾ | Profil ▾</span>
-            </div>
+                <div style="margin: 12px 12px 6px; border-top: 1px solid rgba(255,255,255,.12); padding-top: 12px;">
+                    <a href="/view/front/packs.php" class="admin-sidebar-item" style="background:rgba(16,185,129,.08);">
+                        <i class="fas fa-globe"></i>
+                        <span>Front Office</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
 
-            <div class="content">
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <h1 class="admin-topbar-title">Gestion des Packs</h1>
+                <div class="admin-topbar-actions">
+                    <div class="admin-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <span>Admin</span>
+                    <a href="../../controller/AuthController.php?action=logout" style="color: var(--danger); text-decoration: none;">Déconnexion</a>
+                </div>
+            </header>
+
+            <div class="admin-content">
                 <?php if ($flash): ?>
-                    <div style="margin-bottom:16px;"><div style="background:#FEF3C7;padding:12px;border-radius:8px;color:#92400E;font-weight:700;"><?= htmlspecialchars($flash) ?></div></div>
+                    <div class="admin-panel" style="margin-bottom:16px;border-left:6px solid var(--accent);">
+                        <strong><?php echo htmlspecialchars($flash); ?></strong>
+                    </div>
                 <?php endif; ?>
-                <div class="stat-cards">
-                    <div class="stat-card blue">
-                        <div>
-                            <div class="stat-title">Packs Actifs</div>
-                            <div class="stat-value" id="count-packs">0</div>
+
+                <div class="admin-stats">
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>Total Packs</h4>
+                            <div class="admin-stat-value"><?php echo (int)$totalPacks; ?></div>
                         </div>
-                        <i style="font-size: 30px;">💼</i>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
                     </div>
-                    <div class="stat-card green">
-                        <div>
-                            <div class="stat-title">Revenus Totals</div>
-                            <div class="stat-value">$120,500</div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>CRUD</h4>
+                            <div class="admin-stat-value">OK</div>
                         </div>
-                        <i style="font-size: 30px;">💰</i>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-screwdriver-wrench"></i>
+                        </div>
                     </div>
-                    <div class="stat-card light-green">
-                        <div>
-                            <div class="stat-title">Abonnements</div>
-                            <div class="stat-value">680</div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>État</h4>
+                            <div class="admin-stat-value">Admin</div>
                         </div>
-                        <i style="font-size: 30px;">📈</i>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
                     </div>
-                    <div class="stat-card dark-green">
-                        <div>
-                            <div class="stat-title">Score Durabilité</div>
-                            <div class="stat-value">82</div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-info">
+                            <h4>Palette</h4>
+                            <div class="admin-stat-value">#10B981</div>
                         </div>
-                        <i style="font-size: 30px;">⏱️</i>
+                        <div class="admin-stat-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
                     </div>
                 </div>
 
-                <div class="dashboard-panel">
-                    <div class="panel-title"><?= $editPack ? 'Modifier le Pack' : 'Ajouter un nouveau Pack' ?></div>
-                    <form id="packForm" method="POST" action="../../controller/PackController.php">
-                        <input type="hidden" id="action" name="action" value="<?= $editPack ? 'update' : 'add' ?>">
-                        <input type="hidden" id="id-pack" name="id-pack" value="<?= $editPack ? htmlspecialchars($editPack['id-pack']) : '' ?>">
-                        
+                <div class="admin-panel" style="margin-bottom:16px;">
+                    <h3 class="admin-panel-title"><?php echo $editPack ? 'Modifier le Pack' : 'Créer un Pack'; ?></h3>
+                    <form method="POST" action="../../controller/PackController.php">
+                        <input type="hidden" name="action" value="<?php echo $editPack ? 'update' : 'add'; ?>">
+                        <input type="hidden" name="id-pack" value="<?php echo $editPack ? htmlspecialchars($editPack['id-pack']) : ''; ?>">
+
                         <div class="admin-form">
                             <div class="form-group">
-                                <label>Nom du Pack :</label>
-                                <input type="text" id="nom" name="nom" required value="<?= $editPack ? htmlspecialchars($editPack['nom-pack']) : '' ?>">
+                                <label>Nom du Pack</label>
+                                <input type="text" name="nom" required value="<?php echo $editPack ? htmlspecialchars($editPack['nom-pack']) : ''; ?>">
                             </div>
                             <div class="form-group">
-                                <label>Prix (dt) :</label>
-                                <input type="number" step="0.01" id="prix" name="prix" required value="<?= $editPack ? htmlspecialchars($editPack['prix']) : '' ?>">
+                                <label>Prix</label>
+                                <input type="number" step="0.01" name="prix" required value="<?php echo $editPack ? htmlspecialchars($editPack['prix']) : ''; ?>">
                             </div>
                             <div class="form-group">
-                                <label>Durée (date de début recommandé) :</label>
-                                <input type="date" id="duree" name="duree" required value="<?= $editPack ? htmlspecialchars($editPack['duree']) : '' ?>">
+                                <label>Durée</label>
+                                <input type="date" name="duree" required value="<?php echo $editPack ? htmlspecialchars($editPack['duree']) : ''; ?>">
                             </div>
                             <div class="form-group">
-                                <label>Nombre de projets max :</label>
-                                <input type="number" id="nb" name="nb" required value="<?= $editPack ? htmlspecialchars($editPack['nb-proj-max']) : '' ?>">
+                                <label>Nombre de projets max</label>
+                                <input type="number" name="nb" required value="<?php echo $editPack ? htmlspecialchars($editPack['nb-proj-max']) : ''; ?>">
                             </div>
-                            <div class="form-group" style="grid-column: 1 / -1;">
-                                <label>Description :</label>
-                                <textarea id="description" name="description" rows="3" required><?= $editPack ? htmlspecialchars($editPack['description']) : '' ?></textarea>
+                            <div class="form-group" style="grid-column:1/-1;">
+                                <label>Description</label>
+                                <textarea name="description" rows="3" required><?php echo $editPack ? htmlspecialchars($editPack['description']) : ''; ?></textarea>
                             </div>
                             <div class="form-group">
-                                <label>Support Prioritaire :</label>
-                                <select id="support" name="support">
-                                    <option value="oui" <?= $editPack && $editPack['support-prioritaire'] === 'oui' ? 'selected' : '' ?>>Oui</option>
-                                    <option value="non" <?= $editPack && $editPack['support-prioritaire'] === 'non' ? 'selected' : '' ?>>Non</option>
+                                <label>Support prioritaire</label>
+                                <select name="support">
+                                    <option value="oui" <?php echo $editPack && $editPack['support-prioritaire'] === 'oui' ? 'selected' : ''; ?>>Oui</option>
+                                    <option value="non" <?php echo $editPack && $editPack['support-prioritaire'] === 'non' ? 'selected' : ''; ?>>Non</option>
                                 </select>
                             </div>
                         </div>
-                        <div style="margin-top:12px;display:flex;gap:12px;">
-                            <button type="submit" class="btn-sm" style="background: var(--accent);"><?= $editPack ? 'Mettre à jour' : 'Enregistrer le Pack' ?></button>
+
+                        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
                             <?php if ($editPack): ?>
-                                <a href="dashboard_packs.php" class="btn-sm" style="background:#94A3B8;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;">Annuler</a>
+                                <button type="submit" class="btn-sm btn-info"><i class="fas fa-pen"></i> Mettre à jour</button>
+                                <a href="dashboard_packs.php" class="btn-sm" style="background:#94A3B8;color:white;text-decoration:none;display:inline-flex;align-items:center;gap:8px;"><i class="fas fa-xmark"></i> Annuler</a>
+                            <?php else: ?>
+                                <button type="submit" class="btn-sm btn-accent"><i class="fas fa-plus"></i> Ajouter</button>
                             <?php endif; ?>
                         </div>
                     </form>
                 </div>
 
-                <div class="dashboard-panel">
-                    <div class="panel-title">Liste des Packs Récents</div>
-                    <table class="admin-table" id="packs-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nom</th>
-                                <th>Prix</th>
-                                <th>Projets Max</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($packs as $p): ?>
-                                <tr id="pack-<?= htmlspecialchars($p['id-pack']) ?>">
-                                    <td><?= htmlspecialchars($p['id-pack']) ?></td>
-                                    <td style="font-weight:bold;"><?= htmlspecialchars($p['nom-pack']) ?></td>
-                                    <td style="color:var(--green-card); font-weight:bold;"><?= htmlspecialchars($p['prix']) ?> dt</td>
-                                    <td><?= htmlspecialchars($p['nb-proj-max']) ?> Max</td>
-                                    <td>
-                                        <a class="btn-sm" href="dashboard_packs.php?edit=<?= htmlspecialchars($p['id-pack']) ?>" style="background:#3B82F6;color:white;padding:6px 10px;border-radius:6px;text-decoration:none;margin-right:8px;">Modifier</a>
-                                        <a class="btn-sm" href="../../controller/PackController.php?delete=1&id=<?= htmlspecialchars($p['id-pack']) ?>" style="background:var(--danger-color);color:white;padding:6px 10px;border-radius:6px;text-decoration:none;">Supprimer</a>
-                                    </td>
+                <div class="admin-panel">
+                    <h3 class="admin-panel-title">Tous les Packs</h3>
+                    <div style="overflow-x:auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>Prix</th>
+                                    <th>Durée</th>
+                                    <th>Projets max</th>
+                                    <th>Support</th>
+                                    <th>Actions</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($packs as $p): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($p['id-pack']); ?></td>
+                                        <td style="font-weight:900;"><?php echo htmlspecialchars($p['nom-pack']); ?></td>
+                                        <td><?php echo htmlspecialchars($p['prix']); ?></td>
+                                        <td><?php echo htmlspecialchars($p['duree']); ?></td>
+                                        <td><?php echo htmlspecialchars($p['nb-proj-max']); ?></td>
+                                        <td><?php echo htmlspecialchars($p['support-prioritaire']); ?></td>
+                                        <td style="white-space:nowrap;">
+                                            <a class="btn-sm btn-info" href="dashboard_packs.php?edit=<?php echo htmlspecialchars($p['id-pack']); ?>" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+                                                <i class="fas fa-pen"></i> Modifier
+                                            </a>
+                                            <a class="btn-sm btn-danger" href="../../controller/PackController.php?delete=1&id=<?php echo htmlspecialchars($p['id-pack']); ?>" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-left:8px;">
+                                                <i class="fas fa-trash"></i> Supprimer
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
             </div>
-        </div>
+        </main>
     </div>
-
-    <script src="pack_crud.js"></script>
 </body>
 </html>

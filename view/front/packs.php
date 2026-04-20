@@ -15,14 +15,13 @@
 
     <div class="front-navbar">
         <div class="logo-container">
-            <img src="../frontoffice/assets/img/logo/logo.png" alt="DigiWork HUB" style="height:48px;">
+            <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB" style="height:52px;">
         </div>
         <div class="nav-links">
-            <a href="../frontoffice/index.php">Accueil</a>
-            <a href="#">Projets</a>
-            <a href="packs.php">Packs & Formations</a>
-            <a href="#">Durabilité</a>
-            <a href="abonnement.php">Mon Profil</a>
+            <a href="../frontoffice/index.php">Home</a>
+            <a href="packs.php">Packs</a>
+            <a href="abonnement.php">Abonnement</a>
+            <a href="abonnement.php">Profile</a>
             <?php if (isset($_SESSION['user_id'])): ?>
                 <span style="color: #FFF; margin-left: 12px; font-weight:600;">Bonjour, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Utilisateur') ?></span>
                 <a href="../../controller/AuthController.php?action=logout" style="margin-left:8px;">Se déconnecter</a>

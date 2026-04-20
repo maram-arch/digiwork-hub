@@ -106,9 +106,9 @@ $packs = $packModel->getAll();
                       <li><?= htmlspecialchars($p['description']) ?></li>
                     </ul>
                     <form action="../../controller/AbonnementController.php" method="POST">
+                        <input type="hidden" name="action" value="subscribe">
                         <input type="hidden" name="pack_id" value="<?= htmlspecialchars($p['id-pack']) ?>">
-                        <!-- Using ajax for frontend abonnement button if requested, but falling back to simple submit -->
-                        <button type="submit" name="subscribe" class="button radius-30">S'abonner</button>
+                        <button type="submit" class="button radius-30">S'abonner</button>
                     </form>
                   </div>
                 </div>

@@ -4,10 +4,33 @@ require_once('../model/Abonnement.php');
 
 $abo = new Abonnement();
 
+function isAdmin(): bool {
+    return (isset($_SESSION['role']) && $_SESSION['role'] === 'admin');
+}
+
+function wantsJson(): bool {
+    if (isset($_POST['ajax'])) return true;
+    $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+    return is_string($accept) && strpos($accept, 'application/json') !== false;
+}
+
+function denyIfNotAdmin(): void {
+    if (isAdmin()) return;
+    if (wantsJson()) {
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'Accès refusé (admin requis).']);
+        exit;
+    }
+    $_SESSION['flash'] = 'Accès refusé (admin requis).';
+    header('Location: /view/front/login.php');
+    exit;
+}
+
 // Return JSON for API consumers
 // Return JSON for API consumers: all abonnements (admin) or per-user via getMine
 if (isset($_GET['action'])) {
     if ($_GET['action'] === 'getAll') {
+        denyIfNotAdmin();
         header('Content-Type: application/json');
         $abonnements = $abo->getAllAbonnements();
         echo json_encode($abonnements);
@@ -31,6 +54,7 @@ if (isset($_GET['action'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     // Admin Deletion (AJAX or form)
     if ($_POST['action'] === 'delete' && isset($_POST['id'])) {
+        denyIfNotAdmin();
         $abo->delete($_POST['id']);
 
         // If AJAX, return JSON
@@ -74,4 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         exit;
     }
 }
+
+// Default: redirect
+header('Location: /view/front/packs.php');
+exit;
 ?>

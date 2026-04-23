@@ -1,120 +1,91 @@
 <?php
-require_once __DIR__ . '/../config/config.php';
+// controller/CandidatureController.php
+// Contrôleur Candidature — méthodes CRUD + méthodes avec jointure offre
+ 
 require_once __DIR__ . '/../model/Candidature.php';
-
-class CandidatureController {
-
-    private PDO $db;
-
-    public function __construct() {
-        $this->db = Config::getConnexion();
+require_once __DIR__ . '/../config/config.php';
+ 
+class CandidatureController
+{
+    // ==============================================================
+    // CRUD DE BASE
+    // ==============================================================
+ 
+    /** Ajouter une candidature */
+    public function addCandidature(Candidature $c): bool
+    {
+        return $c->addCandidature();
     }
-
-    /* ══ Ajouter une candidature ══ */
-    public function addCandidature(Candidature $c): bool {
-        $stmt = $this->db->prepare(
-            "INSERT INTO condidateur (id_user, id_offer, cv, Lettre, Date, Statut)
-             VALUES (:id_user, :id_offer, :cv, :lettre, :date, :statut)"
-        );
-        return $stmt->execute([
-            ':id_user'  => $c->getIdUser(),
-            ':id_offer' => $c->getIdOffer(),
-            ':cv'       => $c->getCv(),
-            ':lettre'   => $c->getLettre(),
-            ':date'     => $c->getDate(),
-            ':statut'   => $c->getStatut(),
-        ]);
+ 
+    /** Supprimer (utilisateur) */
+    public function deleteCandidature(int $id_user, int $id_offer): bool
+    {
+        $model = new Candidature($id_user, $id_offer);
+        return $model->deleteCandidature($id_user, $id_offer);
     }
-
-    /* ══ Candidatures d'un utilisateur (frontoffice) ══ */
-    public function getCandidaturesByUser(int $id_user): PDOStatement {
-        $stmt = $this->db->prepare(
-            "SELECT c.id_user, c.id_offer, c.cv, c.Lettre, c.Date, c.Statut,
-                    o.titre AS titre_offre, o.type AS type_offre, o.adresse
-             FROM condidateur c
-             JOIN offre o ON c.id_offer = o.id_offer
-             WHERE c.id_user = :id_user
-             ORDER BY c.Date DESC"
-        );
-        $stmt->execute([':id_user' => $id_user]);
-        return $stmt;
+ 
+    /** Supprimer (admin) */
+    public function deleteCandidatureAdmin(int $id_user, int $id_offer): bool
+    {
+        $model = new Candidature($id_user, $id_offer);
+        return $model->deleteCandidatureAdmin($id_user, $id_offer);
     }
-
-    /* ══ Toutes les candidatures (backoffice) ══ */
-    public function getAllCandidatures(): array {
-        $stmt = $this->db->query(
-            "SELECT c.id_user, c.id_offer, c.cv, c.Lettre, c.Date, c.Statut,
-                    o.titre AS titre_offre
-             FROM condidateur c
-             LEFT JOIN offre o ON o.id_offer = c.id_offer
-             ORDER BY c.Date DESC"
-        );
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+ 
+    /** Mettre à jour le statut */
+    public function updateStatut(int $id_user, int $id_offer, string $statut): bool
+    {
+        $model = new Candidature($id_user, $id_offer);
+        return $model->updateStatut($id_user, $id_offer, $statut);
     }
-
-    /* ══ Une candidature par clé composite ══ */
-    public function getCandidatureById(int $id_user, int $id_offer): array|false {
-        $stmt = $this->db->prepare(
-            "SELECT c.id_user, c.id_offer, c.cv, c.Lettre, c.Date, c.Statut,
-                    o.titre AS titre_offre
-             FROM condidateur c
-             JOIN offre o ON c.id_offer = o.id_offer
-             WHERE c.id_user = :id_user AND c.id_offer = :id_offer"
-        );
-        $stmt->execute([':id_user' => $id_user, ':id_offer' => $id_offer]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+ 
+    /** Mettre à jour CV + lettre */
+    public function updateCandidature(int $id_user, int $id_offer, string $cv, string $lettre): bool
+    {
+        $model = new Candidature($id_user, $id_offer);
+        return $model->updateCandidature($id_user, $id_offer, $cv, $lettre);
     }
-
-    /* ══ Modifier CV + Lettre (frontoffice, accepte les deux formats de statut) ══ */
-    public function updateCandidature(int $id_user, int $id_offer, string $cv, string $lettre): bool {
-        $stmt = $this->db->prepare(
-            "UPDATE condidateur
-             SET cv = :cv, Lettre = :lettre
-             WHERE id_user = :id_user AND id_offer = :id_offer
-             AND (Statut = 'en attente' OR Statut = 'en_attente')"
-        );
-        $stmt->execute([
-            ':cv'       => $cv,
-            ':lettre'   => $lettre,
-            ':id_user'  => $id_user,
-            ':id_offer' => $id_offer,
-        ]);
-        return $stmt->rowCount() > 0;
+ 
+    // ==============================================================
+    // ★ MÉTHODES AVEC JOINTURE (délèguent au modèle)
+    // ==============================================================
+ 
+    /**
+     * Toutes les candidatures + titre/adresse de l'offre
+     * Utilisé : backoffice listCandidatures.php
+     */
+    public function getAllCandidatures(): array
+    {
+        $model = new Candidature(0, 0);
+        return $model->getAllCandidaturesWithOffre();
     }
-
-    /* ══ Supprimer (frontoffice, seulement si en attente) ══ */
-    public function deleteCandidature(int $id_user, int $id_offer): bool {
-        $stmt = $this->db->prepare(
-            "DELETE FROM condidateur
-             WHERE id_user = :id_user AND id_offer = :id_offer
-             AND (Statut = 'en attente' OR Statut = 'en_attente')"
-        );
-        $stmt->execute([':id_user' => $id_user, ':id_offer' => $id_offer]);
-        return $stmt->rowCount() > 0;
+ 
+    /**
+     * Candidatures d'un utilisateur + infos offre
+     * Utilisé : frontoffice mes_candidatures.php
+     * Retourne un tableau (remplace l'ancien PDOStatement)
+     */
+    public function getCandidaturesByUser(int $id_user): array
+    {
+        $model = new Candidature($id_user, 0);
+        return $model->getCandidaturesByUserWithOffre($id_user);
     }
-
-    /* ══ Supprimer par admin (backoffice, tous statuts) ══ */
-    public function deleteCandidatureAdmin(int $id_user, int $id_offer): bool {
-        $stmt = $this->db->prepare(
-            "DELETE FROM condidateur
-             WHERE id_user = :id_user AND id_offer = :id_offer"
-        );
-        $stmt->execute([':id_user' => $id_user, ':id_offer' => $id_offer]);
-        return $stmt->rowCount() > 0;
+ 
+    /**
+     * Une candidature avec infos offre (modifier/supprimer)
+     */
+    public function getCandidatureById(int $id_user, int $id_offer): ?array
+    {
+        $model = new Candidature($id_user, $id_offer);
+        return $model->getCandidatureByIdWithOffre($id_user, $id_offer);
     }
-
-    /* ══ Changer Statut (backoffice admin) ══ */
-    public function updateStatut(int $id_user, int $id_offer, string $statut): bool {
-        $allowed = ['accepte', 'refuse', 'en_attente'];
-        if (!in_array($statut, $allowed)) return false;
-        $stmt = $this->db->prepare(
-            "UPDATE condidateur SET Statut = :statut
-             WHERE id_user = :id_user AND id_offer = :id_offer"
-        );
-        return $stmt->execute([
-            ':statut'   => $statut,
-            ':id_user'  => $id_user,
-            ':id_offer' => $id_offer,
-        ]);
+ 
+    /**
+     * Nombre de candidatures par offre (dashboard admin)
+     */
+    public function getNbCandidaturesParOffre(): array
+    {
+        $model = new Candidature(0, 0);
+        return $model->getNbCandidaturesParOffre();
     }
 }
+ 

@@ -27,7 +27,6 @@ if (isset($_GET['status'], $_GET['msg'])) {
     <link rel="stylesheet" href="assets/css/app.css">
     <link rel="shortcut icon" href="assets/images/favicon.svg" type="image/x-icon">
     <style>
-        /* ── Modales ── */
         .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:9999;justify-content:center;align-items:center}
         .modal-overlay.show{display:flex}
         .modal-box{background:#fff;border-radius:14px;width:100%;max-width:660px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.25);animation:modalIn .22s ease}
@@ -50,11 +49,9 @@ if (isset($_GET['status'], $_GET['msg'])) {
         .form-control:focus{border-color:#435ebe;box-shadow:0 0 0 3px rgba(67,94,190,.12)}
         .section-divider{font-size:11px;font-weight:700;color:#adb5bd;text-transform:uppercase;letter-spacing:.08em;margin:4px 0 14px;display:flex;align-items:center;gap:8px}
         .section-divider::after{content:'';flex:1;height:1px;background:#f0f1f5}
-        /* Validation */
         .form-control.is-invalid{border-color:#dc3545!important;background-color:#fff8f8}
         .error-message{font-size:12px;color:#dc3545;margin-top:4px;display:none;font-weight:500}
         .error-message.show{display:block}
-        /* Cartes CRUD */
         .crud-card{border-radius:14px;cursor:pointer;transition:transform .18s,box-shadow .18s;border:none;user-select:none}
         .crud-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.14)!important}
         .crud-icon-circle{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
@@ -73,13 +70,29 @@ if (isset($_GET['status'], $_GET['msg'])) {
             <div class="sidebar-menu">
                 <ul class="menu">
                     <li class="sidebar-title">Menu Principal</li>
-                    <li class="sidebar-item <?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : '' ?>">
+ 
+                    <!-- Gestion des offres + sous-menu candidatures -->
+                    <li class="sidebar-item has-sub <?= in_array(basename($_SERVER['PHP_SELF']), ['index.php','listCandidatures.php']) ? 'active' : '' ?>">
                         <a href="index.php" class="sidebar-link">
                             <i data-feather="tag" width="20"></i>
                             <span>Gestion des offres</span>
                         </a>
+                        <ul class="submenu <?= in_array(basename($_SERVER['PHP_SELF']), ['index.php','listCandidatures.php']) ? 'open' : '' ?>">
+                            <li>
+                                <a href="index.php" <?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'class="active"' : '' ?>>
+                                    Toutes les offres
+                                </a>
+                            </li>
+                            <li>
+                                <a href="listCandidatures.php" <?= basename($_SERVER['PHP_SELF']) === 'listCandidatures.php' ? 'class="active"' : '' ?>>
+                                    Gestion des candidatures
+                                </a>
+                            </li>
+                        </ul>
                     </li>
+ 
                     <li class="sidebar-title">Gestion</li>
+ 
                     <li class="sidebar-item <?= basename($_SERVER['PHP_SELF']) === 'listUsers.php' ? 'active' : '' ?>">
                         <a href="listUsers.php" class="sidebar-link">
                             <i data-feather="users" width="20"></i>
@@ -108,13 +121,6 @@ if (isset($_GET['status'], $_GET['msg'])) {
                         <a href="listEvents.php" class="sidebar-link">
                             <i data-feather="calendar" width="20"></i>
                             <span>Gestion des Events</span>
-                        </a>
-                    </li>
-                    <!-- ✅ NOUVEAU : Gestion des candidatures -->
-                    <li class="sidebar-item <?= basename($_SERVER['PHP_SELF']) === 'listCandidatures.php' ? 'active' : '' ?>">
-                        <a href="listCandidatures.php" class="sidebar-link">
-                            <i data-feather="file-text" width="20"></i>
-                            <span>Gestion des candidatures</span>
                         </a>
                     </li>
                 </ul>
@@ -178,7 +184,6 @@ if (isset($_GET['status'], $_GET['msg'])) {
                     </div>
                 </div>
  
-                <!-- Alerte message -->
                 <?php if ($message !== ""): ?>
                 <div class="alert alert-<?= $messageType ?> alert-dismissible fade show" role="alert">
                     <?= $messageType === 'success' ? '✅' : '❌' ?> <?= $message ?>
@@ -186,77 +191,81 @@ if (isset($_GET['status'], $_GET['msg'])) {
                 </div>
                 <?php endif; ?>
  
-               <!-- TABLEAU DES OFFRES -->
-<div class="card">
-    <div class="card-header">
-    <h4 class="card-title">Toutes les offres</h4>
-</div>
-    <div class="card-body px-0 pb-0">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Titre</th>
-                        <th>Description</th>
-                        <th>Compétences</th>
-                        <th>Date limite</th>
-                        <th>Adresse</th>
-                        <th>Type</th>
-                        <th>Entreprise</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if (count($offres) > 0): ?>
-                    <?php foreach ($offres as $o): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($o['id_offer']) ?></td>
-                        <td><strong><?= htmlspecialchars($o['titre']) ?></strong></td>
-                        <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-                            <?= htmlspecialchars($o['description']) ?>
-                        </td>
-                        <td><span class="badge bg-info"><?= htmlspecialchars($o['competences']) ?></span></td>
-                        <td><?= htmlspecialchars($o['date_limite']) ?></td>
-                        <td><?= htmlspecialchars($o['adresse']) ?></td>
-                        <td><span class="badge bg-primary"><?= htmlspecialchars($o['type']) ?></span></td>
-                        <td><?= htmlspecialchars($o['id_entreprise']) ?></td>
-                        <td style="white-space:nowrap">
-                            <button class="btn btn-warning btn-sm btn-edit-offer"
-                                data-id="<?= (int)$o['id_offer'] ?>"
-                                data-titre="<?= htmlspecialchars($o['titre'], ENT_QUOTES, 'UTF-8') ?>"
-                                data-description="<?= htmlspecialchars($o['description'], ENT_QUOTES, 'UTF-8') ?>"
-                                data-competences="<?= htmlspecialchars($o['competences'], ENT_QUOTES, 'UTF-8') ?>"
-                                data-date="<?= htmlspecialchars($o['date_limite'], ENT_QUOTES, 'UTF-8') ?>"
-                                data-adresse="<?= htmlspecialchars($o['adresse'], ENT_QUOTES, 'UTF-8') ?>"
-                                data-type="<?= htmlspecialchars($o['type'], ENT_QUOTES, 'UTF-8') ?>"
-                                data-entreprise="<?= htmlspecialchars($o['id_entreprise'], ENT_QUOTES, 'UTF-8') ?>">
-                                <i data-feather="edit" width="14"></i> Modifier
-                            </button>
-                            <button class="btn btn-danger btn-sm btn-delete-offer ml-1"
-                                data-id="<?= (int)$o['id_offer'] ?>"
-                                data-titre="<?= htmlspecialchars($o['titre'], ENT_QUOTES, 'UTF-8') ?>">
-                                <i data-feather="trash" width="14"></i> Supprimer
-                            </button>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="9" class="text-center text-muted py-5">
-                            <i data-feather="inbox" width="32"></i>
-                            <p class="mt-2">Aucune offre disponible.</p>
-                        </td>
-                    </tr>
-                <?php endif; ?>
-                </tbody>
-            </table>
+                <!-- TABLEAU DES OFFRES -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Toutes les offres</h4>
+                    </div>
+                    <div class="card-body px-0 pb-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Titre</th>
+                                        <th>Description</th>
+                                        <th>Compétences</th>
+                                        <th>Date limite</th>
+                                        <th>Adresse</th>
+                                        <th>Type</th>
+                                        <th>Entreprise</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php if (count($offres) > 0): ?>
+                                    <?php foreach ($offres as $o): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($o['id_offer']) ?></td>
+                                        <td><strong><?= htmlspecialchars($o['titre']) ?></strong></td>
+                                        <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                                            <?= htmlspecialchars($o['description']) ?>
+                                        </td>
+                                        <td><span class="badge bg-info"><?= htmlspecialchars($o['competences']) ?></span></td>
+                                        <td><?= htmlspecialchars($o['date_limite']) ?></td>
+                                        <td><?= htmlspecialchars($o['adresse']) ?></td>
+                                        <td><span class="badge bg-primary"><?= htmlspecialchars($o['type']) ?></span></td>
+                                        <td><?= htmlspecialchars($o['id_entreprise']) ?></td>
+                                        <td style="white-space:nowrap">
+                                            <button class="btn btn-warning btn-sm btn-edit-offer"
+                                                data-id="<?= (int)$o['id_offer'] ?>"
+                                                data-titre="<?= htmlspecialchars($o['titre'], ENT_QUOTES, 'UTF-8') ?>"
+                                                data-description="<?= htmlspecialchars($o['description'], ENT_QUOTES, 'UTF-8') ?>"
+                                                data-competences="<?= htmlspecialchars($o['competences'], ENT_QUOTES, 'UTF-8') ?>"
+                                                data-date="<?= htmlspecialchars($o['date_limite'], ENT_QUOTES, 'UTF-8') ?>"
+                                                data-adresse="<?= htmlspecialchars($o['adresse'], ENT_QUOTES, 'UTF-8') ?>"
+                                                data-type="<?= htmlspecialchars($o['type'], ENT_QUOTES, 'UTF-8') ?>"
+                                                data-entreprise="<?= htmlspecialchars($o['id_entreprise'], ENT_QUOTES, 'UTF-8') ?>">
+                                                <i data-feather="edit" width="14"></i> Modifier
+                                            </button>
+                                            <button class="btn btn-danger btn-sm btn-delete-offer ml-1"
+                                                data-id="<?= (int)$o['id_offer'] ?>"
+                                                data-titre="<?= htmlspecialchars($o['titre'], ENT_QUOTES, 'UTF-8') ?>">
+                                                <i data-feather="trash" width="14"></i> Supprimer
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted py-5">
+                                            <i data-feather="inbox" width="32"></i>
+                                            <p class="mt-2">Aucune offre disponible.</p>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+ 
+            </section>
         </div>
-    </div>
+    </main>
 </div>
-<!-- ════════════════════════════════
-     MODALE : AJOUTER
-════════════════════════════════ -->
+ 
+<!-- MODALE : AJOUTER -->
 <div class="modal-overlay" id="addModal">
     <div class="modal-box">
         <div class="modal-top">
@@ -343,9 +352,7 @@ if (isset($_GET['status'], $_GET['msg'])) {
     </div>
 </div>
  
-<!-- ════════════════════════════════
-     MODALE : MODIFIER
-════════════════════════════════ -->
+<!-- MODALE : MODIFIER -->
 <div class="modal-overlay" id="editModal">
     <div class="modal-box">
         <div class="modal-top">
@@ -436,9 +443,7 @@ if (isset($_GET['status'], $_GET['msg'])) {
     </div>
 </div>
  
-<!-- ════════════════════════════════
-     MODALE : SUPPRIMER
-════════════════════════════════ -->
+<!-- MODALE : SUPPRIMER -->
 <div class="modal-overlay" id="deleteModal">
     <div class="modal-box" style="max-width:440px">
         <div class="modal-top">
@@ -481,7 +486,6 @@ if (isset($_GET['status'], $_GET['msg'])) {
     </div>
 </div>
  
-<!-- SCRIPTS -->
 <script src="assets/js/feather-icons/feather.min.js"></script>
 <script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="assets/js/app.js"></script>
@@ -489,17 +493,9 @@ if (isset($_GET['status'], $_GET['msg'])) {
 <script>
 feather.replace();
  
-/* ══════════════════════════════════════════════
-   VALIDATION HELPERS
-══════════════════════════════════════════════ */
 function clearFieldErrors(form) {
-    form.querySelectorAll('.form-control').forEach(function(input) {
-        input.classList.remove('is-invalid');
-    });
-    form.querySelectorAll('.error-message').forEach(function(msg) {
-        msg.classList.remove('show');
-        msg.textContent = '';
-    });
+    form.querySelectorAll('.form-control').forEach(function(input) { input.classList.remove('is-invalid'); });
+    form.querySelectorAll('.error-message').forEach(function(msg) { msg.classList.remove('show'); msg.textContent = ''; });
 }
  
 function setFieldError(form, fieldName, message) {
@@ -508,10 +504,7 @@ function setFieldError(form, fieldName, message) {
         input.classList.add('is-invalid');
         var group = input.closest('.form-group');
         var errorMsg = group ? group.querySelector('.error-message') : null;
-        if (errorMsg) {
-            errorMsg.textContent = message;
-            errorMsg.classList.add('show');
-        }
+        if (errorMsg) { errorMsg.textContent = message; errorMsg.classList.add('show'); }
     }
 }
  
@@ -525,21 +518,16 @@ function isValidDate(dateString) {
 function isFutureOrTodayDate(dateString) {
     if (!isValidDate(dateString)) return false;
     var date = new Date(dateString + 'T00:00:00');
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
+    var today = new Date(); today.setHours(0,0,0,0);
     return date >= today;
 }
  
-function isValidEntrepriseId(value) {
-    return /^\d{1,8}$/.test(value);
-}
+function isValidEntrepriseId(value) { return /^\d{1,8}$/.test(value); }
  
-/* ── Fonction de validation unifiée pour les 2 formulaires ── */
 function validateForm(event, formId) {
     event.preventDefault();
     var form = document.getElementById(formId);
     clearFieldErrors(form);
- 
     var titre         = form.querySelector('[name="titre"]').value.trim();
     var description   = form.querySelector('[name="description"]').value.trim();
     var competences   = form.querySelector('[name="competences"]').value.trim();
@@ -547,52 +535,32 @@ function validateForm(event, formId) {
     var adresse       = form.querySelector('[name="adresse"]').value.trim();
     var type          = form.querySelector('[name="type"]').value.trim();
     var id_entreprise = form.querySelector('[name="id_entreprise"]').value.trim();
- 
     var isValid = true;
- 
-    if (!titre) { setFieldError(form, 'titre', 'Le titre est obligatoire'); isValid = false; }
-    if (!description) { setFieldError(form, 'description', 'La description est obligatoire'); isValid = false; }
-    if (!competences) { setFieldError(form, 'competences', 'Les competences sont obligatoires'); isValid = false; }
-    if (!date_limite) {
-        setFieldError(form, 'date_limite', 'La date limite est obligatoire'); isValid = false;
-    } else if (!isValidDate(date_limite)) {
-        setFieldError(form, 'date_limite', 'Le format doit etre YYYY-MM-DD'); isValid = false;
-    } else if (!isFutureOrTodayDate(date_limite)) {
-        setFieldError(form, 'date_limite', "La date doit etre aujourd'hui ou dans le futur"); isValid = false;
-    }
-    if (!adresse) { setFieldError(form, 'adresse', "L'adresse est obligatoire"); isValid = false; }
-    if (!type) { setFieldError(form, 'type', 'Le type de contrat est obligatoire'); isValid = false; }
-    if (!id_entreprise) {
-        setFieldError(form, 'id_entreprise', "L'ID entreprise est obligatoire"); isValid = false;
-    } else if (!isValidEntrepriseId(id_entreprise)) {
-        setFieldError(form, 'id_entreprise', "L'ID entreprise doit contenir uniquement des chiffres (max 8 caracteres)"); isValid = false;
-    }
- 
+    if (!titre)         { setFieldError(form, 'titre', 'Le titre est obligatoire'); isValid = false; }
+    if (!description)   { setFieldError(form, 'description', 'La description est obligatoire'); isValid = false; }
+    if (!competences)   { setFieldError(form, 'competences', 'Les competences sont obligatoires'); isValid = false; }
+    if (!date_limite)   { setFieldError(form, 'date_limite', 'La date limite est obligatoire'); isValid = false; }
+    else if (!isValidDate(date_limite)) { setFieldError(form, 'date_limite', 'Format YYYY-MM-DD requis'); isValid = false; }
+    else if (!isFutureOrTodayDate(date_limite)) { setFieldError(form, 'date_limite', "La date doit être aujourd'hui ou dans le futur"); isValid = false; }
+    if (!adresse)       { setFieldError(form, 'adresse', "L'adresse est obligatoire"); isValid = false; }
+    if (!type)          { setFieldError(form, 'type', 'Le type de contrat est obligatoire'); isValid = false; }
+    if (!id_entreprise) { setFieldError(form, 'id_entreprise', "L'ID entreprise est obligatoire"); isValid = false; }
+    else if (!isValidEntrepriseId(id_entreprise)) { setFieldError(form, 'id_entreprise', "Chiffres uniquement, max 8 caractères"); isValid = false; }
     if (isValid) { form.submit(); }
     return false;
 }
  
-/* ══════════════════════════════════════════════
-   MODALE AJOUTER
-══════════════════════════════════════════════ */
+/* Modale Ajouter */
 function openAddModal() {
     var form = document.getElementById('addForm');
-    form.reset();
-    clearFieldErrors(form);
+    form.reset(); clearFieldErrors(form);
     document.getElementById('addModal').classList.add('show');
     document.body.style.overflow = 'hidden';
 }
-function closeAddModal() {
-    document.getElementById('addModal').classList.remove('show');
-    document.body.style.overflow = '';
-}
-document.getElementById('addModal').addEventListener('click', function(e) {
-    if (e.target === this) closeAddModal();
-});
+function closeAddModal() { document.getElementById('addModal').classList.remove('show'); document.body.style.overflow = ''; }
+document.getElementById('addModal').addEventListener('click', function(e) { if (e.target === this) closeAddModal(); });
  
-/* ══════════════════════════════════════════════
-   MODALE MODIFIER — via data-* attributes
-══════════════════════════════════════════════ */
+/* Modale Modifier */
 document.addEventListener('click', function(e) {
     var btn = e.target.closest('.btn-edit-offer');
     if (!btn) return;
@@ -605,25 +573,15 @@ document.addEventListener('click', function(e) {
     document.getElementById('modal_adresse').value       = d.adresse;
     document.getElementById('modal_id_entreprise').value = d.entreprise;
     var sel = document.getElementById('modal_type');
-    for (var i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].value === d.type) { sel.selectedIndex = i; break; }
-    }
+    for (var i = 0; i < sel.options.length; i++) { if (sel.options[i].value === d.type) { sel.selectedIndex = i; break; } }
     clearFieldErrors(document.getElementById('editForm'));
     document.getElementById('editModal').classList.add('show');
     document.body.style.overflow = 'hidden';
 });
+function closeEditModal() { document.getElementById('editModal').classList.remove('show'); document.body.style.overflow = ''; }
+document.getElementById('editModal').addEventListener('click', function(e) { if (e.target === this) closeEditModal(); });
  
-function closeEditModal() {
-    document.getElementById('editModal').classList.remove('show');
-    document.body.style.overflow = '';
-}
-document.getElementById('editModal').addEventListener('click', function(e) {
-    if (e.target === this) closeEditModal();
-});
- 
-/* ══════════════════════════════════════════════
-   MODALE SUPPRIMER — via data-* attributes
-══════════════════════════════════════════════ */
+/* Modale Supprimer */
 document.addEventListener('click', function(e) {
     var btn = e.target.closest('.btn-delete-offer');
     if (!btn) return;
@@ -632,18 +590,10 @@ document.addEventListener('click', function(e) {
     document.getElementById('deleteModal').classList.add('show');
     document.body.style.overflow = 'hidden';
 });
+function closeDeleteModal() { document.getElementById('deleteModal').classList.remove('show'); document.body.style.overflow = ''; }
+document.getElementById('deleteModal').addEventListener('click', function(e) { if (e.target === this) closeDeleteModal(); });
  
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.remove('show');
-    document.body.style.overflow = '';
-}
-document.getElementById('deleteModal').addEventListener('click', function(e) {
-    if (e.target === this) closeDeleteModal();
-});
- 
-/* ══════════════════════════════════════════════
-   NUMERIC ID ENTREPRISE
-══════════════════════════════════════════════ */
+/* Numeric ID Entreprise */
 document.querySelectorAll('input[name="id_entreprise"]').forEach(function(input) {
     input.addEventListener('input', function() {
         var sanitized = this.value.replace(/\D/g, '').slice(0, 8);
@@ -651,15 +601,9 @@ document.querySelectorAll('input[name="id_entreprise"]').forEach(function(input)
     });
 });
  
-/* ══════════════════════════════════════════════
-   TOUCHE ECHAP
-══════════════════════════════════════════════ */
+/* Touche Echap */
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeAddModal();
-        closeEditModal();
-        closeDeleteModal();
-    }
+    if (e.key === 'Escape') { closeAddModal(); closeEditModal(); closeDeleteModal(); }
 });
 </script>
 </body>

@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$id_offer = (int)($_POST['id_offre'] ?? 0);
+$id_offer = (int)($_POST['id_offer'] ?? 0);
 $lettre   = trim($_POST['lettre_motivation'] ?? '');
 
 if ($id_offer <= 0) {

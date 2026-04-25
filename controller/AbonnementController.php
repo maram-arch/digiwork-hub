@@ -97,6 +97,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         header('Location: /view/front/abonnement.php');
         exit;
     }
+
+    // Update action (AJAX POST only)
+    if ($_POST['action'] === 'update' && isset($_POST['id'])) {
+        denyIfNotAdmin();
+        
+        $id = intval($_POST['id']);
+        $status = $_POST['status'] ?? '';
+        $dateFin = $_POST['date_fin'] ?? '';
+        
+        $result = $abo->update($id, $status, $dateFin);
+        
+        header('Content-Type: application/json');
+        if ($result) {
+            echo json_encode(['status' => 'success', 'message' => 'Abonnement mis à jour avec succès']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Erreur lors de la mise à jour']);
+        }
+        exit;
+    }
 }
 
 // Default: redirect

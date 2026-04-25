@@ -135,6 +135,13 @@
 
         function subscribeForm(e, packId) {
             e.preventDefault();
+            
+            // Show loading state
+            const button = e.target.querySelector('button[type="submit"]');
+            const originalText = button.textContent;
+            button.textContent = 'Chargement...';
+            button.disabled = true;
+            
             const fd = new FormData();
             fd.append('action', 'subscribe');
             fd.append('pack_id', packId);
@@ -147,15 +154,50 @@
             .then(res => res.json())
             .then(res => {
                 if (res.status === 'success') {
-                    alert('Abonnement créé avec succès.');
-                    window.location.reload();
+                    // Show success message instead of alert
+                    showNotification('🎉 Félicitations! Votre abonnement a été créé avec succès.', 'success');
+                    // Reload after a short delay to show the new abonnement
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
                 } else {
-                    alert('Erreur: ' + res.message);
+                    showNotification('❌ Erreur: ' + res.message, 'error');
+                    button.textContent = originalText;
+                    button.disabled = false;
                 }
             })
-            .catch(err => alert('Erreur réseau.'));
+            .catch(err => {
+                showNotification('❌ Erreur réseau. Veuillez réessayer.', 'error');
+                button.textContent = originalText;
+                button.disabled = false;
+            });
 
             return false;
+        }
+        
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 1000;
+                max-width: 300px;
+                background: ${type === 'success' ? '#10B981' : '#EF4444'};
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
     </script>
 </body>

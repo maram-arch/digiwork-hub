@@ -134,6 +134,35 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
         </main>
     </div>
 
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div class="modal-content" style="background-color: white; margin: 15% auto; padding: 20px; border-radius: 8px; width: 400px; max-width: 90%;">
+            <h3 style="margin-top: 0;">Modifier l'abonnement</h3>
+            <form id="editForm">
+                <input type="hidden" id="editId" name="id">
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="editStatus" style="display: block; margin-bottom: 5px; font-weight: bold;">Statut:</label>
+                    <select id="editStatus" name="status" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="actif">Actif</option>
+                        <option value="expiré">Expiré</option>
+                        <option value="en_attente">En attente</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="editDateFin" style="display: block; margin-bottom: 5px; font-weight: bold;">Date de fin:</label>
+                    <input type="date" id="editDateFin" name="date_fin" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                
+                <div style="text-align: right;">
+                    <button type="button" onclick="closeEditModal()" class="btn btn-sm" style="background: #6c757d; color: white; margin-right: 10px;">Annuler</button>
+                    <button type="submit" class="btn btn-sm" style="background: var(--primary); color: white;">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
@@ -187,8 +216,7 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
                 
                 let html = '';
                 subs.forEach(sub => {
-                    const isExpired = new Date(sub['date-fin']) < new Date() && sub.status === 'actif';
-                    const displayStatus = isExpired ? 'expiré' : sub.status;
+                    const displayStatus = sub.status;
                     const statusClass = getStatusClass(displayStatus);
                     const statusText = displayStatus === 'actif' ? 'Actif' : (displayStatus === 'expiré' ? 'Expiré' : 'En attente');
                     
@@ -202,7 +230,10 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
                             <td>${formatDate(sub['date-fin'])}</td>
                             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                             <td>
-                                <button class="btn btn-sm btn-danger" onclick="deleteAbo(${sub['id-abonnement']})" ${isExpired ? 'disabled style="opacity:0.5;"' : ''}>
+                                <button class="btn btn-sm btn-primary" onclick="editAbo(${sub['id-abonnement']}, '${escapeHtml(sub.status)}', '${escapeHtml(sub['date-fin'])}')" style="margin-right: 5px;">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteAbo(${sub['id-abonnement']})">
                                     <i class="fas fa-ban"></i> Révoquer
                                 </button>
                             </td>
@@ -240,6 +271,52 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
                 }
             } catch (error) {
                 showToast('Erreur', 'error');
+            }
+        }
+        
+        function editAbo(id, status, dateFin) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editStatus').value = status;
+            document.getElementById('editDateFin').value = dateFin;
+            document.getElementById('editModal').style.display = 'block';
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        // Handle edit form submission
+        document.getElementById('editForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            formData.append('action', 'update');
+            formData.append('ajax', '1');
+            
+            try {
+                const response = await fetch('../../controller/AbonnementController.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showToast('Abonnement mis à jour avec succès');
+                    closeEditModal();
+                    loadSubscriptions();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('Erreur réseau', 'error');
+            }
+        });
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
             }
         }
         

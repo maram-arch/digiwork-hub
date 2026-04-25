@@ -18,16 +18,7 @@ $cat_labels = [
     'evenement' => ['label' => 'Événement',  'icon' => '📅', 'color' => '#EF4444'],
 ];
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum — DigiWork Hub</title>
-    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../assets/css/LineIcons.2.0.css">
-    <link rel="stylesheet" href="../../assets/css/main.css">
-    <style>
+<style>
         :root {
             --primary: #2F80ED;
             --primary-dark: #1a6fd4;
@@ -163,6 +154,67 @@ $cat_labels = [
         .btn-del-sm { color: var(--danger); border-color: var(--danger); }
         .btn-del-sm:hover { background: var(--danger); color: #fff; text-decoration: none; }
 
+        /* ── Bouton commenter ── */
+        .btn-comment {
+            background: none; border: 1.5px solid var(--border);
+            color: var(--muted); font-size: 12px; font-weight: 600;
+            padding: 5px 12px; border-radius: 6px; cursor: pointer;
+            font-family: 'Heebo', sans-serif;
+            display: inline-flex; align-items: center; gap: 5px;
+            transition: all .2s;
+        }
+        .btn-comment:hover, .btn-comment.open {
+            border-color: var(--primary); color: var(--primary);
+            background: rgba(47,128,237,0.06);
+        }
+
+        /* ── Panneau commentaire inline ── */
+        .comment-panel {
+            display: none;
+            padding: 14px 20px 16px;
+            border-top: 1px solid var(--border);
+            background: #F8FAFC;
+            animation: slideDown .18s ease;
+        }
+        .comment-panel.open { display: block; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .comment-panel textarea {
+            width: 100%; padding: 10px 12px;
+            border: 1.5px solid var(--border); border-radius: 8px;
+            font-size: 13px; font-family: 'Heebo', sans-serif;
+            resize: vertical; min-height: 72px;
+            transition: border-color .2s; box-sizing: border-box;
+            background: #fff; color: var(--text);
+        }
+        .comment-panel textarea:focus { border-color: var(--primary); outline: none; }
+        .comment-panel textarea.error { border-color: var(--danger); }
+        .comment-panel .panel-footer {
+            display: flex; align-items: center;
+            justify-content: space-between; margin-top: 8px; gap: 8px;
+        }
+        .comment-panel .char-info { font-size: 11px; color: var(--muted); }
+        .comment-panel .char-info.warn { color: var(--danger); font-weight: 600; }
+        .comment-panel .err-msg {
+            font-size: 12px; color: var(--danger);
+            margin-top: 4px; display: none;
+        }
+        .comment-panel .btn-send {
+            background: var(--primary); color: #fff; border: none;
+            padding: 8px 18px; border-radius: 7px; font-size: 13px;
+            font-weight: 600; cursor: pointer; font-family: 'Heebo', sans-serif;
+            transition: background .2s; white-space: nowrap;
+        }
+        .comment-panel .btn-send:hover { background: var(--primary-dark); }
+        .comment-panel .btn-cancel {
+            background: none; border: none; color: var(--muted);
+            font-size: 12px; cursor: pointer; font-family: 'Heebo', sans-serif;
+            padding: 4px 6px; border-radius: 5px;
+        }
+        .comment-panel .btn-cancel:hover { color: var(--danger); }
+
         /* ── Pagination ── */
         .pagination-wrap { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 32px; flex-wrap: wrap; }
         .page-btn {
@@ -186,9 +238,7 @@ $cat_labels = [
             .page-header { padding: 12px 16px; }
             .cat-pills, .flash { padding-left: 16px; padding-right: 16px; }
         }
-    </style>
-</head>
-<body>
+</style>
 
 <!-- Header -->
 <div class="page-header">
@@ -196,7 +246,7 @@ $cat_labels = [
         <h1>Forum DigiWork</h1>
         <span class="badge-total"><?php echo $total; ?> pub.</span>
     </div>
-    <a href="index.php?action=add" class="btn-new">+ Nouvelle publication</a>
+    <a href="index.php?action=addPublication" class="btn-new">+ Nouvelle publication</a>
 </div>
 
 <!-- Flash messages -->
@@ -314,15 +364,42 @@ $cat_labels = [
                         </div>
                         <?php if ($isOwner): ?>
                             <div class="actions">
-                                <a href="index.php?action=edit&id=<?php echo $pub['id_publication']; ?>" class="btn-edit-sm">✏️</a>
-                                <a href="index.php?action=delete&id=<?php echo $pub['id_publication']; ?>"
+                                <a href="index.php?action=editPublication&id=<?php echo $pub['id_publication']; ?>" class="btn-edit-sm">✏️</a>
+                                <a href="index.php?action=deletePublication&id=<?php echo $pub['id_publication']; ?>"
                                    class="btn-del-sm"
                                    onclick="return confirm('Supprimer cette publication ?');">🗑️</a>
                             </div>
                         <?php endif; ?>
+                        <!-- Bouton Commenter -->
+                        <button class="btn-comment"
+                                onclick="toggleCommentPanel(this, <?php echo (int)$pub['id_publication']; ?>)">
+                            💬 Commenter
+                        </button>
                     </div>
                 </div>
-            </div>
+
+                <!-- Panneau commentaire inline -->
+                <div class="comment-panel" id="cpanel-<?php echo (int)$pub['id_publication']; ?>">
+                    <form method="POST" action="index.php?action=addComment" novalidate
+                          onsubmit="return validateComment(this, <?php echo (int)$pub['id_publication']; ?>)">
+                        <input type="hidden" name="id_publication" value="<?php echo (int)$pub['id_publication']; ?>">
+                        <textarea name="contenu"
+                                  id="ctxt-<?php echo (int)$pub['id_publication']; ?>"
+                                  placeholder="Écrivez votre commentaire… (3–500 caractères)"
+                                  oninput="onCommentInput(this, <?php echo (int)$pub['id_publication']; ?>)"></textarea>
+                        <div class="err-msg" id="cerr-<?php echo (int)$pub['id_publication']; ?>"></div>
+                        <div class="panel-footer">
+                            <span class="char-info" id="cchar-<?php echo (int)$pub['id_publication']; ?>">0 / 500</span>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <button type="button" class="btn-cancel"
+                                        onclick="toggleCommentPanel(this.closest('.comment-panel').previousElementSibling.querySelector('.btn-comment'), <?php echo (int)$pub['id_publication']; ?>)">
+                                    Annuler
+                                </button>
+                                <button type="submit" class="btn-send">Envoyer 💬</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             <?php endforeach; ?>
         </div>
 
@@ -347,8 +424,9 @@ $cat_labels = [
 </div>
 
 <script>
+// ── Like publication ──────────────────────────────────────────────────────────
 function toggleLike(btn) {
-    const id = btn.dataset.id;
+    const id    = btn.dataset.id;
     const heart = btn.querySelector('.heart');
     const count = btn.querySelector('.like-count');
 
@@ -371,7 +449,64 @@ function toggleLike(btn) {
     })
     .catch(() => alert('Erreur réseau'));
 }
-</script>
 
-</body>
-</html>
+// ── Ouvrir / fermer le panneau commentaire ────────────────────────────────────
+function toggleCommentPanel(btn, id) {
+    const panel = document.getElementById('cpanel-' + id);
+    if (!panel) return;
+
+    const isOpen = panel.classList.contains('open');
+
+    // Fermer tous les autres panneaux ouverts
+    document.querySelectorAll('.comment-panel.open').forEach(p => {
+        p.classList.remove('open');
+        const otherBtn = p.closest('.pub-card').querySelector('.btn-comment');
+        if (otherBtn) otherBtn.classList.remove('open');
+    });
+
+    if (!isOpen) {
+        panel.classList.add('open');
+        btn.classList.add('open');
+        const ta = document.getElementById('ctxt-' + id);
+        if (ta) setTimeout(() => ta.focus(), 50);
+    }
+}
+
+// ── Compteur de caractères en temps réel ─────────────────────────────────────
+function onCommentInput(ta, id) {
+    const len      = ta.value.length;
+    const charEl   = document.getElementById('cchar-' + id);
+    const errEl    = document.getElementById('cerr-' + id);
+
+    charEl.textContent = len + ' / 500';
+    charEl.className   = 'char-info' + (len > 450 ? ' warn' : '');
+
+    if (len > 0) {
+        errEl.style.display = 'none';
+        ta.classList.remove('error');
+    }
+}
+
+// ── Validation avant envoi ────────────────────────────────────────────────────
+function validateComment(form, id) {
+    const ta    = document.getElementById('ctxt-' + id);
+    const errEl = document.getElementById('cerr-' + id);
+    const val   = ta.value.trim();
+
+    const showErr = (msg) => {
+        errEl.textContent    = '⚠️ ' + msg;
+        errEl.style.display  = 'block';
+        ta.classList.add('error');
+        ta.focus();
+        return false;
+    };
+
+    if (val.length === 0)   return showErr('Le commentaire ne peut pas être vide.');
+    if (val.length < 3)     return showErr('Minimum 3 caractères requis.');
+    if (val.length > 500)   return showErr('Maximum 500 caractères autorisés.');
+    if (/^[^a-zA-Z0-9\u00C0-\u024F]+$/.test(val))
+                            return showErr('Veuillez saisir un commentaire valide.');
+
+    return true; // soumettre le formulaire
+}
+</script>

@@ -125,6 +125,11 @@ $id_user_session = $_SESSION['id_user'] ?? null;
         <?php if (!empty($error)): ?>
             <div class="error-msg"><?php echo $error; ?></div>
         <?php endif; ?>
+        <?php if (!empty($_SESSION['error'])): ?>
+             <div class="error-msg">
+        <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
 
         <form action="index.php?action=edit&id=<?php echo (int)$publication['id_publication']; ?>"
               method="POST" enctype="multipart/form-data" id="editForm">
@@ -157,7 +162,8 @@ $id_user_session = $_SESSION['id_user'] ?? null;
                         <input type="radio" name="categorie" id="cat_<?php echo $val; ?>"
                                value="<?php echo $val; ?>" class="cat-radio"
                                <?php echo $cur_cat === $val ? 'checked' : ''; ?>>
-                        <label for="cat_<?php echo $val; ?>" class="cat-label">
+                        <label <form action="index.php?action=editPublication&id=<?php echo (int)$publication['id_publication']; ?>"
+      method="POST" enctype="multipart/form-data" id="editForm">
                             <span class="cat-icon"><?php echo $c['icon']; ?></span>
                             <?php echo $c['label']; ?>
                         </label>

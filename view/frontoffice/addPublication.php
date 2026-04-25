@@ -139,7 +139,7 @@ $contenu    = $contenu    ?? '';
             <div class="error-msg"><?php echo $error; ?></div>
         <?php endif; ?>
 
-        <form action="index.php?action=add" method="POST" enctype="multipart/form-data" id="pubForm">
+        <form action="index.php?action=addPublication" method="POST" enctype="multipart/form-data" id="pubForm">
 
             <!-- Titre -->
             <div class="form-group">
@@ -344,6 +344,61 @@ document.getElementById('pubForm').addEventListener('submit', function(e) {
         }
         existing.innerHTML = msgs.join('<br>');
         existing.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    <script>
+// Compteur titre
+const titreInput = document.getElementById('titreInput');
+const titreCount = document.getElementById('titreCount');
+
+function updateTitreCount() {
+    const len = titreInput.value.length;
+    titreCount.textContent = len + ' / 100';
+    titreCount.className = 'char-count' + (len > 85 ? ' warn' : '');
+}
+
+titreInput.addEventListener('input', updateTitreCount);
+updateTitreCount();
+
+// Emoji
+function insertEmoji(emoji) {
+    const ta = document.getElementById('contenuTextarea');
+    const start = ta.selectionStart;
+    const end   = ta.selectionEnd;
+    ta.value = ta.value.slice(0, start) + emoji + ta.value.slice(end);
+    ta.selectionStart = ta.selectionEnd = start + emoji.length;
+    ta.focus();
+}
+
+// Event toggle
+function toggleEventSection() {
+    const check = document.getElementById('isEventCheck');
+    const section = document.getElementById('eventSection');
+    section.classList.toggle('show', check.checked);
+}
+
+// Image preview
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('previewImg').src = e.target.result;
+            document.getElementById('previewName').textContent = file.name;
+            document.getElementById('imgPreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// VALIDATION FORMULAIRE
+document.getElementById('pubForm').addEventListener('submit', function(e) {
+
+    const titre = document.getElementById('titreInput').value.trim();
+    const contenu = document.getElementById('contenuTextarea').value.trim();
+
+    if (!titre || !contenu) {
+        e.preventDefault();
+        alert("Titre et contenu obligatoires !");
     }
 });
 </script>

@@ -31,7 +31,7 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
     <div class="admin-container">
         <aside class="admin-sidebar">
             <div class="admin-sidebar-logo">
-                <img src="assets/img/logo.png" alt="DigiWork HUB" style="height:56px;width:auto;display:block;margin:0 auto;filter:brightness(0) invert(1);">
+                <img src="../../assets/img/logo.png" alt="DigiWork HUB" style="height:56px;width:auto;display:block;margin:0 auto;filter:brightness(0) invert(1);">
             </div>
             <nav class="admin-sidebar-menu">
                 <a href="dashboard_packs.php" class="admin-sidebar-item">

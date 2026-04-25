@@ -39,7 +39,7 @@ $packs = $packModel->getAll();
               <div class="col-lg-12">
                 <nav class="navbar navbar-expand-lg">
                   <a class="navbar-brand" href="index.php">
-                    <img src="assets/img/logo/logo.svg" alt="Logo" />
+                    <img src="../../assets/img/logo.png" alt="DigiWork HUB" style="height:52px;" />
                   </a>
                   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent6">
                     <span class="toggler-icon"></span>

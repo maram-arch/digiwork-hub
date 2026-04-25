@@ -15,7 +15,7 @@
 
     <div class="front-navbar">
         <div class="logo-container">
-            <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB" style="height:52px;">
+            <img src="../../assets/img/logo.png" alt="DigiWork HUB" style="height:52px;">
         </div>
         <div class="nav-links">
             <a href="../frontoffice/index.php">Home</a>

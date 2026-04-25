@@ -24,7 +24,7 @@
 
     <div class="front-navbar">
         <div class="logo-container">
-            <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB" style="height:52px;">
+            <img src="../../assets/img/logo.png" alt="DigiWork HUB" style="height:52px;">
         </div>
         <div class="nav-links">
             <a href="../frontoffice/index.php">Home</a>
@@ -43,17 +43,24 @@
     <?php endif; ?>
 
     <div class="profile-container">
-        <h2 style="color: var(--primary);">S'abonner à un Pack</h2>
-
-        <div id="packs-list">
-            <p style="color: var(--text-muted);">Chargement des packs...</p>
+        <!-- Current Subscriptions Section - More Prominent -->
+        <div class="current-subscriptions" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(16,185,129,0.2);">
+            <h2 style="color: white; margin: 0 0 20px 0; font-size: 24px;">
+                <i class="fas fa-crown" style="margin-right: 10px;"></i>Mes Abonnements Actifs
+            </h2>
+            <div id="abonnements-container">
+                <p style="color: rgba(255,255,255,0.9);">Chargement de vos abonnements...</p>
+            </div>
         </div>
 
-        <hr style="margin:30px 0;">
-
-        <h2 style="color: var(--primary);">Mes Abonnements</h2>
-        <div id="abonnements-container">
-            <p style="color: var(--text-muted);">Chargement de vos abonnements...</p>
+        <!-- Available Packs Section -->
+        <div class="available-packs" style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h2 style="color: var(--primary); margin: 0 0 20px 0;">
+                <i class="fas fa-box-open" style="margin-right: 10px;"></i>Disponible pour S'abonner
+            </h2>
+            <div id="packs-list">
+                <p style="color: var(--text-muted);">Chargement des packs...</p>
+            </div>
         </div>
     </div>
 
@@ -110,18 +117,27 @@
                 // We'll display all abonnements but mark them with name/phone
                 let html = '';
                 data.forEach(abo => {
+                    const statusColor = abo.status === 'actif' ? '#10B981' : (abo.status === 'expiré' ? '#EF4444' : '#F59E0B');
+                    const statusBg = abo.status === 'actif' ? 'rgba(255,255,255,0.2)' : (abo.status === 'expiré' ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.2)');
+                    
                     html += `
-                        <div class="list-item">
-                            <div class="list-info">
-                                <h3>Pack : ${abo['nom-pack']}</h3>
-                                <p style="font-size: 14px; color: var(--text-muted); margin:0;">
-                                    <strong>Client :</strong> ${abo.nom} — ${abo.tel} <br>
-                                    <strong>Du :</strong> ${abo['date-deb']} <br>
-                                    <strong>Au :</strong> ${abo['date-fin']}
-                                </p>
-                            </div>
-                            <div>
-                                <span style="background: #D1FAE5; color: #065F46; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 13px;">${abo.status}</span>
+                        <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 20px; border-radius: 8px; margin-bottom: 15px; backdrop-filter: blur(10px);">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px;">
+                                        <i class="fas fa-gem" style="margin-right: 8px;"></i>${abo['nom-pack']}
+                                    </h3>
+                                    <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 14px; line-height: 1.5;">
+                                        <div style="margin-bottom: 5px;"><strong>Client :</strong> ${abo.nom}</div>
+                                        <div style="margin-bottom: 5px;"><strong>Période :</strong> ${abo['date-deb']} → ${abo['date-fin']}</div>
+                                        <div><strong>Téléphone :</strong> ${abo.tel}</div>
+                                    </p>
+                                </div>
+                                <div>
+                                    <span style="background: ${statusBg}; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 13px; border: 1px solid ${statusColor};">
+                                        ${abo.status.toUpperCase()}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     `;

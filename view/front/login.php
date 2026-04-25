@@ -40,7 +40,7 @@
     ?>
     <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:420px;">
         <div class="logo-top">
-            <img src="../frontoffice/assets/img/logo/digiwork-hub.png" alt="DigiWork HUB">
+            <img src="../../assets/img/logo.png" alt="DigiWork HUB">
         </div>
         <div class="card" style="width:100%;">
         <h1 class="title">Connexion</h1>

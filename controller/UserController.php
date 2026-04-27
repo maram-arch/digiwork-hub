@@ -35,9 +35,11 @@ class UserController
             return ['success' => false, 'errors' => ['Cet email existe deja.']];
         }
 
+        $passwordHash = password_hash($validation['clean']['password'], PASSWORD_BCRYPT);
+
         $created = $this->userModel->create(
             $validation['clean']['email'],
-            $validation['clean']['password'],
+            $passwordHash,
             $validation['clean']['role'],
             $validation['clean']['tel']
         );
@@ -65,7 +67,7 @@ class UserController
         }
 
         $password = $validation['clean']['password'] !== ''
-            ? $validation['clean']['password']
+            ? password_hash($validation['clean']['password'], PASSWORD_BCRYPT)
             : $currentUser['mdp'];
 
         $updated = $this->userModel->update(
@@ -99,14 +101,21 @@ class UserController
         }
 
         $user = $this->userModel->getByEmail($email);
-        if (!$user || $user['mdp'] !== $password) {
+        if (!$user) {
             return ['success' => false, 'message' => 'Identifiants invalides.'];
         }
+
+        $storedPassword = (string) ($user['mdp'] ?? '');
+        if (!password_verify($password, $storedPassword)) {
+            return ['success' => false, 'message' => 'Identifiants invalides.'];
+        }
+
+        $this->userModel->markOnline((int) $user['id_user']);
 
         return [
             'success' => true,
             'message' => 'Connexion reussie.',
-            'role' => 'candidat',
+            'role' => $user['role'],
             'user' => [
                 'id' => (int) $user['id_user'],
                 'email' => $user['email'],
@@ -131,12 +140,32 @@ class UserController
         return self::ALLOWED_ROLES;
     }
 
+    public function getOnlineUsers(int $minutes = 15): array
+    {
+        return $this->userModel->getOnlineUsers($minutes);
+    }
+
+    public function touchUserSession(int $userId): void
+    {
+        $this->userModel->touchActivity($userId);
+    }
+
+    public function markUserOffline(int $userId): void
+    {
+        $this->userModel->markOffline($userId);
+    }
+
     private function validateUserData(array $data, bool $isUpdate): array
     {
         $email = trim((string) ($data['email'] ?? ''));
         $password = trim((string) ($data['password'] ?? ''));
         $role = strtolower(trim((string) ($data['role'] ?? 'condidat')));
         $tel = trim((string) ($data['tel'] ?? ''));
+
+        // Keep backward compatibility between UI label and database enum value.
+        if ($role === 'candidat') {
+            $role = 'condidat';
+        }
 
         $errors = [];
 
@@ -152,8 +181,8 @@ class UserController
             $errors[] = 'Le mot de passe doit contenir au moins 6 caracteres.';
         }
 
-        if (!preg_match('/^[0-9]{8,15}$/', $tel)) {
-            $errors[] = 'Le numero de telephone doit contenir entre 8 et 15 chiffres.';
+        if (!preg_match('/^[0-9]{8}$/', $tel)) {
+            $errors[] = 'Le numero de telephone doit contenir exactement 8 chiffres.';
         }
 
         if (!in_array($role, self::ALLOWED_ROLES, true)) {

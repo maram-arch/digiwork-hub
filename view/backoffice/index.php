@@ -1,17 +1,37 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/../../controller/UserController.php';
+
+$loggedInUser = null;
+if (isset($_SESSION['user_id'])) {
+    try {
+        $loggedInUser = (new UserController())->findUser((int) $_SESSION['user_id']);
+    } catch (Throwable $e) {
+        $loggedInUser = null;
+    }
+}
+
 // Vérifier si l'utilisateur est connecté et est admin
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+if (!$loggedInUser || ($loggedInUser['role'] ?? '') !== 'admin') {
     header('Location: login.php');
     exit;
 }
 
-// Stocker les informations de l'utilisateur pour affichage
-$loggedInUser = $_SESSION['user'];
+// No front-only gate: allow admins to log in from front or backoffice.
+
+try {
+    (new UserController())->touchUserSession((int) $loggedInUser['id_user']);
+} catch (Throwable $e) {
+}
 
 // Gestion de la déconnexion
 if (isset($_GET['logout']) && $_GET['logout'] == 1) {
+    try {
+        (new UserController())->markUserOffline((int) $loggedInUser['id_user']);
+    } catch (Throwable $e) {
+    }
+    $_SESSION = [];
     session_destroy();
     header('Location: login.php');
     exit;
@@ -59,99 +79,7 @@ if (isset($_GET['logout']) && $_GET['logout'] == 1) {
 </head>
 <body>
     <div id="app">
-        <div id="sidebar" class='active'>
-            <div class="sidebar-wrapper active">
-                <div class="sidebar-header">
-                   <img src="assets/images/logo.png" alt="DigiWork Hub Logo" style="height: 90px; width: auto; margin-bottom: 10px;" srcset="">
-                   <h4 class="mt-2" style="color:#00A651;">DigiWork Hub</h4>
-                   <div class="user-info">
-                       <span><?php echo htmlspecialchars($loggedInUser['email'] ?? 'Admin'); ?></span>
-                       <span class="admin-badge">ADMIN</span>
-                   </div>
-            </div>
-                <div class="sidebar-menu">
-                    <ul class="menu">
-                        <li class='sidebar-title'>Menu Principal</li>
-                        <li class="sidebar-item active">
-                            <a href="index.php" class='sidebar-link'>
-                                <i data-feather="home" width="20"></i> 
-                                <span>Tableau de bord</span>
-                            </a>
-                        </li>
-                        
-                        <li class='sidebar-title'>Gestion</li>
-                        
-                        <li class="sidebar-item has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i data-feather="briefcase" width="20"></i> 
-                                <span>Gestion des offres</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="#">Toutes les offres</a></li>
-                                <li><a href="#">Ajouter une offre</a></li>
-                                <li><a href="#">Catégories</a></li>
-                            </ul>
-                        </li>
-                        
-                        <li class="sidebar-item has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i data-feather="users" width="20"></i> 
-                                <span>Gestion des utilisateurs</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="users.php">Utilisateurs (CRUD)</a></li>
-                                <li><a href="#">Statistique</a></li>
-                            </ul>
-                        </li>
-                        
-                        <li class="sidebar-item has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i data-feather="folder" width="20"></i> 
-                                <span>Gestion des projets</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="#">Tous les projets</a></li>
-                                <li><a href="#">Projets en cours</a></li>
-                                <li><a href="#">Projets terminés</a></li>
-                                <li><a href="#">Livrables</a></li>
-                            </ul>
-                        </li>
-                        
-                        <li class="sidebar-item has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i data-feather="star" width="20"></i> 
-                                <span>Packs</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="#">Toutes les packs</a></li>
-                            </ul>
-                        </li>
-                        
-                        <li class="sidebar-item has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i data-feather="message-circle" width="20"></i> 
-                                <span>Forums</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="#">Tous les sujets</a></li>
-                                <li><a href="#">Messages signalés</a></li>
-                                <li><a href="#">Catégories</a></li>
-                            </ul>
-                        </li>
-                        
-                        <li class='sidebar-title'>Actions</li>
-                        
-                        <li class="sidebar-item">
-                            <a href="?logout=1" class='sidebar-link'>
-                                <i data-feather="log-out" width="20"></i> 
-                                <span>Déconnexion</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
-            </div>
-        </div>
+        <?php $activePage = 'dashboard'; require __DIR__ . '/layouts/sidebar.php'; ?>
         
         <div id="main">
             <nav class="navbar navbar-header navbar-expand navbar-light">
@@ -208,6 +136,7 @@ if (isset($_GET['logout']) && $_GET['logout'] == 1) {
                                     <img src="assets/images/avatar/avatar-s-1.png" alt="Admin DigiWork Hub">
                                 </div>
                                 <div class="d-none d-md-block d-lg-inline-block"><?php echo htmlspecialchars($loggedInUser['email'] ?? 'Admin'); ?></div>
+                                <span class="admin-badge">Connecte</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item" href="#"><i data-feather="user"></i> Mon profil</a>
@@ -224,6 +153,48 @@ if (isset($_GET['logout']) && $_GET['logout'] == 1) {
                 <div class="page-title">
                     <h3>Tableau de bord administrateur</h3>
                     <p class="text-subtitle text-muted">Bienvenue sur DigiWork Hub - Plateforme intelligente d'accompagnement des entrepreneurs digitaux</p>
+                </div>
+
+                <?php
+                    $onlineUsers = [];
+                    try {
+                        $onlineUsers = (new UserController())->getOnlineUsers(15);
+                    } catch (Throwable $e) {
+                        $onlineUsers = [];
+                    }
+                ?>
+
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">Utilisateurs connectes</h4>
+                        <span class="badge bg-success"><?= count($onlineUsers) ?></span>
+                    </div>
+                    <div class="card-body">
+                        <?php if (!empty($onlineUsers)): ?>
+                            <div class="table-responsive">
+                                <table class="table table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Derniere activite</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($onlineUsers as $onlineUser): ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($onlineUser['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><?= htmlspecialchars($onlineUser['role'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><?= htmlspecialchars((string) ($onlineUser['last_activity'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php else: ?>
+                            <p class="text-muted mb-0">Aucun utilisateur n'est connecte pour le moment.</p>
+                        <?php endif; ?>
+                    </div>
                 </div>
                 
                 <section class="section">

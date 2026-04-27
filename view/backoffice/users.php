@@ -1,13 +1,40 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/../../controller/UserController.php';
+
+$loggedInUser = null;
+if (isset($_SESSION['user_id'])) {
+    try {
+        $loggedInUser = (new UserController())->findUser((int) $_SESSION['user_id']);
+    } catch (Throwable $e) {
+        $loggedInUser = null;
+    }
+}
+
 // Vérifier si l'utilisateur est connecté et est admin
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+if (!$loggedInUser || ($loggedInUser['role'] ?? '') !== 'admin') {
     header('Location: login.php');
     exit;
 }
 
-require_once __DIR__ . '/../../controller/UserController.php';
+// No front-only gate: allow admins to log in from front or backoffice.
+
+try {
+    (new UserController())->touchUserSession((int) $loggedInUser['id_user']);
+} catch (Throwable $e) {
+}
+
+if (isset($_GET['logout']) && $_GET['logout'] == 1) {
+    try {
+        (new UserController())->markUserOffline((int) $loggedInUser['id_user']);
+    } catch (Throwable $e) {
+    }
+    $_SESSION = [];
+    session_destroy();
+    header('Location: login.php');
+    exit;
+}
 
 $errors = [];
 $message = '';
@@ -63,25 +90,70 @@ try {
     <link rel="stylesheet" href="assets/css/bootstrap.css">
     <link rel="stylesheet" href="assets/css/app.css">
     <link rel="stylesheet" href="assets/css/backoffice-users-crud.css">
+    <style>
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: #00A651;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>CRUD Utilisateurs - BackOffice</h2>
-        <div>
-            <a class="btn btn-outline-primary" href="index.php">Dashboard</a>
-        </div>
-    </div>
+<div id="app">
+    <?php $activePage = 'users'; require __DIR__ . '/layouts/sidebar.php'; ?>
 
-    <?php if ($message !== ''): ?>
-        <div class="success-box mb-3"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></div>
-    <?php endif; ?>
+    <div id="main">
+        <nav class="navbar navbar-header navbar-expand navbar-light">
+            <a class="sidebar-toggler" href="#"><span class="navbar-toggler-icon"></span></a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav d-flex align-items-center navbar-light ml-auto">
+                    <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+                            <div class="avatar mr-1">
+                                <img src="assets/images/avatar/avatar-s-1.png" alt="Admin DigiWork Hub">
+                            </div>
+                            <div class="d-none d-md-block d-lg-inline-block"><?= htmlspecialchars($loggedInUser['email'] ?? 'Admin', ENT_QUOTES, 'UTF-8') ?></div>
+                            <span class="admin-badge ml-2">Connecte</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="index.php"><i data-feather="home"></i> Dashboard</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="?logout=1"><i data-feather="log-out"></i> Deconnexion</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-    <?php if (!empty($errors)): ?>
-        <div class="error-box mb-3"><?= htmlspecialchars(implode(' ', $errors), ENT_QUOTES, 'UTF-8') ?></div>
-    <?php endif; ?>
+        <div class="main-content container-fluid">
+            <div class="page-title">
+                <h3>CRUD Utilisateurs - BackOffice</h3>
+            </div>
 
-    <div class="row">
+            <?php if ($message !== ''): ?>
+                <div class="success-box mb-3"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></div>
+            <?php endif; ?>
+
+            <?php if (!empty($errors)): ?>
+                <div class="error-box mb-3"><?= htmlspecialchars(implode(' ', $errors), ENT_QUOTES, 'UTF-8') ?></div>
+            <?php endif; ?>
+
+            <div class="row">
         <div class="col-lg-4">
             <div class="card crud-card">
                 <div class="card-header">
@@ -118,7 +190,7 @@ try {
 
                         <div class="mb-3">
                             <label class="form-label">Telephone</label>
-                            <input class="form-control" type="text" name="tel" id="boTel" value="<?= htmlspecialchars((string) ($editUser['tel'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" placeholder="8 a 15 chiffres">
+                            <input class="form-control" type="text" name="tel" id="boTel" value="<?= htmlspecialchars((string) ($editUser['tel'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" placeholder="8 chiffres">
                             <div class="validation-error" id="boTelError"></div>
                         </div>
 
@@ -173,8 +245,14 @@ try {
             </div>
         </div>
     </div>
+        </div>
+    </div>
 </div>
 
+<script src="assets/js/feather-icons/feather.min.js"></script>
+<script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/main.js"></script>
 <script src="assets/js/backoffice-users-crud-validation.js"></script>
 </body>
 </html>

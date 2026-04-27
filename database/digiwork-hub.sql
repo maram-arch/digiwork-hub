@@ -247,7 +247,7 @@ CREATE TABLE `sponsorships` (
 CREATE TABLE `user` (
   `id_user` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(50) NOT NULL,
-  `mdp` varchar(30) NOT NULL,
+  `mdp` varchar(255) NOT NULL,
   `role` enum('condidat','admin','entreprise','sponsor') NOT NULL DEFAULT 'condidat',
   `tel` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

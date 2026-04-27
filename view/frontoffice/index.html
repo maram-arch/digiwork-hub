@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="assets/css/tiny-slider.css"/>
     <link rel="stylesheet" href="assets/css/animate.css"/>
     <link rel="stylesheet" href="assets/css/lindy-uikit.css"/>
-    <link rel="stylesheet" href="assets/css/frontoffice-auth-modals.css" />
+    <link rel="stylesheet" href="frontoffice-auth-modals.css" />
     <style>
         .header-6 .navbar-nav .page-scroll-auth {
             cursor: pointer;
@@ -79,7 +79,7 @@
                 </div>
                 <div class="form-group">
                     <label>Téléphone</label>
-                    <input type="text" id="signupTel" placeholder="8 a 15 chiffres">
+                    <input type="text" id="signupTel" placeholder="8 chiffres">
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
@@ -213,6 +213,11 @@
                                 <li class="nav-item" id="authButtons">
                                     <a class="page-scroll-auth" href="#" onclick="event.preventDefault(); openModal('loginModal');">Connexion</a>
                                 </li>
+                                <?php if (!empty($currentUser) && (($currentUser['role'] ?? '') === 'admin')): ?>
+                                <li class="nav-item" id="dashboardButton">
+                                    <a class="page-scroll-auth admin-link" href="../backoffice/index.php">Dashboard</a>
+                                </li>
+                                <?php endif; ?>
                                 <li class="nav-item" id="signupButton">
                                     <a class="page-scroll-auth admin-link" href="#" onclick="event.preventDefault(); openModal('signupModal');">Inscription</a>
                                 </li>
@@ -511,7 +516,7 @@
 <script src="assets/js/tiny-slider.js"></script>
 <script src="assets/js/wow.min.js"></script>
 <script src="assets/js/main.js"></script>
-<script src="assets/js/frontoffice-auth-forms.js"></script>
+<script src="frontoffice-auth-forms.js"></script>
 
 </body>
 </html>

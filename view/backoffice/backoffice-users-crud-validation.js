@@ -38,8 +38,8 @@
             showError('boRoleError', '');
         }
 
-        if (!/^[0-9]{8,15}$/.test(tel)) {
-            showError('boTelError', 'Telephone invalide (8 a 15 chiffres).');
+        if (!/^[0-9]{8}$/.test(tel)) {
+            showError('boTelError', 'Telephone invalide (exactement 8 chiffres).');
             ok = false;
         } else {
             showError('boTelError', '');

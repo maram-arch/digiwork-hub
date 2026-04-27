@@ -1,13 +1,23 @@
 <?php
 session_start();
 
-// Si déjà connecté comme admin, rediriger au dashboard
-if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin') {
+require_once __DIR__ . '/../../controller/UserController.php';
+
+// No front-only gate: backoffice login can be used to authenticate directly.
+
+$currentUser = null;
+if (isset($_SESSION['user_id'])) {
+    try {
+        $currentUser = (new UserController())->findUser((int) $_SESSION['user_id']);
+    } catch (Throwable $e) {
+        $currentUser = null;
+    }
+}
+
+if (!empty($currentUser) && ($currentUser['role'] ?? '') === 'admin') {
     header('Location: index.php');
     exit;
 }
-
-require_once __DIR__ . '/../../controller/UserController.php';
 
 $error = '';
 $success = '';
@@ -27,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($result['user']['role'] !== 'admin') {
                     $error = 'Acces refusé. Seuls les admins peuvent accedre au dashboard.';
                 } else {
-                    $_SESSION['user'] = $result['user'];
+                    session_regenerate_id(true);
+                    $_SESSION['user_id'] = (int) $result['user']['id'];
                     header('Location: index.php');
                     exit;
                 }

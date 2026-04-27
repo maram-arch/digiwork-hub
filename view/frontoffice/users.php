@@ -98,7 +98,7 @@ try {
 
                         <div class="mb-3">
                             <label class="form-label">Telephone</label>
-                            <input class="form-control" type="text" name="tel" id="foTel" value="<?= htmlspecialchars((string) ($editUser['tel'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" placeholder="8 a 15 chiffres">
+                            <input class="form-control" type="text" name="tel" id="foTel" value="<?= htmlspecialchars((string) ($editUser['tel'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" placeholder="8 chiffres">
                             <div class="validation-error" id="foTelError"></div>
                         </div>
 

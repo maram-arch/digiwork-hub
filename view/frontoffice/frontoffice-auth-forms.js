@@ -2,7 +2,7 @@
     'use strict';
 
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const telRe = /^[0-9]{8,15}$/;
+    const telRe = /^[0-9]{8}$/;
     const dateRe = /^\d{4}-\d{2}-\d{2}$/;
 
     function apiUrl(action) {
@@ -23,6 +23,25 @@
         el.style.display = message ? 'block' : 'none';
     }
 
+    function clearAuthForm(modalId) {
+        if (modalId === 'loginModal') {
+            var loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.reset();
+            }
+            setAlert(document.getElementById('loginAlert'), '', 'err');
+        }
+
+        if (modalId === 'signupModal') {
+            var signupForm = document.getElementById('signupForm');
+            if (signupForm) {
+                signupForm.reset();
+            }
+            window.selectRole('candidat');
+            setAlert(document.getElementById('signupAlert'), '', 'err');
+        }
+    }
+
     window.openModal = function (id) {
         const overlay = document.getElementById(id);
         if (overlay) {
@@ -35,6 +54,7 @@
         if (overlay) {
             overlay.style.display = 'none';
         }
+        clearAuthForm(id);
     };
 
     window.switchToSignup = function () {
@@ -91,7 +111,7 @@
             return 'Email invalide.';
         }
         if (!telRe.test(tel.trim())) {
-            return 'Telephone invalide (8 a 15 chiffres).';
+            return 'Telephone invalide (exactement 8 chiffres).';
         }
         if (password.length < 6) {
             return 'Mot de passe: minimum 6 caracteres.';
@@ -134,37 +154,6 @@
             }
         }
         return '';
-    }
-
-    function applyLoggedInState(user) {
-        var authButtons = document.getElementById('authButtons');
-        var signupButton = document.getElementById('signupButton');
-        if (!authButtons) {
-            return;
-        }
-        while (authButtons.firstChild) {
-            authButtons.removeChild(authButtons.firstChild);
-        }
-        var label = document.createElement('span');
-        label.className = 'page-scroll';
-        label.style.cursor = 'default';
-        label.textContent = user && user.email ? user.email + (user.role ? ' (' + user.role + ')' : '') : 'Compte';
-        authButtons.appendChild(label);
-        var space = document.createTextNode(' ');
-        authButtons.appendChild(space);
-        var logout = document.createElement('a');
-        logout.className = 'page-scroll';
-        logout.style.cursor = 'pointer';
-        logout.id = 'logoutLink';
-        logout.textContent = 'Deconnexion';
-        logout.addEventListener('click', function () {
-            sessionStorage.removeItem('digiworkUser');
-            window.location.reload();
-        });
-        authButtons.appendChild(logout);
-        if (signupButton) {
-            signupButton.style.display = 'none';
-        }
     }
 
     function ensureContactFeedback() {
@@ -222,19 +211,59 @@
         });
     }
 
+    function startHeartbeat() {
+        function ping() {
+            fetch(apiUrl('heartbeat'), {
+                method: 'GET',
+                credentials: 'same-origin',
+            }).catch(function () {});
+        }
+
+        ping();
+        window.setInterval(ping, 60000);
+    }
+
+    let disconnectSent = false;
+
+    function sendDisconnect() {
+        if (disconnectSent) {
+            return;
+        }
+
+        var authState = window.__FRONT_AUTH_STATE__ || {};
+        if (!authState.loggedIn) {
+            return;
+        }
+
+        disconnectSent = true;
+
+        var logoutUrl = apiUrl('logout');
+        if (navigator.sendBeacon) {
+            try {
+                navigator.sendBeacon(logoutUrl, new Blob([], { type: 'text/plain;charset=UTF-8' }));
+                return;
+            } catch (e) {
+                // Fall through to fetch keepalive.
+            }
+        }
+
+        fetch(logoutUrl, {
+            method: 'GET',
+            credentials: 'same-origin',
+            keepalive: true,
+        }).catch(function () {});
+    }
+
+    function registerDisconnectHandlers() {
+        window.addEventListener('pagehide', sendDisconnect);
+        window.addEventListener('beforeunload', sendDisconnect);
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         window.selectRole('candidat');
 
-        try {
-            var raw = sessionStorage.getItem('digiworkUser');
-            if (raw) {
-                var u = JSON.parse(raw);
-                if (u && u.email) {
-                    applyLoggedInState(u);
-                }
-            }
-        } catch (e) {
-            sessionStorage.removeItem('digiworkUser');
+        if ((window.__FRONT_AUTH_STATE__ || {}).loggedIn) {
+            registerDisconnectHandlers();
         }
 
         var loginForm = document.getElementById('loginForm');
@@ -259,11 +288,13 @@
                     .then(function (data) {
                         if (data.success) {
                             setAlert(alertEl, data.message || 'Connexion reussie.', 'ok');
-                            if (data.user) {
-                                sessionStorage.setItem('digiworkUser', JSON.stringify(data.user));
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                                return;
                             }
                             window.closeModal('loginModal');
-                            applyLoggedInState(data.user);
+                            startHeartbeat();
+                            registerDisconnectHandlers();
                         } else {
                             setAlert(alertEl, data.message || 'Echec de la connexion.', 'err');
                         }

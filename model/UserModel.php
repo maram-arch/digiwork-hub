@@ -13,7 +13,7 @@ class UserModel
 
 	public function getAll(): array
 	{
-		$stmt = $this->db->query('SELECT id_user, email, mdp, role, tel FROM user ORDER BY id_user DESC');
+		$stmt = $this->db->query('SELECT id_user, email, role, tel FROM user ORDER BY id_user DESC');
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 
@@ -71,8 +71,54 @@ class UserModel
 
 	public function getByRole(string $role): array
 	{
-		$stmt = $this->db->prepare('SELECT id_user, email, mdp, role, tel FROM user WHERE role = :role ORDER BY id_user DESC');
+		$stmt = $this->db->prepare('SELECT id_user, email, role, tel FROM user WHERE role = :role ORDER BY id_user DESC');
 		$stmt->execute(['role' => $role]);
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	public function getAuthRecords(): array
+	{
+		$stmt = $this->db->query('SELECT id_user, mdp FROM user ORDER BY id_user ASC');
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	public function getOnlineUsers(int $minutes = 15): array
+	{
+		// Only users explicitly marked `is_online = 1` are considered connected.
+		$stmt = $this->db->prepare(
+			"SELECT id_user, email, role, tel, last_activity
+			 FROM user
+			 WHERE is_online = 1
+			 ORDER BY last_activity DESC"
+		);
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	public function markOnline(int $id): bool
+	{
+		$stmt = $this->db->prepare('UPDATE user SET is_online = 1, last_activity = NOW() WHERE id_user = :id');
+		return $stmt->execute(['id' => $id]);
+	}
+
+	public function touchActivity(int $id): bool
+	{
+		$stmt = $this->db->prepare('UPDATE user SET last_activity = NOW(), is_online = 1 WHERE id_user = :id');
+		return $stmt->execute(['id' => $id]);
+	}
+
+	public function markOffline(int $id): bool
+	{
+		$stmt = $this->db->prepare('UPDATE user SET is_online = 0 WHERE id_user = :id');
+		return $stmt->execute(['id' => $id]);
+	}
+
+	public function updatePassword(int $id, string $password): bool
+	{
+		$stmt = $this->db->prepare('UPDATE user SET mdp = :mdp WHERE id_user = :id');
+		return $stmt->execute([
+			'id' => $id,
+			'mdp' => $password,
+		]);
 	}
 }

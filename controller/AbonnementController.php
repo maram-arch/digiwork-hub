@@ -74,16 +74,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'subscribe') {
         $userId = $_SESSION['user_id'] ?? null;
         $packId = intval($_POST['pack_id']);
+        
+        // If no user is logged in, create a static user
         if (!$userId) {
-            if (isset($_POST['ajax'])) {
-                header('Content-Type: application/json');
-                echo json_encode(['status' => 'error', 'message' => 'Vous devez être connecté pour vous abonner.']);
+            global $pdo;
+            try {
+                $pdo->beginTransaction();
+                
+                // Create static user
+                $sql = "INSERT INTO `user` (email, mdp, tel) VALUES (?, ?, ?)";
+                $stmt = $pdo->prepare($sql);
+                $staticEmail = 'static_user_' . time() . '@digiwork.com';
+                $staticPassword = password_hash('static_password', PASSWORD_DEFAULT);
+                $staticTel = '00000000';
+                $stmt->execute([$staticEmail, $staticPassword, $staticTel]);
+                $userId = $pdo->lastInsertId();
+                
+                // Set session for this user
+                $_SESSION['user_id'] = $userId;
+                $_SESSION['user_name'] = 'Static User';
+                $_SESSION['role'] = 'user';
+                
+                $pdo->commit();
+            } catch (\Exception $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                if (isset($_POST['ajax'])) {
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'error', 'message' => 'Erreur lors de la création de l\'utilisateur statique.']);
+                    exit;
+                }
+                $_SESSION['flash'] = 'Erreur lors de la création de l\'utilisateur statique.';
+                header('Location: /view/front/packs.php');
                 exit;
             }
-
-            $_SESSION['flash'] = 'Vous devez être connecté pour vous abonner.';
-            header('Location: /view/front/login.php');
-            exit;
         }
 
         $abId = $abo->subscribe($userId, $packId);

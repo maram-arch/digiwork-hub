@@ -5,12 +5,12 @@
     <title>Mon Profil - DigiWork Hub</title>
     <link rel="stylesheet" href="../style.css">
     <style>
-        .profile-container { max-width: 900px; margin: 40px auto; padding: 20px; }
-        .list-item { background: white; padding: 20px; border-radius: 8px; border: 1px solid #E5E7EB; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .list-info h3 { margin: 0 0 10px 0; color: var(--primary); }
+        .profile-container { max-width: 1100px; margin: 40px auto; padding: 20px; }
+        .list-item { background: white; padding: 20px; border-radius: 16px; border: 1px solid #dddddd; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); }
+        .list-info h3 { margin: 0 0 10px 0; color: #00A651; }
     </style>
 </head>
-<body>
+<body style="background-color: #FFFFFF !important;">
     <?php
     session_start();
     if (!isset($_SESSION['user_id'])) {
@@ -30,21 +30,21 @@
             <a href="../frontoffice/index.php">Home</a>
             <a href="packs.php">Packs</a>
             <a href="abonnement.php">Abonnement</a>
-            <a href="abonnement.php" style="color: #fff; text-decoration: underline;">Profile</a>
-            <span style="color: rgba(255,255,255,0.9); margin-left: 12px; font-weight:700;"><?= htmlspecialchars($_SESSION['user_name'] ?? 'Utilisateur') ?></span>
+            <a href="abonnement.php" style="color: #00A651; text-decoration: underline;">Profile</a>
+            <span style="color: #333333; margin-left: 12px; font-weight:700;"><?= htmlspecialchars($_SESSION['user_name'] ?? 'Utilisateur') ?></span>
             <a href="../../controller/AuthController.php?action=logout" style="margin-left:8px;">Se déconnecter</a>
         </div>
     </div>
 
     <?php if ($flash): ?>
-        <div style="max-width:900px;margin:20px auto;">
-            <div style="background:#D1FAE5;color:#065F46;padding:12px;border-radius:8px;font-weight:bold;"><?= htmlspecialchars($flash) ?></div>
+        <div style="max-width:1100px;margin:20px auto;">
+            <div style="background:#e8f6ef;color:#0f5132;padding:12px;border-radius:10px;border:1px solid #b7ebcc;font-weight:bold;"><?= htmlspecialchars($flash) ?></div>
         </div>
     <?php endif; ?>
 
     <div class="profile-container">
         <!-- Current Subscriptions Section - More Prominent -->
-        <div class="current-subscriptions" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(16,185,129,0.2);">
+        <div class="current-subscriptions" style="background: linear-gradient(135deg, #00A651 0%, #008040 100%); color: white; padding: 30px; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);">
             <h2 style="color: white; margin: 0 0 20px 0; font-size: 24px;">
                 <i class="fas fa-crown" style="margin-right: 10px;"></i>Mes Abonnements Actifs
             </h2>
@@ -54,12 +54,12 @@
         </div>
 
         <!-- Available Packs Section -->
-        <div class="available-packs" style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <h2 style="color: var(--primary); margin: 0 0 20px 0;">
+        <div class="available-packs" style="background: white; padding: 30px; border-radius: 16px; border: 1px solid #dddddd; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);">
+            <h2 style="color: #00A651; margin: 0 0 20px 0;">
                 <i class="fas fa-box-open" style="margin-right: 10px;"></i>Disponible pour S'abonner
             </h2>
             <div id="packs-list">
-                <p style="color: var(--text-muted);">Chargement des packs...</p>
+                <p style="color: #666666;">Chargement des packs...</p>
             </div>
         </div>
     </div>
@@ -117,8 +117,8 @@
                 // We'll display all abonnements but mark them with name/phone
                 let html = '';
                 data.forEach(abo => {
-                    const statusColor = abo.status === 'actif' ? '#10B981' : (abo.status === 'expiré' ? '#EF4444' : '#F59E0B');
-                    const statusBg = abo.status === 'actif' ? 'rgba(255,255,255,0.2)' : (abo.status === 'expiré' ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.2)');
+                    const statusColor = abo.status === 'actif' ? '#00A651' : (abo.status === 'expiré' ? '#dc3545' : '#ffc107');
+                    const statusBg = abo.status === 'actif' ? 'rgba(255,255,255,0.2)' : (abo.status === 'expiré' ? 'rgba(220,53,69,0.2)' : 'rgba(255,193,7,0.2)');
                     
                     html += `
                         <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 20px; border-radius: 8px; margin-bottom: 15px; backdrop-filter: blur(10px);">

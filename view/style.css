@@ -1,19 +1,31 @@
 :root {
-  /* Spec palette: Green, Blue, White */
-  --primary: #0A2540;         /* dark blue */
-  --bg-color: #F9FAFB;        /* light background */
-  --green-accent: #10B981;    /* emerald green */
-  --green-hover: #059669;
-  --accent: #10B981;          /* matching green for CTA */
-  --accent-hover: #059669;
-  --text-color: #0F172A;
-  --text-muted: #64748B;
-  --border: #E5E7EB;
-  --danger-color: #EF4444;
+  /* Colleagues' palette - Green theme */
+  --primary: #00A651;         /* main green */
+  --primary-dark: #008040;    /* darker green */
+  --bg-color: #FFFFFF;        /* white background */
+  --accent: #00A651;          /* matching green for CTA */
+  --accent-hover: #008040;
+  --text-color: #333333;
+  --text-muted: #666666;
+  --border: #dddddd;
+  --danger-color: #dc3545;
+  --success-color: #0f5132;
+  --card-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  --border-radius: 16px;
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); }
+body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #FFFFFF !important; color: var(--text-color) !important; }
+html { background-color: #FFFFFF !important; }
+
+/* Override browser dark mode */
+@media (prefers-color-scheme: dark) {
+    body { background-color: #FFFFFF !important; color: #0F172A !important; }
+    html { background-color: #FFFFFF !important; }
+    .front-navbar { background-color: #FFFFFF !important; }
+    .profile-container { background-color: #FFFFFF !important; }
+    .available-packs { background-color: #FFFFFF !important; }
+}
 
 /* FRONT OFFICE */
 .front-navbar {
@@ -21,31 +33,31 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
   justify-content: space-between;
   align-items: center;
   padding: 15px 50px;
-  background-color: var(--primary);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 .logo-container {
   display: flex;
   align-items: center;
   font-size: 24px;
   font-weight: 800;
-  color: #fff;
+  color: var(--primary);
 }
 .logo-container img { height: 52px; margin-right: 14px; }
-.nav-links { display: flex; gap: 30px; align-items: center; font-weight: 600; font-size: 14px; color: var(--text-muted); }
-.nav-links { color: rgba(255,255,255,0.85); }
+.nav-links { display: flex; gap: 30px; align-items: center; font-weight: 600; font-size: 14px; color: var(--text-color); }
 .nav-links a { text-decoration: none; color: inherit; }
-.nav-links a:hover { color: #fff; }
+.nav-links a:hover { color: var(--primary); }
 
 .hero {
-  background: linear-gradient(135deg, #143a63 0%, var(--primary) 100%);
-  color: white;
+  background: linear-gradient(130deg, #e9f7ef 0%, #f7f9fb 100%);
+  color: var(--text-color);
   text-align: left;
   padding: 80px 20px;
 }
 .hero .container { max-width: 1100px; margin: 0 auto; }
 .hero h1 { font-size: 48px; margin-bottom: 16px; font-weight: 800; line-height: 1.05; }
-.hero p { font-size: 18px; margin-bottom: 28px; color: rgba(255,255,255,0.9); max-width: 680px; }
+.hero p { font-size: 18px; margin-bottom: 28px; color: var(--text-muted); max-width: 680px; }
 .hero-buttons { display: flex; gap: 15px; justify-content: flex-start; }
 .btn-accent { background: var(--accent); color: #1F2937; }
 .btn-white { background: rgba(255,255,255,0.95); color: var(--primary); }
@@ -53,9 +65,12 @@ body { margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, san
 /* subtle hero decorative image placement for mockup-like look */
 .hero-visual { position: absolute; right: 6%; top: 20%; width: 420px; max-width: 36%; }
 
-.btn-white { background: white; color: var(--primary); padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none; border: none; cursor: pointer; }
-.btn-green { background: var(--accent); color: #1F2937; padding: 12px 24px; border-radius: 10px; font-weight: 800; text-decoration: none; border: none; cursor: pointer; }
-.btn-accent { background: var(--accent); color: #1F2937; padding: 12px 24px; border-radius: 10px; font-weight: 900; text-decoration: none; border: none; cursor: pointer; width: 100%; text-align: center; }
+.btn-white { background: white; color: var(--primary); padding: 12px 24px; border-radius: 10px; font-weight: 600; text-decoration: none; border: 1px solid var(--primary); cursor: pointer; transition: all 0.3s; }
+.btn-white:hover { background: var(--primary); color: white; }
+.btn-green { background: linear-gradient(135deg, #00A651 0%, #008040 100%); color: white; padding: 12px 24px; border-radius: 10px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: transform 0.2s; }
+.btn-green:hover { transform: translateY(-2px); }
+.btn-accent { background: linear-gradient(135deg, #00A651 0%, #008040 100%); color: white; padding: 12px 24px; border-radius: 10px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; width: 100%; text-align: center; transition: transform 0.2s; }
+.btn-accent:hover { transform: translateY(-2px); }
 
 .section-title { font-size: 20px; font-weight: 700; color: var(--primary); margin: 40px 50px 20px 50px; }
 

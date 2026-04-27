@@ -5,7 +5,7 @@
     <title>Nos Packs - DigiWork Hub</title>
     <link rel="stylesheet" href="../style.css">
 </head>
-<body>
+<body style="background-color: #FFFFFF !important;">
     <?php
     session_start();
     // show flash if any
@@ -23,7 +23,7 @@
             <a href="abonnement.php">Abonnement</a>
             <a href="abonnement.php">Profile</a>
             <?php if (isset($_SESSION['user_id'])): ?>
-                <span style="color: #FFF; margin-left: 12px; font-weight:600;">Bonjour, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Utilisateur') ?></span>
+                <span style="color: #333333; margin-left: 12px; font-weight:600;">Bonjour, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Utilisateur') ?></span>
                 <a href="../../controller/AuthController.php?action=logout" style="margin-left:8px;">Se déconnecter</a>
             <?php else: ?>
                 <a href="login.php" style="margin-left:8px;">Se connecter</a>
@@ -32,8 +32,8 @@
     </div>
 
     <div class="hero">
-        <h1>Trouvez les meilleures opportunités freelances pour vous !</h1>
-        <p>Boostez votre carrière digitale avec nos abonnements prioritaires, gestion de projets et support VIP.</p>
+        <h1 style="color: #333333;">Trouvez les meilleures opportunités freelances pour vous !</h1>
+        <p style="color: #666666;">Boostez votre carrière digitale avec nos abonnements prioritaires, gestion de projets et support VIP.</p>
         <div class="hero-buttons">
             <a href="#" class="btn-white">Explorez les Projets</a>
             <a href="#packs-container" class="btn-green">Voir les Packs</a>

@@ -15,23 +15,12 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/admin.css">
-    <style>
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .status-actif { background: #D1FAE5; color: #065F46; }
-        .status-expire { background: #FEE2E2; color: #991B1B; }
-        .status-en_attente { background: #FEF3C7; color: #92400E; }
-    </style>
 </head>
 <body>
     <div class="admin-container">
         <aside class="admin-sidebar">
             <div class="admin-sidebar-logo">
-                <img src="../../assets/img/logo.png" alt="DigiWork HUB" style="height:56px;width:auto;display:block;margin:0 auto;filter:brightness(0) invert(1);">
+                <img src="assets/img/logo.png" alt="DigiWork HUB" style="height:56px;width:auto;display:block;margin:0 auto;">
             </div>
             <nav class="admin-sidebar-menu">
                 <a href="dashboard_packs.php" class="admin-sidebar-item">

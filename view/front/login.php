@@ -7,32 +7,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root{
-            --bg:#F0FDF4;
-            --primary:#0A2540;
-            --border:#D1FAE5;
-            --muted:#64748B;
-            --accent:#10B981;
-            --danger:#EF4444;
+            --bg:#FFFFFF;
+            --primary:#00A651;
+            --primary-dark:#008040;
+            --border:#dddddd;
+            --muted:#666666;
+            --accent:#00A651;
+            --danger:#dc3545;
         }
         *{box-sizing:border-box}
         body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-        .card{width:100%;max-width:420px;background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 20px 50px rgba(2,6,23,.08);padding:26px}
+        .card{width:100%;max-width:420px;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,0.08);padding:26px}
         .logo-top{display:flex;justify-content:center;margin-bottom:24px}
-        .logo-top img{height:64px;filter:drop-shadow(0 4px 12px rgba(10,37,64,.12))}
+        .logo-top img{height:64px;filter:drop-shadow(0 4px 12px rgba(0,166,81,.12))}
         .title{margin:0 0 8px 0;font-size:22px;font-weight:900;color:var(--primary)}
         .subtitle{margin:0 0 18px 0;color:var(--muted);font-size:14px}
-        .alert{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;padding:10px 12px;border-radius:12px;margin-bottom:14px;font-weight:700;font-size:13px}
+        .alert{background:#fde8e8;color:#842029;border:1px solid #f5c2c7;padding:10px 12px;border-radius:10px;margin-bottom:14px;font-weight:700;font-size:13px}
         .field{margin-bottom:12px}
         label{display:block;margin-bottom:6px;color:var(--primary);font-weight:800;font-size:13px}
-        input{width:100%;padding:12px 12px;border:1px solid var(--border);border-radius:12px;font-size:14px}
-        input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(16,185,129,.18)}
-        button{width:100%;border:none;border-radius:12px;padding:12px 14px;font-weight:900;background:var(--accent);color:#fff;cursor:pointer;transition:filter .2s}
-        button:hover{filter:brightness(1.08)}
+        input{width:100%;padding:12px 12px;border:1px solid var(--border);border-radius:10px;font-size:14px}
+        input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(0,166,81,.18)}
+        button{width:100%;border:none;border-radius:10px;padding:12px 14px;font-weight:600;background:linear-gradient(135deg, #00A651 0%, #008040 100%);color:#fff;cursor:pointer;transition:transform .2s}
+        button:hover{transform:translateY(-2px)}
         .hint{margin-top:12px;text-align:center;font-size:13px;color:var(--muted)}
         .hint a{color:var(--primary);text-decoration:none;font-weight:800}
     </style>
 </head>
-<body>
+<body style="background-color: #FFFFFF !important;">
     <?php
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     $flash = $_SESSION['flash'] ?? null;

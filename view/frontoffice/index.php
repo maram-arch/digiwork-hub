@@ -16,8 +16,32 @@ $packs = $packModel->getAll();
     <link rel="stylesheet" href="assets/css/tiny-slider.css"/>
     <link rel="stylesheet" href="assets/css/animate.css"/>
     <link rel="stylesheet" href="assets/css/lindy-uikit.css"/>
+    <style>
+        /* Use colleagues' exact aesthetic approach */
+        body, html { background-color: #FFFFFF !important; }
+        .hero-section-wrapper-5 { background: linear-gradient(130deg, #e9f7ef 0%, #f7f9fb 100%) !important; }
+        .header { background-color: #FFFFFF !important; }
+        .navbar-area { background-color: #FFFFFF !important; }
+        .main { background-color: #FFFFFF !important; }
+        
+        /* Use colleagues' card styling */
+        .card-soft {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .08);
+            border: 0;
+        }
+        
+        /* Override browser dark mode */
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #FFFFFF !important; color: #333333 !important; }
+            html { background-color: #FFFFFF !important; }
+            .header { background-color: #FFFFFF !important; }
+            .navbar-area { background-color: #FFFFFF !important; }
+        }
+    </style>
   </head>
-  <body>
+  <body style="background-color: #FFFFFF !important;">
     <div class="preloader">
       <div class="loader">
         <div class="spinner">

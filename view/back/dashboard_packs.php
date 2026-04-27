@@ -26,7 +26,7 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-sidebar-logo">
-                <img src="../../assets/img/logo.png" alt="DigiWork HUB" style="height:56px;width:auto;display:block;margin:0 auto;filter:brightness(0) invert(1);">
+                <img src="assets/img/logo.png" alt="DigiWork HUB" style="height:56px;width:auto;display:block;margin:0 auto;">
                 <h2>DigiWork <span>HUB</span></h2>
                 <p style="font-size: 12px; opacity: 0.7; margin-top: 8px;">Administration</p>
             </div>

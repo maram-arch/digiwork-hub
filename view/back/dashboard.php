@@ -13,13 +13,13 @@ $abonnementModel = new Abonnement();
 $packModel = new Pack();
 
 // Get statistics
-$totalAbonnements = count($abonnementModel->getAll()->fetchAll());
-$activeAbonnements = count($abonnementModel->getAll()->fetchAll(PDO::FETCH_ASSOC));
+$totalAbonnements = count($abonnementModel->getAllAbonnements());
+$activeAbonnements = count($abonnementModel->getAllAbonnements());
 $totalPacks = count($packModel->getAll()->fetchAll());
 $totalRevenue = 0; // You can calculate this from abonnement data
 
 // Get recent activity
-$recentAbonnements = $abonnementModel->getAll()->fetchAll(PDO::FETCH_ASSOC);
+$recentAbonnements = $abonnementModel->getAllAbonnements();
 $packs = $packModel->getAll()->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>

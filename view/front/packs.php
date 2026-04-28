@@ -126,6 +126,50 @@
         <!-- Packs will be injected here via Fetch API -->
     </div>
 
+    <!-- Modal for manual abonnement entry -->
+    <div id="abonnementModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <h2 style="margin: 0 0 20px 0; color: #333333;">Ajouter un Abonnement</h2>
+            <form id="abonnementForm">
+                <input type="hidden" id="packId" name="pack_id">
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666666; font-weight: 600;">Nom</label>
+                    <input type="text" id="nom" name="nom" required style="width: 100%; padding: 10px; border: 1px solid #dddddd; border-radius: 8px; font-size: 14px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666666; font-weight: 600;">Téléphone</label>
+                    <input type="text" id="tel" name="tel" required style="width: 100%; padding: 10px; border: 1px solid #dddddd; border-radius: 8px; font-size: 14px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666666; font-weight: 600;">Date de début</label>
+                    <input type="date" id="dateDeb" name="date_deb" required style="width: 100%; padding: 10px; border: 1px solid #dddddd; border-radius: 8px; font-size: 14px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666666; font-weight: 600;">Date de fin</label>
+                    <input type="date" id="dateFin" name="date_fin" required style="width: 100%; padding: 10px; border: 1px solid #dddddd; border-radius: 8px; font-size: 14px;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666666; font-weight: 600;">Statut</label>
+                    <select id="status" name="status" required style="width: 100%; padding: 10px; border: 1px solid #dddddd; border-radius: 8px; font-size: 14px;">
+                        <option value="actif">Actif</option>
+                        <option value="expiré">Expiré</option>
+                        <option value="en_attente">En attente</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" onclick="closeModal()" style="padding: 10px 20px; border: 1px solid #dddddd; background: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Annuler</button>
+                    <button type="submit" style="padding: 10px 20px; border: none; background: #00A651; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Confirmer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             fetch('../../controller/PackController.php?action=getAll')
@@ -164,43 +208,54 @@
         function subscribeForm(e, packId) {
             e.preventDefault();
             
-            // Show loading state
-            const button = e.target.querySelector('button[type="submit"]');
-            const originalText = button.textContent;
-            button.textContent = 'Chargement...';
-            button.disabled = true;
+            // Show modal with pack ID
+            document.getElementById('packId').value = packId;
+            document.getElementById('abonnementModal').style.display = 'flex';
             
-            const fd = new FormData();
-            fd.append('action', 'subscribe');
-            fd.append('pack_id', packId);
-            fd.append('ajax', '1');
-
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            const nextMonthStr = nextMonth.toISOString().split('T')[0];
+            
+            document.getElementById('dateDeb').value = today;
+            document.getElementById('dateFin').value = nextMonthStr;
+            
+            return false;
+        }
+        
+        function closeModal() {
+            document.getElementById('abonnementModal').style.display = 'none';
+        }
+        
+        // Handle form submission
+        document.getElementById('abonnementForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            formData.append('action', 'subscribe');
+            formData.append('ajax', '1');
+            
             fetch('../../controller/AbonnementController.php', {
                 method: 'POST',
-                body: fd
+                body: formData
             })
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
                     showNotification('🎉 Félicitations! Votre abonnement a été créé avec succès.', 'success');
-                    // Redirect to abonnement page after a short delay
+                    closeModal();
                     setTimeout(() => {
                         window.location.href = 'abonnement.php';
                     }, 2000);
                 } else {
                     showNotification('❌ Erreur: ' + res.message, 'error');
-                    button.textContent = originalText;
-                    button.disabled = false;
                 }
             })
             .catch(err => {
                 showNotification('❌ Erreur réseau. Veuillez réessayer.', 'error');
-                button.textContent = originalText;
-                button.disabled = false;
             });
-
-            return false;
-        }
+        });
         
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');

@@ -6,6 +6,7 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
     exit;
 }
 
+require_once(__DIR__ . '/../../config/config.php');
 require_once(__DIR__ . '/../../model/Abonnement.php');
 require_once(__DIR__ . '/../../model/Pack.php');
 
@@ -13,13 +14,43 @@ $abonnementModel = new Abonnement();
 $packModel = new Pack();
 
 // Get statistics
-$totalAbonnements = count($abonnementModel->getAllAbonnements());
-$activeAbonnements = count($abonnementModel->getAllAbonnements());
+$allAbonnements = $abonnementModel->getAllAbonnements();
+$totalAbonnements = count($allAbonnements);
+
+// Count active abonnements
+$activeAbonnements = 0;
+foreach ($allAbonnements as $abo) {
+    if (isset($abo['status']) && $abo['status'] === 'actif') {
+        $activeAbonnements++;
+    }
+}
+
 $totalPacks = count($packModel->getAll()->fetchAll());
-$totalRevenue = 0; // You can calculate this from abonnement data
+
+// Get total users
+$totalUsers = 0;
+try {
+    $userCountStmt = $pdo->query("SELECT COUNT(*) as count FROM `user`");
+    $userCountResult = $userCountStmt->fetch(PDO::FETCH_ASSOC);
+    $totalUsers = $userCountResult['count'] ?? 0;
+} catch (Exception $e) {
+    $totalUsers = 0;
+}
+
+// Calculate total revenue from abonnements
+$totalRevenue = 0;
+try {
+    $revenueStmt = $pdo->query("SELECT SUM(p.prix) as total FROM `abonnement` a 
+                                JOIN `abon-pack` ap ON a.`id-abonnement` = ap.`id-abonnement` 
+                                JOIN `pack` p ON ap.`id-pack` = p.`id-pack`");
+    $revenueResult = $revenueStmt->fetch(PDO::FETCH_ASSOC);
+    $totalRevenue = $revenueResult['total'] ?? 0;
+} catch (Exception $e) {
+    $totalRevenue = 0;
+}
 
 // Get recent activity
-$recentAbonnements = $abonnementModel->getAllAbonnements();
+$recentAbonnements = $allAbonnements;
 $packs = $packModel->getAll()->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -164,6 +195,14 @@ $packs = $packModel->getAll()->fetchAll(PDO::FETCH_ASSOC);
                         <div class="stat-icon" style="background: #e8f6ef; color: #00A651;">
                             <i class="fas fa-users"></i>
                         </div>
+                        <div class="stat-value"><?= $totalUsers ?></div>
+                        <div class="stat-label">Total Utilisateurs</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #e8f6ef; color: #00A651;">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
                         <div class="stat-value"><?= $totalAbonnements ?></div>
                         <div class="stat-label">Total Abonnements</div>
                     </div>
@@ -178,18 +217,10 @@ $packs = $packModel->getAll()->fetchAll(PDO::FETCH_ASSOC);
 
                     <div class="stat-card">
                         <div class="stat-icon" style="background: #e8f6ef; color: #00A651;">
-                            <i class="fas fa-box"></i>
-                        </div>
-                        <div class="stat-value"><?= $totalPacks ?></div>
-                        <div class="stat-label">Packs Disponibles</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: #e8f6ef; color: #00A651;">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <div class="stat-value"><?= $totalRevenue ?>€</div>
-                        <div class="stat-label">Revenus Totaux</div>
+                        <div class="stat-value"><?= number_format($totalRevenue, 2) ?> DT</div>
+                        <div class="stat-label">Revenu Total</div>
                     </div>
                 </div>
 

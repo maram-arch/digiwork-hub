@@ -130,7 +130,8 @@ CREATE TABLE `evente` (
   `lieu` varchar(255) DEFAULT NULL,
   `capacite` int(11) DEFAULT NULL,
   `id_organisateur` int(11) DEFAULT NULL,
-  `date_creation` timestamp NOT NULL DEFAULT current_timestamp()
+  `date_creation` timestamp NOT NULL DEFAULT current_timestamp(),
+  `nbr_inscri` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

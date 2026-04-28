@@ -38,15 +38,15 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
         .nav-links a:hover, .nav-links a.active { color: var(--secondary-blue); }
         .nav-actions { display: flex; gap: 15px; align-items: center; }
         .nav-actions a { text-decoration: none; color: var(--text-dark); font-weight: 500; font-size: 14px; display: flex; align-items: center; gap: 5px; }
-        .page-header { max-width: 1100px; margin: 0 auto; padding: 40px 20px 20px; }
+        .page-header { max-width: 1400px; margin: 0 auto; padding: 40px 20px 20px; }
         .page-header h1 { font-size: 32px; margin-bottom: 8px; color: var(--primary-blue); }
         .page-header p { color: var(--text-light); font-size: 15px; margin-bottom: 20px; }
         .page-header .action-link { display: inline-flex; background-color: var(--primary-green); color: var(--white); padding: 12px 18px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: background 0.3s; }
         .page-header .action-link:hover { background-color: var(--primary-green-hover); }
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px 40px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px 40px; }
         .section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; color: var(--text-dark); display: flex; justify-content: space-between; align-items: center; }
         .table-wrapper { overflow-x: auto; }
-        .event-table { width: 100%; border-collapse: collapse; background-color: var(--white); box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 16px; overflow: hidden; }
+        .event-table { width: 100%; min-width: 1200px; border-collapse: collapse; background-color: var(--white); box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 16px; overflow: hidden; }
         .event-table th, .event-table td { padding: 16px 18px; text-align: left; border-bottom: 1px solid #edf2f7; font-size: 14px; color: var(--text-dark); }
         .event-table th { background-color: #f7fafc; font-weight: 700; color: var(--primary-blue); }
         .event-table tbody tr:hover { background-color: #f1f5f9; }
@@ -63,8 +63,14 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
 <body>
 
     <div class="page-header">
-        <div class="section-title">Gérer les événements</div>
-        <a href="ajouterEvent.php" class="action-link">Ajouter un événement</a>
+        <div>
+            <div class="section-title">Gérer les événements</div>
+            <p class="section-description">Liste des événements et accès rapide aux inscriptions.</p>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <a href="ajouterEvent.php" class="action-link">Ajouter un événement</a>
+            <a href="manageInscriptions.php" class="action-link" style="background-color: #2270c1;">Voir les inscriptions</a>
+        </div>
     </div>
 
     <?php if ($message): ?>
@@ -84,6 +90,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
                             <th>Heure</th>
                             <th>Lieu</th>
                             <th>Capacité</th>
+                            <th>Inscriptions</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -106,7 +113,9 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
                                 <td><?php echo $heureStr; ?></td>
                                 <td><?php echo $lieuStr; ?></td>
                                 <td><?php echo $capaciteStr; ?></td>
+                                <td><?php echo isset($event['nbr_inscri']) ? (int)$event['nbr_inscri'] : 0; ?></td>
                                 <td>
+                                    <a href="../front/inscription.php?id_event=<?php echo $idEvent; ?>" class="btn-modifier" style="background-color: #2270c1;">Voir l'événement</a>
                                     <a href="editEvent.php?id=<?php echo $idEvent; ?>" class="btn-modifier">Modifier</a>
                                     <button type="button" class="btn-supprimer" onclick="deleteEvent(<?php echo $idEvent; ?>)">Supprimer</button>
                                 </td>

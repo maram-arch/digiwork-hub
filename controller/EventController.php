@@ -36,6 +36,25 @@ class EventController {
             die('Error:' . $e->getMessage());
         }
     }
+
+    public function incrementEventRegistrationCount($id) {
+        $db = config::getConnexion();
+        try {
+            $countQuery = $db->prepare('SELECT COUNT(*) AS total FROM inscription WHERE id_event = :id');
+            $countQuery->execute(['id' => $id]);
+            $result = $countQuery->fetch();
+            $count = $result ? (int)$result['total'] : 0;
+
+            $updateQuery = $db->prepare('UPDATE evente SET nbr_inscri = :count WHERE id_event = :id');
+            $updateQuery->execute([
+                'count' => $count,
+                'id' => $id
+            ]);
+        } catch (Exception $e) {
+            die('Error:' . $e->getMessage());
+        }
+    }
+
     public function deleteEvent($id) {
         $db = config::getConnexion();
         try {
@@ -83,6 +102,17 @@ class EventController {
             return $query->fetch();
         } catch (Exception $e) {
             die('Error:' . $e->getMessage());
+        }
+    }
+
+    public function eventExists(int $id): bool {
+        $db = config::getConnexion();
+        try {
+            $query = $db->prepare('SELECT 1 FROM evente WHERE id_event = :id LIMIT 1');
+            $query->execute(['id' => $id]);
+            return (bool)$query->fetch();
+        } catch (Exception $e) {
+            return false;
         }
     }
 

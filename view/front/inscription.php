@@ -1,15 +1,47 @@
 <?php
+session_start();
 $message = '';
+require_once __DIR__ . '/../../controller/EventController.php';
+require_once __DIR__ . '/../../controller/InscriptionController.php';
+require_once __DIR__ . '/../../model/Inscription.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_inscription'])) {
-    // Les champs correspondent exactement aux colonnes de la Table `inscription`
-    $id_user = isset($_POST['id_user']) ? htmlspecialchars($_POST['id_user']) : '';
-    $id_event = isset($_POST['id_event']) ? htmlspecialchars($_POST['id_event']) : '';
+    // Les champs correspondent exactement aux colonnes de la table `inscription`
+    $id_user = isset($_POST['id_user']) ? intval($_POST['id_user']) : 0;
+    $id_event = isset($_POST['id_event']) ? intval($_POST['id_event']) : 0;
     $statut = isset($_POST['statut']) ? htmlspecialchars($_POST['statut']) : '';
 
-    $message = '<div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb; font-weight: 500; text-align:center;">Inscription enregistrée pour l\'utilisateur ID : '.$id_user.' (Statut : '.$statut.')</div>';
-}
+    try {
+        $inscriptionController = new InscriptionController();
+        $eventController = new EventController();
 
-require_once __DIR__ . '/../../controller/EventController.php';
+        if ($id_user <= 0) {
+            throw new Exception('Veuillez saisir un ID utilisateur positif pour l\'inscription.');
+        }
+        if ($id_event <= 0) {
+            throw new Exception('ID événement invalide.');
+        }
+        if (!$eventController->eventExists($id_event)) {
+            throw new Exception('L\'événement sélectionné n\'existe pas.');
+        }
+
+        if (!$inscriptionController->userExists($id_user)) {
+            if (!$inscriptionController->createPlaceholderUser($id_user)) {
+                throw new Exception('Impossible de créer un utilisateur temporaire pour l\'inscription.');
+            }
+        }
+
+        $inscription = new Inscription(null, $id_user, $id_event, null, $statut);
+        $inscriptionController->addInscription($inscription);
+
+        $eventController = new EventController();
+        $eventController->incrementEventRegistrationCount($id_event);
+
+        $message = '<div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb; font-weight: 500; text-align:center;">Inscription enregistrée pour l\'utilisateur ID : '.$id_user.' (Statut : '.$statut.')</div>';
+    } catch (Exception $e) {
+        $message = '<div style="background-color: #fdecea; color: #b02a37; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c2c7; font-weight: 500; text-align:center;">Erreur lors de l\'inscription : '.htmlspecialchars($e->getMessage()).'</div>';
+    }
+}
 
 $eventTitle = 'Aucun événement sélectionné';
 if (isset($_GET['id_event'])) {
@@ -282,14 +314,14 @@ if (isset($_GET['id_event'])) {
 
             <form id="inscriptionForm" action="" method="POST">
                 <div class="form-group">
-                    <label for="id_user">ID Utilisateur (id_user)</label>
-                    <input type="number" id="id_user" name="id_user" placeholder="Ex: 1" required>
+                    <label for="id_user">ID utilisateur</label>
+                    <input type="number" id="id_user" name="id_user" placeholder="Entrez l'ID utilisateur" value="<?php echo isset($_SESSION['id_user']) ? (int)$_SESSION['id_user'] : ''; ?>" min="1" step="1" required>
+                    <small style="display:block; margin-top:6px; color:#4a5568; font-size:13px;">Saisissez un ID utilisateur entier valide.</small>
                 </div>
 
-                <div class="form-group">
-                    <label for="id_event">ID Événement (id_event)</label>
-                    <input type="number" id="id_event" name="id_event" placeholder="Ex: 2" value="<?php echo isset($_GET['id_event']) ? htmlspecialchars($_GET['id_event']) : ''; ?>" required>
-                </div>
+                <?php if (isset($_GET['id_event'])): ?>
+                    <input type="hidden" id="id_event" name="id_event" value="<?php echo htmlspecialchars($_GET['id_event']); ?>">
+                <?php endif; ?>
 
                 <div class="event-info" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #b3d9ff;">
                     <strong>Événement sélectionné :</strong> <?php echo $eventTitle; ?>
@@ -307,6 +339,13 @@ if (isset($_GET['id_event'])) {
                 <button type="submit" name="submit_inscription" class="btn-submit">Confirmer l'inscription</button>
             </form>
 
+            <?php if (isset($_GET['id_event']) && intval($_GET['id_event']) > 0): ?>
+                <a href="cancelInscription.php?id_event=<?php echo htmlspecialchars((int)$_GET['id_event']); ?>" class="back-link" style="margin-top: 12px; display:inline-flex;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 L6 18"></path><path d="M6 6 L18 18"></path></svg>
+                    Annuler une inscription pour cet événement
+                </a>
+            <?php endif; ?>
+
             <a href="event.php" class="back-link">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                 Retour aux événements
@@ -314,41 +353,19 @@ if (isset($_GET['id_event'])) {
         </div>
     </div>
     <script>
-        document.getElementById('inscriptionForm').addEventListener('submit', function(e) {
-            let idUser = document.getElementById('id_user').value.trim();
-            let idEvent = document.getElementById('id_event').value.trim();
-            let errorContainer = document.getElementById('js-error');
-            let errors = [];
-
-            // Regex for exact 8 digits
-            let regex8 = /^\d{8}$/;
-
-            if (!regex8.test(idUser)) {
-                errors.push("❌ L'ID Utilisateur doit contenir exactement 8 chiffres.");
+        const inscriptionForm = document.getElementById('inscriptionForm');
+        const jsError = document.getElementById('js-error');
+        inscriptionForm.addEventListener('submit', function(event) {
+            const idUserField = document.getElementById('id_user');
+            const idUser = parseInt(idUserField.value, 10);
+            if (!Number.isInteger(idUser) || idUser <= 0) {
+                event.preventDefault();
+                jsError.textContent = 'Veuillez saisir un ID utilisateur entier et valide.';
+                jsError.style.display = 'block';
+                idUserField.focus();
+                return;
             }
-
-            if (!regex8.test(idEvent)) {
-                errors.push("❌ L'ID Événement doit contenir exactement 8 chiffres.");
-            }
-
-            if (errors.length > 0) {
-                e.preventDefault(); // Stop form submission
-                errorContainer.innerHTML = errors.join('<br>');
-                errorContainer.style.display = 'block';
-                // Add red borders to inputs
-                if(!regex8.test(idUser)) document.getElementById('id_user').style.borderColor = 'var(--error-color)';
-                if(!regex8.test(idEvent)) document.getElementById('id_event').style.borderColor = 'var(--error-color)';
-            } else {
-                errorContainer.style.display = 'none';
-            }
-        });
-
-        // Reset borders on input
-        document.getElementById('id_user').addEventListener('input', function() {
-            this.style.borderColor = 'var(--border-color)';
-        });
-        document.getElementById('id_event').addEventListener('input', function() {
-            this.style.borderColor = 'var(--border-color)';
+            jsError.style.display = 'none';
         });
     </script>
 </body>

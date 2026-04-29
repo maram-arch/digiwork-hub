@@ -93,11 +93,21 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
                 </div>
 
                 <div class="admin-panel">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                         <h3 class="admin-panel-title" style="margin-bottom: 0;">Tous les Abonnements</h3>
-                        <button onclick="refreshSubscriptions()" class="btn btn-sm" style="background: var(--primary); color: white;">
-                            <i class="fas fa-sync-alt"></i> Actualiser
-                        </button>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="text" id="searchInput" placeholder="Rechercher..." style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; width: 200px;">
+                            <select id="sortSelect" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="date-desc">Date (récent)</option>
+                                <option value="date-asc">Date (ancien)</option>
+                                <option value="name-asc">Nom (A-Z)</option>
+                                <option value="name-desc">Nom (Z-A)</option>
+                                <option value="status">Statut</option>
+                            </select>
+                            <button onclick="refreshSubscriptions()" class="btn btn-sm" style="background: var(--primary); color: white;">
+                                <i class="fas fa-sync-alt"></i> Actualiser
+                            </button>
+                        </div>
                     </div>
                     <div style="overflow-x: auto;">
                         <table class="admin-table" id="abo-table">
@@ -184,10 +194,13 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
             });
         }
         
+        let allSubscriptions = [];
+        
         async function loadSubscriptions() {
             try {
                 const response = await fetch('../../controller/AbonnementController.php?action=getAll');
                 const subs = await response.json();
+                allSubscriptions = subs;
                 
                 const total = subs.length;
                 const active = subs.filter(s => s.status === 'actif').length;
@@ -197,44 +210,84 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
                 document.getElementById('active-subs').innerText = active;
                 document.getElementById('expired-subs').innerText = expired;
                 
-                const tbody = document.getElementById('abo-tbody');
-                if (subs.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Aucun abonnement</td></tr>';
-                    return;
-                }
-                
-                let html = '';
-                subs.forEach(sub => {
-                    const displayStatus = sub.status;
-                    const statusClass = getStatusClass(displayStatus);
-                    const statusText = displayStatus === 'actif' ? 'Actif' : (displayStatus === 'expiré' ? 'Expiré' : 'En attente');
-                    
-                    html += `
-                        <tr id="abo-${sub['id-abonnement']}">
-                            <td>${sub['id-abonnement']}</td>
-                            <td><strong>${escapeHtml(sub.nom)}</strong></td>
-                            <td>${escapeHtml(sub.tel)}</td>
-                            <td><span style="color: var(--primary);">${escapeHtml(sub['nom-pack'])}</span></td>
-                            <td>${formatDate(sub['date-deb'])}</td>
-                            <td>${formatDate(sub['date-fin'])}</td>
-                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" onclick="editAbo(${sub['id-abonnement']}, '${escapeHtml(sub.status)}', '${escapeHtml(sub['date-fin'])}')" style="margin-right: 5px;">
-                                    <i class="fas fa-edit"></i> Modifier
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteAbo(${sub['id-abonnement']})">
-                                    <i class="fas fa-ban"></i> Révoquer
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                tbody.innerHTML = html;
+                renderSubscriptions(subs);
             } catch (error) {
                 console.error(error);
                 showToast('Erreur de chargement', 'error');
             }
         }
+        
+        function renderSubscriptions(subs) {
+            const tbody = document.getElementById('abo-tbody');
+            if (subs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Aucun abonnement</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            subs.forEach(sub => {
+                const displayStatus = sub.status;
+                const statusClass = getStatusClass(displayStatus);
+                const statusText = displayStatus === 'actif' ? 'Actif' : (displayStatus === 'expiré' ? 'Expiré' : 'En attente');
+                
+                html += `
+                    <tr id="abo-${sub['id-abonnement']}">
+                        <td>${sub['id-abonnement']}</td>
+                        <td><strong>${escapeHtml(sub.nom)}</strong></td>
+                        <td>${escapeHtml(sub.tel)}</td>
+                        <td><span style="color: var(--primary);">${escapeHtml(sub['nom-pack'])}</span></td>
+                        <td>${formatDate(sub['date-deb'])}</td>
+                        <td>${formatDate(sub['date-fin'])}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="editAbo(${sub['id-abonnement']}, '${escapeHtml(sub.status)}', '${escapeHtml(sub['date-fin'])}')" style="margin-right: 5px;">
+                                <i class="fas fa-edit"></i> Modifier
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteAbo(${sub['id-abonnement']})">
+                                <i class="fas fa-ban"></i> Révoquer
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+        
+        function filterAndSortSubscriptions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sortValue = document.getElementById('sortSelect').value;
+            
+            let filtered = allSubscriptions.filter(sub => {
+                return sub.nom?.toLowerCase().includes(searchTerm) ||
+                       sub.tel?.toString().includes(searchTerm) ||
+                       sub['nom-pack']?.toLowerCase().includes(searchTerm) ||
+                       sub.status?.toLowerCase().includes(searchTerm);
+            });
+            
+            // Sort
+            filtered.sort((a, b) => {
+                switch(sortValue) {
+                    case 'date-desc':
+                        return new Date(b['date-deb']) - new Date(a['date-deb']);
+                    case 'date-asc':
+                        return new Date(a['date-deb']) - new Date(b['date-deb']);
+                    case 'name-asc':
+                        return a.nom?.localeCompare(b.nom);
+                    case 'name-desc':
+                        return b.nom?.localeCompare(a.nom);
+                    case 'status':
+                        return a.status?.localeCompare(b.status);
+                    default:
+                        return 0;
+                }
+            });
+            
+            renderSubscriptions(filtered);
+        }
+        
+        // Add event listeners for search and sort
+        document.getElementById('searchInput').addEventListener('input', filterAndSortSubscriptions);
+        document.getElementById('sortSelect').addEventListener('change', filterAndSortSubscriptions);
         
         async function deleteAbo(id) {
             if (!confirm('⚠️ Révoquer cet abonnement ?')) return;

@@ -168,7 +168,19 @@
 
                 <!-- Packs List Panel -->
                 <div class="admin-panel">
-                    <h3 class="admin-panel-title">Liste des Packs Récents</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                        <h3 class="admin-panel-title" style="margin-bottom: 0;">Liste des Packs Récents</h3>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="text" id="searchInput" placeholder="Rechercher..." style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; width: 200px;">
+                            <select id="sortSelect" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="price-desc">Prix (élevé)</option>
+                                <option value="price-asc">Prix (bas)</option>
+                                <option value="name-asc">Nom (A-Z)</option>
+                                <option value="name-desc">Nom (Z-A)</option>
+                                <option value="projects">Projets Max</option>
+                            </select>
+                        </div>
+                    </div>
                     <div style="overflow-x: auto;">
                         <table class="admin-table" id="packs-table">
                             <thead>
@@ -183,24 +195,7 @@
                                 </tr>
                             </thead>
                             <tbody id="packs-tbody">
-                                <?php foreach ($packs as $p): ?>
-                                    <tr id="pack-<?= htmlspecialchars($p['id-pack']) ?>">
-                                        <td><?= htmlspecialchars($p['id-pack']) ?></td>
-                                        <td><strong><?= htmlspecialchars($p['nom-pack']) ?></strong></td>
-                                        <td><span style="color: var(--primary); font-weight: bold;"><?= htmlspecialchars($p['prix']) ?> dt</span></td>
-                                        <td><?= htmlspecialchars($p['duree']) ?></td>
-                                        <td><?= htmlspecialchars($p['nb-proj-max']) ?> Max</td>
-                                        <td><?= htmlspecialchars($p['support-prioritaire']) ?></td>
-                                        <td>
-                                            <button class="btn btn-sm" onclick='editPack(<?= json_encode($p) ?>)' style="background: #3B82F6; color: white; margin-right: 8px;">
-                                                <i class="fas fa-edit"></i> Modifier
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" onclick="deletePack(<?= $p['id-pack'] ?>)">
-                                                <i class="fas fa-trash"></i> Supprimer
-                                            </button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
+                                <tr><td colspan="7" style="text-align: center;">Chargement...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -326,41 +321,100 @@
             }
         }
         
+        // Escape HTML
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        let allPacks = [];
+        
         // Load packs
         async function loadPacks() {
             try {
                 const response = await fetch('../../controller/PackController.php?action=getAll');
                 const packs = await response.json();
+                allPacks = packs;
                 
-                const tbody = document.getElementById('packs-tbody');
                 document.getElementById('count-packs').innerText = packs.length;
-                
-                let html = '';
-                packs.forEach(p => {
-                    html += `
-                        <tr id="pack-${p['id-pack']}">
-                            <td>${p['id-pack']}</td>
-                            <td><strong>${escapeHtml(p['nom-pack'])}</strong></td>
-                            <td><span style="color: var(--primary); font-weight: bold;">${p.prix} dt</span></td>
-                            <td>${escapeHtml(p.duree)}</td>
-                            <td>${p['nb-proj-max']} Max</td>
-                            <td>${escapeHtml(p['support-prioritaire'])}</td>
-                            <td>
-                                <button class="btn btn-sm" onclick='editPack(${JSON.stringify(p)})' style="background: #3B82F6; color: white; margin-right: 8px;">
-                                    <i class="fas fa-edit"></i> Modifier
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="deletePack(${p['id-pack']})">
-                                    <i class="fas fa-trash"></i> Supprimer
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                tbody.innerHTML = html;
+                renderPacks(packs);
             } catch (error) {
                 console.error(error);
             }
         }
+        
+        function renderPacks(packs) {
+            const tbody = document.getElementById('packs-tbody');
+            
+            if (packs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Aucun pack</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            packs.forEach(p => {
+                html += `
+                    <tr id="pack-${p['id-pack']}">
+                        <td>${p['id-pack']}</td>
+                        <td><strong>${escapeHtml(p['nom-pack'])}</strong></td>
+                        <td><span style="color: var(--primary); font-weight: bold;">${p.prix} dt</span></td>
+                        <td>${escapeHtml(p.duree)}</td>
+                        <td>${p['nb-proj-max']} Max</td>
+                        <td>${escapeHtml(p['support-prioritaire'])}</td>
+                        <td>
+                            <button class="btn btn-sm" onclick='editPack(${JSON.stringify(p)})' style="background: #3B82F6; color: white; margin-right: 8px;">
+                                <i class="fas fa-edit"></i> Modifier
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deletePack(${p['id-pack']})">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+        
+        function filterAndSortPacks() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sortValue = document.getElementById('sortSelect').value;
+            
+            let filtered = allPacks.filter(pack => {
+                return pack['nom-pack']?.toLowerCase().includes(searchTerm) ||
+                       pack.description?.toLowerCase().includes(searchTerm) ||
+                       pack.prix?.toString().includes(searchTerm) ||
+                       pack['support-prioritaire']?.toLowerCase().includes(searchTerm);
+            });
+            
+            // Sort
+            filtered.sort((a, b) => {
+                switch(sortValue) {
+                    case 'price-desc':
+                        return parseFloat(b.prix) - parseFloat(a.prix);
+                    case 'price-asc':
+                        return parseFloat(a.prix) - parseFloat(b.prix);
+                    case 'name-asc':
+                        return a['nom-pack']?.localeCompare(b['nom-pack']);
+                    case 'name-desc':
+                        return b['nom-pack']?.localeCompare(a['nom-pack']);
+                    case 'projects':
+                        return parseInt(b['nb-proj-max']) - parseInt(a['nb-proj-max']);
+                    default:
+                        return 0;
+                }
+            });
+            
+            renderPacks(filtered);
+        }
+        
+        // Add event listeners for search and sort
+        document.getElementById('searchInput').addEventListener('input', filterAndSortPacks);
+        document.getElementById('sortSelect').addEventListener('change', filterAndSortPacks);
         
         // Reset form
         function resetForm() {
@@ -459,6 +513,7 @@
         
         document.addEventListener('DOMContentLoaded', () => {
             loadSubscriptionsCount();
+            loadPacks();
         });
     </script>
 </body>

@@ -39,6 +39,31 @@ class OffreController
         }
     }
  
+    public function searchOffre($titre = '', $competences = '', $adresse = '')
+    {
+        $sql = "SELECT * FROM offre
+                WHERE (:titre = '' OR titre LIKE :titre_like)
+                  AND (:competences = '' OR competences LIKE :competences_like)
+                  AND (:adresse = '' OR adresse LIKE :adresse_like)
+                ORDER BY id_offer DESC";
+
+        $db = Config::getConnexion();
+        try {
+            $query = $db->prepare($sql);
+            $query->execute([
+                'titre'            => $titre,
+                'titre_like'       => '%' . $titre . '%',
+                'competences'      => $competences,
+                'competences_like' => '%' . $competences . '%',
+                'adresse'          => $adresse,
+                'adresse_like'     => '%' . $adresse . '%',
+            ]);
+            return $query;
+        } catch (Exception $e) {
+            die('Error: ' . $e->getMessage());
+        }
+    }
+
     // ── GET ONE ──────────────────────────────────────────────
     public function getOffre($id)
     {

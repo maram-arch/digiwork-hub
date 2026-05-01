@@ -2,12 +2,68 @@
 // backoffice/views/listCandidatures.php
 // ★ Jointure : affiche titre et adresse de l'offre via INNER JOIN
  
-require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__. '/../../config/config.php';
 require_once __DIR__ . '/../../controller/CandidatureController.php';
  
 $controller   = new CandidatureController();
 // ★ getAllCandidatures() utilise maintenant INNER JOIN offre
 $candidatures = $controller->getAllCandidatures();
+$allCandidatures = $candidatures;
+
+$rechercheCandidat = trim($_GET['id_user'] ?? '');
+$rechercheOffre    = trim($_GET['offre'] ?? '');
+$rechercheStatut   = trim($_GET['statut'] ?? '');
+$rechercheDate     = trim($_GET['date'] ?? '');
+$triCandidature    = $_GET['tri'] ?? 'Date';
+$ordreTri          = $_GET['ordre'] ?? 'desc';
+
+$trisAutorises = [
+    'Date' => 'Date',
+    'id_user' => 'Candidat',
+    'titre_offre' => 'Offre',
+    'Statut' => 'Statut',
+];
+
+if (!array_key_exists($triCandidature, $trisAutorises)) {
+    $triCandidature = 'Date';
+}
+
+if (!in_array($ordreTri, ['asc', 'desc'], true)) {
+    $ordreTri = 'desc';
+}
+
+$statsStatut = [
+    'en_attente' => 0,
+    'accepte' => 0,
+    'refuse' => 0,
+];
+
+foreach ($allCandidatures as $candStat) {
+    $statut = $candStat['Statut'] ?? 'en_attente';
+    $statsStatut[$statut] = ($statsStatut[$statut] ?? 0) + 1;
+}
+
+$totalCandidatures = count($allCandidatures);
+
+$candidatures = array_values(array_filter($candidatures, function ($c) use ($rechercheCandidat, $rechercheOffre, $rechercheStatut, $rechercheDate) {
+    $matchCandidat = ($rechercheCandidat === '' || (string)($c['id_user'] ?? '') === $rechercheCandidat);
+    $matchOffre = ($rechercheOffre === '' || stripos($c['titre_offre'] ?? '', $rechercheOffre) !== false);
+    $matchStatut = ($rechercheStatut === '' || ($c['Statut'] ?? 'en_attente') === $rechercheStatut);
+    $matchDate = ($rechercheDate === '' || substr($c['Date'] ?? '', 0, 10) === $rechercheDate);
+    return $matchCandidat && $matchOffre && $matchStatut && $matchDate;
+}));
+
+usort($candidatures, function ($a, $b) use ($triCandidature, $ordreTri) {
+    if ($triCandidature === 'Date') {
+        $result = (strtotime($a['Date'] ?? '') ?: 0) <=> (strtotime($b['Date'] ?? '') ?: 0);
+    } elseif ($triCandidature === 'id_user') {
+        $result = (int)($a['id_user'] ?? 0) <=> (int)($b['id_user'] ?? 0);
+    } else {
+        $result = strcmp(strtolower($a[$triCandidature] ?? ''), strtolower($b[$triCandidature] ?? ''));
+    }
+
+    return $ordreTri === 'desc' ? -$result : $result;
+});
  
 $message = $messageType = "";
 if (isset($_GET['status'], $_GET['msg'])) {
@@ -30,11 +86,25 @@ if (isset($_GET['status'], $_GET['msg'])) {
         .badge-refuse     { background:#F8D7DA; color:#842029; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
         .badge-en_attente { background:#FFF3CD; color:#856404; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
         .action-btns      { display:flex; gap:6px; flex-wrap:wrap; }
+        .btn-circle-action{width:34px;height:34px;border-radius:50%;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;line-height:1}
         /* Jointure info */
         .offre-cell .titre { font-weight:700; color:#1a202c; font-size:13px; }
         .offre-cell .type  { display:inline-block; background:#e6f1fb; color:#185fa5; border-radius:20px;
                              padding:2px 10px; font-size:11px; font-weight:600; margin-top:3px; }
         .offre-cell .addr  { font-size:11px; color:#6c757d; margin-top:2px; }
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+        .stat-card{background:#fff;border-radius:10px;border:1px solid #edf0f7;padding:18px;box-shadow:0 2px 10px rgba(67,94,190,.06)}
+        .stat-label{font-size:12px;color:#6c757d;text-transform:uppercase;font-weight:700;letter-spacing:.04em}
+        .stat-value{font-size:30px;font-weight:800;color:#435ebe;margin-top:6px;line-height:1}
+        .chart-card{background:#fff;border-radius:10px;border:1px solid #edf0f7;padding:18px;margin-bottom:18px;box-shadow:0 2px 10px rgba(67,94,190,.06)}
+        .chart-wrap{height:260px;position:relative}
+        .tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+        .tool-card{background:#fff;border-radius:10px;border:1px solid #edf0f7;padding:16px;box-shadow:0 2px 10px rgba(67,94,190,.06)}
+        .tool-title{font-size:13px;font-weight:700;color:#2d3748;margin-bottom:12px}
+        .tool-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end}
+        .tool-row.tri{grid-template-columns:1fr 1fr auto}
+        .field-label{font-size:12px;font-weight:600;color:#6c757d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;display:block}
+        @media(max-width:992px){.stats-grid,.tools-grid{grid-template-columns:1fr}.tool-row,.tool-row.tri{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
@@ -131,6 +201,66 @@ if (isset($_GET['status'], $_GET['msg'])) {
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
             <?php endif; ?>
+
+            <?php include __DIR__ . '/statistique.php'; ?>
+
+            <div class="tools-grid">
+                <form class="tool-card" method="GET" action="recherchecondidature.php">
+                    <div class="tool-title">Recherche</div>
+                    <div class="tool-row">
+                        <div>
+                            <label class="field-label" for="id_user">Candidat</label>
+                            <input type="number" class="form-control" id="id_user" name="id_user" value="<?= htmlspecialchars($rechercheCandidat) ?>">
+                        </div>
+                        <div>
+                            <label class="field-label" for="offre">Offre</label>
+                            <input type="text" class="form-control" id="offre" name="offre" value="<?= htmlspecialchars($rechercheOffre) ?>">
+                        </div>
+                        <div>
+                            <label class="field-label" for="statut">Statut</label>
+                            <select class="form-control" id="statut" name="statut">
+                                <option value="" <?= $rechercheStatut === '' ? 'selected' : '' ?>>Tous</option>
+                                <option value="en_attente" <?= $rechercheStatut === 'en_attente' ? 'selected' : '' ?>>En attente</option>
+                                <option value="accepte" <?= $rechercheStatut === 'accepte' ? 'selected' : '' ?>>Accepte</option>
+                                <option value="refuse" <?= $rechercheStatut === 'refuse' ? 'selected' : '' ?>>Refuse</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="field-label" for="date">Date</label>
+                            <input type="date" class="form-control" id="date" name="date" value="<?= htmlspecialchars($rechercheDate) ?>">
+                        </div>
+                        <input type="hidden" name="tri" value="<?= htmlspecialchars($triCandidature) ?>">
+                        <input type="hidden" name="ordre" value="<?= htmlspecialchars($ordreTri) ?>">
+                        <button class="btn btn-primary" type="submit">Recherche</button>
+                    </div>
+                </form>
+
+                <form class="tool-card" method="GET" action="triecondidature.php">
+                    <div class="tool-title">Tri</div>
+                    <div class="tool-row tri">
+                        <div>
+                            <label class="field-label" for="tri">Trier par</label>
+                            <select class="form-control" id="tri" name="tri">
+                                <?php foreach ($trisAutorises as $value => $label): ?>
+                                <option value="<?= htmlspecialchars($value) ?>" <?= $triCandidature === $value ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="field-label" for="ordre">Ordre</label>
+                            <select class="form-control" id="ordre" name="ordre">
+                                <option value="asc" <?= $ordreTri === 'asc' ? 'selected' : '' ?>>Croissant</option>
+                                <option value="desc" <?= $ordreTri === 'desc' ? 'selected' : '' ?>>Decroissant</option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="id_user" value="<?= htmlspecialchars($rechercheCandidat) ?>">
+                        <input type="hidden" name="offre" value="<?= htmlspecialchars($rechercheOffre) ?>">
+                        <input type="hidden" name="statut" value="<?= htmlspecialchars($rechercheStatut) ?>">
+                        <input type="hidden" name="date" value="<?= htmlspecialchars($rechercheDate) ?>">
+                        <button class="btn btn-primary" type="submit">Tri</button>
+                    </div>
+                </form>
+            </div>
  
             <div class="card">
                 <div class="card-header">
@@ -223,8 +353,9 @@ if (isset($_GET['status'], $_GET['msg'])) {
                                                        value="<?= (int)$c['id_offer'] ?>">
                                                 <input type="hidden" name="statut" value="accepte">
                                                 <button type="submit"
-                                                        class="btn btn-success btn-sm">
-                                                    ✔ Accepter
+                                                        class="btn btn-success btn-circle-action"
+                                                        title="Accepter">
+                                                    ✔
                                                 </button>
                                             </form>
                                             <form method="POST" action="updateStatut.php">
@@ -234,8 +365,9 @@ if (isset($_GET['status'], $_GET['msg'])) {
                                                        value="<?= (int)$c['id_offer'] ?>">
                                                 <input type="hidden" name="statut" value="refuse">
                                                 <button type="submit"
-                                                        class="btn btn-danger btn-sm">
-                                                    ✘ Refuser
+                                                        class="btn btn-danger btn-circle-action"
+                                                        title="Refuser">
+                                                    ✘
                                                 </button>
                                             </form>
                                             <form method="POST" action="deleteCandidature.php"
@@ -265,6 +397,7 @@ if (isset($_GET['status'], $_GET['msg'])) {
 </div>
  
 <script src="assets/js/feather-icons/feather.min.js"></script>
+<script src="assets/vendors/chartjs/Chart.bundle.min.js"></script>
 <script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="assets/js/app.js"></script>
 <script>feather.replace();</script>

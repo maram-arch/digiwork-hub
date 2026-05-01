@@ -2,7 +2,50 @@
 require_once __DIR__ . '/../../controller/OffreController.php';
  
 $controller = new OffreController();
-$offres     = $controller->listOffre()->fetchAll(PDO::FETCH_ASSOC);
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+
+$titre       = trim($_GET['titre'] ?? '');
+$competences = trim($_GET['competences'] ?? '');
+$adresse     = trim($_GET['adresse'] ?? '');
+$hasSearch   = ($titre !== '' || $competences !== '' || $adresse !== '');
+$tri         = $_GET['tri'] ?? 'id_offer';
+$ordre       = $_GET['ordre'] ?? 'desc';
+
+$trisAutorises = [
+    'id_offer' => 'Plus recentes',
+    'type' => 'Type',
+    'date_limite' => 'Date limite',
+    'adresse' => 'Adresse',
+];
+
+if (!array_key_exists($tri, $trisAutorises)) {
+    $tri = 'id_offer';
+}
+
+if (!in_array($ordre, ['asc', 'desc'], true)) {
+    $ordre = 'desc';
+}
+
+$offres = $hasSearch
+    ? $controller->searchOffre($titre, $competences, $adresse)->fetchAll(PDO::FETCH_ASSOC)
+    : $controller->listOffre()->fetchAll(PDO::FETCH_ASSOC);
+
+usort($offres, function ($a, $b) use ($tri, $ordre) {
+    if ($tri === 'date_limite') {
+        $valueA = strtotime($a['date_limite'] ?? '') ?: 0;
+        $valueB = strtotime($b['date_limite'] ?? '') ?: 0;
+        $result = $valueA <=> $valueB;
+    } elseif ($tri === 'id_offer') {
+        $result = (int)($a['id_offer'] ?? 0) <=> (int)($b['id_offer'] ?? 0);
+    } else {
+        $valueA = strtolower(trim($a[$tri] ?? ''));
+        $valueB = strtolower(trim($b[$tri] ?? ''));
+        $result = strcmp($valueA, $valueB);
+    }
+
+    return $ordre === 'desc' ? -$result : $result;
+});
  
 session_start();
 $id_user = $_SESSION['id_user'] ?? 1;
@@ -62,6 +105,10 @@ if (isset($_GET['status'], $_GET['msg'])) {
         .offre-meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #6c757d; }
         .comp-tag { background:#e1f5ee; color:#0f6e56; border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; margin:2px; display:inline-block; }
         .offre-actions { display:flex; gap:10px; margin-top:auto; padding-top:16px; border-top:1px solid #f0f1f5; }
+        .offre-tools { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+        .btn-map, .btn-qr { background:#fff; color:#435ebe; border:1px solid #dce0f0; border-radius:8px; padding:7px 11px; font-size:12px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+        .btn-map:hover, .btn-qr:hover { background:#e8eaf5; color:#2d3a8c; text-decoration:none; }
+        .qr-small { width:74px; height:74px; border:1px solid #edf0f7; border-radius:8px; padding:4px; background:#fff; }
         .btn-postuler { background:#435ebe; color:#fff; border:none; border-radius:8px; padding:9px 20px; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:background .15s; flex:1; justify-content:center; }
         .btn-postuler:hover { background:#3348a8; }
         .btn-detail { background:#f5f6fa; color:#435ebe; border:1px solid #dce0f0; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:500; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:background .15s; }
@@ -98,6 +145,11 @@ if (isset($_GET['status'], $_GET['msg'])) {
         .offres-hero p  { font-size:15px; opacity:.85; margin:0; }
         .offres-count { font-size:13px; color:#6c757d; margin-bottom:20px; }
         .offres-count strong { color:#435ebe; }
+        .search-box { background:#fff; border:1px solid #e8eaf0; border-radius:12px; padding:22px; box-shadow:0 12px 32px rgba(67,94,190,.08); margin-bottom:30px; position:relative; z-index:2; }
+        .search-control { border:1px solid #dee2e6; border-radius:8px; padding:10px 12px; width:100%; font-size:14px; }
+        .search-control:focus { border-color:#435ebe; outline:none; box-shadow:0 0 0 3px rgba(67,94,190,.12); }
+        .btn-search { background:#435ebe; color:#fff; border:none; border-radius:8px; padding:10px 22px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:7px; width:100%; }
+        .btn-search:hover { background:#3348a8; color:#fff; }
         /* Compteur lettre */
         .char-counter { font-size:12px; color:#6c757d; margin-top:4px; }
         .char-counter.near-limit { color:#fd7e14; }
@@ -162,10 +214,67 @@ if (isset($_GET['status'], $_GET['msg'])) {
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <?php endif; ?>
+
+        <form class="search-box" method="GET" action="offres.php">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="field-label" for="titre">Titre</label>
+                    <input class="search-control" type="text" id="titre" name="titre"
+                           placeholder="Ex: Developpeur web"
+                           value="<?= htmlspecialchars($titre) ?>">
+                </div>
+                <div class="col-md-4">
+                    <label class="field-label" for="competences">Competences</label>
+                    <input class="search-control" type="text" id="competences" name="competences"
+                           placeholder="Ex: PHP, JavaScript"
+                           value="<?= htmlspecialchars($competences) ?>">
+                </div>
+                <div class="col-md-4">
+                    <label class="field-label" for="adresse">Adresse</label>
+                    <input class="search-control" type="text" id="adresse" name="adresse"
+                           placeholder="Ex: Tunis"
+                           value="<?= htmlspecialchars($adresse) ?>">
+                </div>
+                <input type="hidden" name="tri" value="<?= htmlspecialchars($tri) ?>">
+                <input type="hidden" name="ordre" value="<?= htmlspecialchars($ordre) ?>">
+                <div class="col-md-3">
+                    <button class="btn-search" type="submit" name="action" value="recherche">Recherche</button>
+                </div>
+            </div>
+        </form>
+
+        <form class="search-box" method="GET" action="offres.php">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="field-label" for="tri">Trier par</label>
+                    <select class="search-control" id="tri" name="tri">
+                        <?php foreach ($trisAutorises as $value => $label): ?>
+                            <option value="<?= htmlspecialchars($value) ?>" <?= $tri === $value ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($label) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="field-label" for="ordre">Ordre</label>
+                    <select class="search-control" id="ordre" name="ordre">
+                        <option value="asc" <?= $ordre === 'asc' ? 'selected' : '' ?>>Croissant</option>
+                        <option value="desc" <?= $ordre === 'desc' ? 'selected' : '' ?>>Decroissant</option>
+                    </select>
+                </div>
+                <input type="hidden" name="titre" value="<?= htmlspecialchars($titre) ?>">
+                <input type="hidden" name="competences" value="<?= htmlspecialchars($competences) ?>">
+                <input type="hidden" name="adresse" value="<?= htmlspecialchars($adresse) ?>">
+                <div class="col-md-3">
+                    <button class="btn-search" type="submit" name="action" value="tri">Trie</button>
+                </div>
+            </div>
+        </form>
  
         <?php if (!empty($offres)): ?>
         <p class="offres-count">
-            Affichage de <strong><?= count($offres) ?></strong> offre<?= count($offres) > 1 ? 's' : '' ?>
+            <?= $hasSearch ? 'Resultat de recherche :' : 'Affichage de' ?>
+            <strong><?= count($offres) ?></strong> offre<?= count($offres) > 1 ? 's' : '' ?>
         </p>
  
         <div class="row g-4">
@@ -203,6 +312,16 @@ if (isset($_GET['status'], $_GET['msg'])) {
                             <?= htmlspecialchars($offre['date_limite']) ?>
                         </div>
                     </div>
+                    <?php
+                    $mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($offre['adresse']);
+                    $detailUrl = $baseUrl . '/detail_offre.php?id=' . urlencode($offre['id_offer']);
+                    $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' . urlencode($detailUrl);
+                    ?>
+                    <div class="offre-tools">
+                        <a class="btn-map" href="<?= htmlspecialchars($mapsUrl) ?>" target="_blank">✔ Maps</a>
+                        <a class="btn-qr" href="<?= htmlspecialchars($qrUrl) ?>" target="_blank">✔ QR Code</a>
+                        <img class="qr-small" src="<?= htmlspecialchars($qrUrl) ?>" alt="QR Code offre">
+                    </div>
                     <div class="offre-actions">
                         <a href="detail_offre.php?id=<?= urlencode($offre['id_offer']) ?>" class="btn-detail">
                             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -227,7 +346,9 @@ if (isset($_GET['status'], $_GET['msg'])) {
         </div>
  
         <?php else: ?>
-        <div class="alert alert-warning">Aucune offre n'est disponible pour le moment.</div>
+        <div class="alert alert-warning">
+            <?= $hasSearch ? "Aucune offre ne correspond a votre recherche." : "Aucune offre n'est disponible pour le moment." ?>
+        </div>
         <?php endif; ?>
  
     </div>
@@ -403,6 +524,7 @@ function validatePostulerForm(event) {
     return false;
 }
 </script>
+<?php include __DIR__ . '/chatbot.php'; ?>
 </body>
 </html>
  

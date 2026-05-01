@@ -49,10 +49,7 @@ class CandidatureController
     // ★ MÉTHODES AVEC JOINTURE (délèguent au modèle)
     // ==============================================================
  
-    /**
-     * Toutes les candidatures + titre/adresse de l'offre
-     * Utilisé : backoffice listCandidatures.php
-     */
+    
     public function getAllCandidatures(): array
     {
         $model = new Candidature(0, 0);

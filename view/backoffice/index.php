@@ -9,6 +9,73 @@ try { $nbOffres = $db->query("SELECT COUNT(*) FROM offre")->fetchColumn(); } cat
  
 $controller = new OffreController();
 $offres     = $controller->listOffre()->fetchAll(PDO::FETCH_ASSOC);
+$allOffres  = $offres;
+
+$titreRecherche = trim($_GET['titre'] ?? '');
+$typeRecherche  = trim($_GET['type'] ?? '');
+$dateRecherche  = trim($_GET['date_limite'] ?? '');
+$triOffre       = $_GET['tri'] ?? 'id_offer';
+$ordreTri       = $_GET['ordre'] ?? 'desc';
+
+$trisAutorises = [
+    'id_offer' => 'Plus recentes',
+    'titre' => 'Titre',
+    'type' => 'Type',
+    'date_limite' => 'Date limite',
+];
+
+if (!array_key_exists($triOffre, $trisAutorises)) {
+    $triOffre = 'id_offer';
+}
+
+if (!in_array($ordreTri, ['asc', 'desc'], true)) {
+    $ordreTri = 'desc';
+}
+
+$offres = array_values(array_filter($offres, function ($offre) use ($titreRecherche, $typeRecherche, $dateRecherche) {
+    $matchTitre = ($titreRecherche === '' || stripos($offre['titre'] ?? '', $titreRecherche) !== false);
+    $matchType  = ($typeRecherche === '' || ($offre['type'] ?? '') === $typeRecherche);
+    $matchDate  = ($dateRecherche === '' || ($offre['date_limite'] ?? '') === $dateRecherche);
+    return $matchTitre && $matchType && $matchDate;
+}));
+
+usort($offres, function ($a, $b) use ($triOffre, $ordreTri) {
+    if ($triOffre === 'date_limite') {
+        $result = (strtotime($a['date_limite'] ?? '') ?: 0) <=> (strtotime($b['date_limite'] ?? '') ?: 0);
+    } elseif ($triOffre === 'id_offer') {
+        $result = (int)($a['id_offer'] ?? 0) <=> (int)($b['id_offer'] ?? 0);
+    } else {
+        $result = strcmp(strtolower($a[$triOffre] ?? ''), strtolower($b[$triOffre] ?? ''));
+    }
+
+    return $ordreTri === 'desc' ? -$result : $result;
+});
+
+// ── Chargement candidatures depuis condidateur ──
+$candByOffer = [];
+try {
+    $rows = $db->query("SELECT id_candidature, id_user, id_offer, cv, Lettre, Date, Statut FROM `condidateur` ORDER BY Date DESC")->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($rows as $c) {
+        $candByOffer[(int)$c['id_offer']][] = $c;
+    }
+} catch(Exception $e) { $candByOffer = []; }
+
+$totalOffres = count($allOffres);
+$totalCandidatures = array_sum(array_map('count', $candByOffer));
+$offresExpirees = 0;
+$offresParType = [];
+$today = date('Y-m-d');
+
+foreach ($allOffres as $offreStat) {
+    $typeStat = $offreStat['type'] ?? 'Autre';
+    $offresParType[$typeStat] = ($offresParType[$typeStat] ?? 0) + 1;
+
+    if (!empty($offreStat['date_limite']) && $offreStat['date_limite'] < $today) {
+        $offresExpirees++;
+    }
+}
+
+arsort($offresParType);
  
 $message = $messageType = "";
 if (isset($_GET['status'], $_GET['msg'])) {
@@ -52,10 +119,48 @@ if (isset($_GET['status'], $_GET['msg'])) {
         .form-control.is-invalid{border-color:#dc3545!important;background-color:#fff8f8}
         .error-message{font-size:12px;color:#dc3545;margin-top:4px;display:none;font-weight:500}
         .error-message.show{display:block}
+        .tools-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:16px;margin-bottom:18px}
+        .tool-card{background:#fff;border-radius:10px;border:1px solid #edf0f7;padding:16px;box-shadow:0 2px 10px rgba(67,94,190,.06)}
+        .tool-title{font-size:13px;font-weight:700;color:#2d3748;margin-bottom:12px}
+        .tool-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+        .tool-row.tri{grid-template-columns:1fr 1fr auto}
+        .btn-stat{height:100%;min-height:74px;display:flex;align-items:center;justify-content:center;font-weight:700}
+        .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+        .stat-card{background:#fff;border-radius:10px;border:1px solid #edf0f7;padding:18px;box-shadow:0 2px 10px rgba(67,94,190,.06)}
+        .stat-label{font-size:12px;color:#6c757d;text-transform:uppercase;font-weight:700;letter-spacing:.04em}
+        .stat-value{font-size:30px;font-weight:800;color:#435ebe;margin-top:6px;line-height:1}
+        .type-row{display:flex;align-items:center;gap:10px;margin-top:12px}
+        .type-name{width:120px;font-size:13px;font-weight:700;color:#2d3748}
+        .type-bar{height:10px;background:#eef1fb;border-radius:20px;flex:1;overflow:hidden}
+        .type-bar span{display:block;height:100%;background:#435ebe;border-radius:20px}
+        @media(max-width:992px){.tools-grid,.stats-grid{grid-template-columns:1fr}.tool-row,.tool-row.tri{grid-template-columns:1fr}}
         .crud-card{border-radius:14px;cursor:pointer;transition:transform .18s,box-shadow .18s;border:none;user-select:none}
         .crud-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.14)!important}
         .crud-icon-circle{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
         .crud-action-label{display:inline-flex;align-items:center;gap:5px;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:600;margin-top:12px}
+ 
+        /* ── Bouton Voir Candidatures ── */
+        .btn-voir-cand{background:#e8f4fd;border:1.5px solid #b3d9f5;color:#185fa5;border-radius:6px;
+                       padding:5px 11px;font-size:12px;font-weight:600;cursor:pointer;
+                       display:inline-flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap;vertical-align:middle}
+        .btn-voir-cand:hover{background:#c5e2f8;border-color:#7bbfe8;color:#0d3f73}
+ 
+        /* ── Modale Candidatures ── */
+        .cand-header{background:linear-gradient(135deg,#435ebe 0%,#2a3f9e 100%);
+                     padding:20px 24px;border-radius:14px 14px 0 0;color:#fff}
+        .cand-header h5{margin:0;font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
+        .cand-header .offre-meta{font-size:12px;opacity:.8;margin-top:4px}
+        .cand-count-badge{background:rgba(255,255,255,.25);border-radius:20px;
+                          padding:2px 10px;font-size:12px;font-weight:700;margin-left:6px}
+        .cand-table th{background:#f7f8fc;font-size:11px;font-weight:700;text-transform:uppercase;
+                       letter-spacing:.05em;color:#6c757d;border-bottom:2px solid #e9ecef;padding:10px 12px}
+        .cand-table td{font-size:13px;padding:10px 12px;vertical-align:middle;border-bottom:1px solid #f0f1f5}
+        .cand-table tr:last-child td{border-bottom:none}
+        .badge-accepte   {background:#D1E7DD;color:#0F5132;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+        .badge-refuse    {background:#F8D7DA;color:#842029;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+        .badge-en_attente{background:#FFF3CD;color:#856404;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+        .cand-empty{text-align:center;padding:40px;color:#adb5bd}
+        .btn-circle-action{width:30px;height:30px;border-radius:50%;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;line-height:1}
     </style>
 </head>
 <body>
@@ -164,24 +269,36 @@ if (isset($_GET['status'], $_GET['msg'])) {
  
             <section class="section">
  
-                <!-- CARTE AJOUTER -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card crud-card shadow-sm text-center" style="border-top:5px solid #28a745"
-                             onclick="openAddModal()">
-                            <div class="card-body">
-                                <div class="crud-icon-circle" style="background:#e8f5e9">
-                                    <i data-feather="plus-circle" style="color:#28a745;width:32px;height:32px"></i>
-                                </div>
-                                <h4 style="font-weight:800;color:#28a745;margin:0;font-size:1.3rem">Ajouter</h4>
-                                <p style="font-size:13px;font-weight:600;color:#6c757d;margin:6px 0 4px;text-transform:uppercase;letter-spacing:.05em">Nouvelle offre</p>
-                                <p style="font-size:12px;color:#adb5bd;margin:0">Créer une nouvelle offre d'emploi</p>
-                                <span class="crud-action-label" style="background:#e8f5e9;color:#28a745">
-                                    <i data-feather="plus" width="12"></i> Cliquez pour ajouter
-                                </span>
-                            </div>
-                        </div>
+                <!-- STATISTIQUES -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total offres</div>
+                        <div class="stat-value"><?= $totalOffres ?></div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Offres expirees</div>
+                        <div class="stat-value"><?= $offresExpirees ?></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Candidatures</div>
+                        <div class="stat-value"><?= $totalCandidatures ?></div>
+                    </div>
+                </div>
+
+                <div class="stat-card mb-4">
+                    <h5 class="mb-2">Offres par type</h5>
+                    <?php if (!empty($offresParType)): ?>
+                        <?php foreach ($offresParType as $type => $count): ?>
+                            <?php $percent = $totalOffres > 0 ? round(($count / $totalOffres) * 100) : 0; ?>
+                            <div class="type-row">
+                                <div class="type-name"><?= htmlspecialchars($type) ?></div>
+                                <div class="type-bar"><span style="width:<?= $percent ?>%"></span></div>
+                                <strong><?= $count ?></strong>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="text-muted mb-0">Aucune offre disponible.</p>
+                    <?php endif; ?>
                 </div>
  
                 <?php if ($message !== ""): ?>
@@ -191,6 +308,63 @@ if (isset($_GET['status'], $_GET['msg'])) {
                 </div>
                 <?php endif; ?>
  
+                <div class="tools-grid">
+                    <form class="tool-card" method="GET" action="rechercheOffre.php">
+                        <div class="tool-title">Recherche</div>
+                        <div class="tool-row">
+                            <div>
+                                <label class="field-label" for="titre">Titre</label>
+                                <input type="text" class="form-control" id="titre" name="titre" value="<?= htmlspecialchars($titreRecherche) ?>">
+                            </div>
+                            <div>
+                                <label class="field-label" for="type">Type</label>
+                                <select class="form-control" id="type" name="type">
+                                    <option value="" <?= $typeRecherche === '' ? 'selected' : '' ?>>Tous</option>
+                                    <?php foreach (['CDI','CDD','Stage','Freelance','Alternance'] as $typeOption): ?>
+                                    <option value="<?= $typeOption ?>" <?= $typeRecherche === $typeOption ? 'selected' : '' ?>><?= $typeOption ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="field-label" for="date_limite">Date limite</label>
+                                <input type="date" class="form-control" id="date_limite" name="date_limite" value="<?= htmlspecialchars($dateRecherche) ?>">
+                            </div>
+                            <input type="hidden" name="tri" value="<?= htmlspecialchars($triOffre) ?>">
+                            <input type="hidden" name="ordre" value="<?= htmlspecialchars($ordreTri) ?>">
+                            <button class="btn btn-primary" type="submit">Recherche</button>
+                        </div>
+                    </form>
+
+                    <form class="tool-card" method="GET" action="triOffre.php">
+                        <div class="tool-title">Tri</div>
+                        <div class="tool-row tri">
+                            <div>
+                                <label class="field-label" for="tri">Trier par</label>
+                                <select class="form-control" id="tri" name="tri">
+                                    <?php foreach ($trisAutorises as $value => $label): ?>
+                                    <option value="<?= htmlspecialchars($value) ?>" <?= $triOffre === $value ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="field-label" for="ordre">Ordre</label>
+                                <select class="form-control" id="ordre" name="ordre">
+                                    <option value="asc" <?= $ordreTri === 'asc' ? 'selected' : '' ?>>Croissant</option>
+                                    <option value="desc" <?= $ordreTri === 'desc' ? 'selected' : '' ?>>Decroissant</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="titre" value="<?= htmlspecialchars($titreRecherche) ?>">
+                            <input type="hidden" name="type" value="<?= htmlspecialchars($typeRecherche) ?>">
+                            <input type="hidden" name="date_limite" value="<?= htmlspecialchars($dateRecherche) ?>">
+                            <button class="btn btn-primary" type="submit">Tri</button>
+                        </div>
+                    </form>
+
+                    <button class="btn btn-success btn-stat" type="button" onclick="openAddModal()">
+                        <i data-feather="plus" width="16"></i> Ajouter
+                    </button>
+                </div>
+
                 <!-- TABLEAU DES OFFRES -->
                 <div class="card">
                     <div class="card-header">
@@ -209,6 +383,7 @@ if (isset($_GET['status'], $_GET['msg'])) {
                                         <th>Adresse</th>
                                         <th>Type</th>
                                         <th>Entreprise</th>
+                                        <th>Candidatures</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -226,6 +401,25 @@ if (isset($_GET['status'], $_GET['msg'])) {
                                         <td><?= htmlspecialchars($o['adresse']) ?></td>
                                         <td><span class="badge bg-primary"><?= htmlspecialchars($o['type']) ?></span></td>
                                         <td><?= htmlspecialchars($o['id_entreprise']) ?></td>
+                                        <td>
+                                            <?php $nbCands = count($candByOffer[(int)$o['id_offer']] ?? []); ?>
+                                            <button class="btn-voir-cand"
+                                                data-id="<?= (int)$o['id_offer'] ?>"
+                                                data-titre="<?= htmlspecialchars($o['titre'], ENT_QUOTES) ?>"
+                                                data-type="<?= htmlspecialchars($o['type'], ENT_QUOTES) ?>"
+                                                style="<?= $nbCands === 0 ? 'opacity:0.45;cursor:default' : 'background:#d4edda;border-color:#28a745;color:#155724' ?>">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                                                     fill="none" stroke="currentColor" stroke-width="2.2"
+                                                     stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                                    <circle cx="9" cy="7" r="4"/>
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                                </svg>
+                                                <?= $nbCands > 0 ? 'Voir candidatures' : 'Aucune candidature' ?>
+                                                <span style="background:<?= $nbCands > 0 ? '#28a745' : '#adb5bd' ?>;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px"><?= $nbCands ?></span>
+                                            </button>
+                                        </td>
                                         <td style="white-space:nowrap">
                                             <button class="btn btn-warning btn-sm btn-edit-offer"
                                                 data-id="<?= (int)$o['id_offer'] ?>"
@@ -263,6 +457,37 @@ if (isset($_GET['status'], $_GET['msg'])) {
             </section>
         </div>
     </main>
+</div>
+ 
+<!-- MODALE : CANDIDATURES -->
+<div class="modal-overlay" id="candModal">
+    <div class="modal-box" style="max-width:860px">
+        <div class="cand-header">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                    <h5>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2.2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Candidatures
+                        <span class="cand-count-badge" id="cand-count">0</span>
+                    </h5>
+                    <div class="offre-meta" id="cand-offre-meta"></div>
+                </div>
+                <button class="btn-close-x" style="background:rgba(255,255,255,.2);color:#fff"
+                        onclick="closeCandModal()">&#x2715;</button>
+            </div>
+        </div>
+        <div style="overflow-x:auto;max-height:460px;overflow-y:auto" id="cand-table-wrap"></div>
+        <div class="modal-foot">
+            <button class="btn-cancel-modal" onclick="closeCandModal()">Fermer</button>
+        </div>
+    </div>
 </div>
  
 <!-- MODALE : AJOUTER -->
@@ -601,9 +826,83 @@ document.querySelectorAll('input[name="id_entreprise"]').forEach(function(input)
     });
 });
  
-/* Touche Echap */
+/* ══════════════════════════════════════════════
+   MODALE CANDIDATURES
+══════════════════════════════════════════════ */
+var candData = <?= json_encode($candByOffer, JSON_UNESCAPED_UNICODE) ?>;
+ 
+function escH(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+ 
+document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.btn-voir-cand');
+    if (!btn) return;
+    var id    = btn.dataset.id;
+    var titre = btn.dataset.titre;
+    var type  = btn.dataset.type;
+    var cands = candData[id] || candData[+id] || [];
+ 
+    document.getElementById('cand-offre-meta').textContent = titre + (type ? ' · ' + type : '');
+    document.getElementById('cand-count').textContent = cands.length;
+ 
+    var wrap = document.getElementById('cand-table-wrap');
+    if (cands.length === 0) {
+        wrap.innerHTML = '<div class="cand-empty"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ced4da" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><p style="margin-top:12px;font-size:14px">Aucune candidature pour cette offre.</p></div>';
+    } else {
+        var rows = cands.map(function(c) {
+            var statut = c.Statut || 'en_attente';
+            var label  = statut.charAt(0).toUpperCase() + statut.slice(1).replace('_',' ');
+            var cv = c.cv
+                ? '<a href="../../uploads/'+escH(c.cv)+'" target="_blank" style="color:#435ebe;font-size:12px">📄 Voir CV</a>'
+                : '<span style="color:#ccc">–</span>';
+            var lettre = c.Lettre
+                ? '<span title="'+escH(c.Lettre)+'" style="font-size:12px">'+escH(c.Lettre.substring(0,45))+(c.Lettre.length>45?'…':'')+'</span>'
+                : '<span style="color:#ccc">–</span>';
+            return '<tr>'
+                + '<td><strong>#'+escH(c.id_candidature)+'</strong></td>'
+                + '<td><strong>'+escH(c.id_user)+'</strong></td>'
+                + '<td>'+cv+'</td>'
+                + '<td style="max-width:200px">'+lettre+'</td>'
+                + '<td style="font-size:12px;color:#6c757d;white-space:nowrap">'+escH(c.Date||'–')+'</td>'
+                + '<td><span class="badge-'+escH(statut)+'">'+escH(label)+'</span></td>'
+                + '<td style="white-space:nowrap">'
+                +   '<form method="POST" action="updateStatut.php" style="display:inline">'
+                +     '<input type="hidden" name="id_user" value="'+parseInt(c.id_user)+'">'
+                +     '<input type="hidden" name="id_offer" value="'+parseInt(c.id_offer)+'">'
+                +     '<input type="hidden" name="statut" value="accepte">'
+                +     '<button type="submit" class="btn btn-success btn-circle-action" title="Accepter">✔</button>'
+                +   '</form> '
+                +   '<form method="POST" action="updateStatut.php" style="display:inline">'
+                +     '<input type="hidden" name="id_user" value="'+parseInt(c.id_user)+'">'
+                +     '<input type="hidden" name="id_offer" value="'+parseInt(c.id_offer)+'">'
+                +     '<input type="hidden" name="statut" value="refuse">'
+                +     '<button type="submit" class="btn btn-danger btn-circle-action" title="Refuser">✘</button>'
+                +   '</form>'
+                + '</td>'
+                + '</tr>';
+        }).join('');
+        wrap.innerHTML = '<table class="table cand-table mb-0"><thead><tr>'
+            + '<th>#</th><th>Candidat (ID)</th><th>CV</th><th>Lettre de motivation</th>'
+            + '<th>Date</th><th>Statut</th><th>Actions</th>'
+            + '</tr></thead><tbody>'+rows+'</tbody></table>';
+    }
+ 
+    document.getElementById('candModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+});
+ 
+function closeCandModal() {
+    document.getElementById('candModal').classList.remove('show');
+    document.body.style.overflow = '';
+}
+document.getElementById('candModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCandModal();
+});
+ 
+
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') { closeAddModal(); closeEditModal(); closeDeleteModal(); }
+    if (e.key === 'Escape') { closeAddModal(); closeEditModal(); closeDeleteModal(); closeCandModal(); }
 });
 </script>
 </body>

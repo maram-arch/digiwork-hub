@@ -85,5 +85,6 @@ $offres = $controller->listOffre()->fetchAll();
   </main>
 
   <script src="assets/js/bootstrap-5.0.0-beta1.min.js"></script>
+  <?php include __DIR__ . '/chatbot.php'; ?>
 </body>
 </html>

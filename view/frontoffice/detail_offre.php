@@ -4,6 +4,8 @@ require_once __DIR__ . '/../../controller/OffreController.php';
 
 $controller = new OffreController();
 $offre = null;
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $offre = $controller->getOffre((int) $_GET['id']);
@@ -84,6 +86,16 @@ $id_user = 1; // ← même valeur que dans postuler.php
     .alert-success { background: #d1e7dd; color: #0f5132; }
     .alert-danger  { background: #f8d7da; color: #842029; }
     .char-count { font-size: 12px; color: #adb5bd; margin-top: 4px; }
+    .info-card { background:#fff; border:1px solid #e8eaf0; border-radius:12px; padding:18px; box-shadow:0 4px 18px rgba(67,94,190,.08); margin-bottom:18px; }
+    .map-frame { width:100%; height:260px; border:0; border-radius:10px; overflow:hidden; }
+    .qr-code { width:132px; height:132px; border:1px solid #edf0f7; border-radius:10px; padding:6px; background:#fff; }
+    .detail-tools { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:16px 0; }
+    .btn-map { background:#435ebe; color:#fff; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+    .btn-map:hover { background:#3348a8; color:#fff; text-decoration:none; }
+    .btn-voice { background:#10b981; color:#fff; border:0; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    .btn-voice:hover { background:#059669; }
+    .btn-voice.is-reading { background:#ef4444; }
+    .btn-voice.is-reading:hover { background:#dc2626; }
   </style>
 </head>
 <body>
@@ -118,6 +130,12 @@ $id_user = 1; // ← même valeur que dans postuler.php
       <?php endif; ?>
 
       <?php if ($offre): ?>
+        <?php
+          $mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($offre['adresse']);
+          $mapEmbedUrl = 'https://www.google.com/maps?q=' . urlencode($offre['adresse']) . '&output=embed';
+          $detailUrl = $baseUrl . '/detail_offre.php?id=' . urlencode($offre['id_offer']);
+          $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' . urlencode($detailUrl);
+        ?>
         <div class="row">
 
           <!-- ── Détail de l'offre ── -->
@@ -126,6 +144,14 @@ $id_user = 1; // ← même valeur que dans postuler.php
             <h1 class="mt-3"><?= htmlspecialchars($offre['titre']) ?></h1>
             <p class="text-muted">📅 Date limite : <?= htmlspecialchars($offre['date_limite']) ?></p>
             <p class="text-muted">📍 <?= htmlspecialchars($offre['adresse']) ?></p>
+            <div class="detail-tools">
+              <button type="button" class="btn-voice" id="readOfferBtn" onclick="toggleOfferReading()">&#128266; Lire l'offre</button>
+              <a class="btn-map" href="<?= htmlspecialchars($mapsUrl) ?>" target="_blank">✔ Maps</a>
+              <div>
+                <img class="qr-code" src="<?= htmlspecialchars($qrUrl) ?>" alt="QR Code offre">
+                <div class="char-count text-center">✔ QR Code</div>
+              </div>
+            </div>
             <div class="mb-4">
               <h5>Description</h5>
               <p><?= nl2br(htmlspecialchars($offre['description'])) ?></p>
@@ -133,6 +159,13 @@ $id_user = 1; // ← même valeur que dans postuler.php
             <div class="mb-4">
               <h5>Compétences requises</h5>
               <p><?= nl2br(htmlspecialchars($offre['competences'])) ?></p>
+            </div>
+            <div class="info-card">
+              <h5>Localisation</h5>
+              <iframe class="map-frame"
+                      src="<?= htmlspecialchars($mapEmbedUrl) ?>"
+                      loading="lazy"
+                      referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
             <a href="offres.php" class="button radius-50">← Retour à la liste</a>
           </div>
@@ -189,6 +222,59 @@ $id_user = 1; // ← même valeur que dans postuler.php
 
   <script src="assets/js/bootstrap-5.0.0-beta1.min.js"></script>
   <script>
+    const offerSpeechText = <?php
+      if ($offre) {
+          echo json_encode(
+              "Offre : " . ($offre['titre'] ?? '') . ". "
+              . "Type de contrat : " . ($offre['type'] ?? '') . ". "
+              . "Adresse : " . ($offre['adresse'] ?? '') . ". "
+              . "Date limite : " . ($offre['date_limite'] ?? '') . ". "
+              . "Description : " . strip_tags((string)($offre['description'] ?? '')) . ". "
+              . "Competences requises : " . strip_tags((string)($offre['competences'] ?? '')) . ".",
+              JSON_UNESCAPED_UNICODE
+          );
+      } else {
+          echo json_encode('');
+      }
+    ?>;
+
+    function toggleOfferReading() {
+      var btn = document.getElementById('readOfferBtn');
+      if (!btn || !offerSpeechText) return;
+
+      if (!('speechSynthesis' in window)) {
+        alert('La lecture vocale n est pas supportee par ce navigateur.');
+        return;
+      }
+
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        btn.classList.remove('is-reading');
+        btn.innerHTML = '&#128266; Lire l\\'offre';
+        return;
+      }
+
+      var utterance = new SpeechSynthesisUtterance(offerSpeechText);
+      utterance.lang = 'fr-FR';
+      utterance.rate = 0.95;
+      utterance.pitch = 1;
+      utterance.onend = utterance.onerror = function() {
+        btn.classList.remove('is-reading');
+        btn.innerHTML = '&#128266; Lire l\\'offre';
+      };
+
+      btn.classList.add('is-reading');
+      btn.innerHTML = '&#9209; Arreter';
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+
+    window.addEventListener('beforeunload', function() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    });
+
     function updateCount() {
       var len = document.getElementById('lettre_input').value.length;
       document.getElementById('lettre_count').textContent = len + ' / 2000 caractères';
@@ -222,5 +308,6 @@ $id_user = 1; // ← même valeur que dans postuler.php
       return false;
     }
   </script>
+  <?php include __DIR__ . '/chatbot.php'; ?>
 </body>
 </html>

@@ -239,6 +239,7 @@ class Candidature
                     o.titre,
                     COUNT(c.id_user) AS nb_candidatures
                  FROM offre o
+                 /**garde toute les offre */
                  LEFT JOIN condidateur c ON o.id_offer = c.id_offer
                  GROUP BY o.id_offer, o.titre
                  ORDER BY nb_candidatures DESC"

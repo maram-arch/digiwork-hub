@@ -1,10 +1,59 @@
 <?php
-require_once _DIR_ . '/../../config/config.php';
-require_once _DIR_ . '/../../controller/OffreController.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../controller/OffreController.php';
+require_once __DIR__ . '/../../controller/CandidatureController.php';
  
 // ── Liste via Controller ─────────────────────────────────────
 $controller = new OffreController();
 $offres     = $controller->listOffre()->fetchAll(PDO::FETCH_ASSOC);
+
+$titreRecherche = trim($_GET['titre'] ?? '');
+$typeRecherche  = trim($_GET['type'] ?? '');
+$dateRecherche  = trim($_GET['date_limite'] ?? '');
+$triOffre       = $_GET['tri'] ?? 'id_offer';
+$ordreTri       = $_GET['ordre'] ?? 'desc';
+
+$trisAutorises = [
+    'id_offer' => 'Plus recentes',
+    'titre' => 'Titre',
+    'type' => 'Type',
+    'date_limite' => 'Date limite',
+];
+
+if (!array_key_exists($triOffre, $trisAutorises)) {
+    $triOffre = 'id_offer';
+}
+
+if (!in_array($ordreTri, ['asc', 'desc'], true)) {
+    $ordreTri = 'desc';
+}
+
+$offres = array_values(array_filter($offres, function ($offre) use ($titreRecherche, $typeRecherche, $dateRecherche) {
+    $matchTitre = ($titreRecherche === '' || stripos($offre['titre'] ?? '', $titreRecherche) !== false);
+    $matchType  = ($typeRecherche === '' || ($offre['type'] ?? '') === $typeRecherche);
+    $matchDate  = ($dateRecherche === '' || ($offre['date_limite'] ?? '') === $dateRecherche);
+    return $matchTitre && $matchType && $matchDate;
+}));
+
+usort($offres, function ($a, $b) use ($triOffre, $ordreTri) {
+    if ($triOffre === 'date_limite') {
+        $result = (strtotime($a['date_limite'] ?? '') ?: 0) <=> (strtotime($b['date_limite'] ?? '') ?: 0);
+    } elseif ($triOffre === 'id_offer') {
+        $result = (int)($a['id_offer'] ?? 0) <=> (int)($b['id_offer'] ?? 0);
+    } else {
+        $result = strcmp(strtolower($a[$triOffre] ?? ''), strtolower($b[$triOffre] ?? ''));
+    }
+
+    return $ordreTri === 'desc' ? -$result : $result;
+});
+
+// ── Toutes les candidatures groupées par id_offer ────────────
+$candController  = new CandidatureController();
+$allCandidatures = $candController->getAllCandidatures();
+$candByOffer = [];
+foreach ($allCandidatures as $c) {
+    $candByOffer[(int)$c['id_offer']][] = $c;
+}
  
 // ── Message retour ───────────────────────────────────────────
 $message     = "";
@@ -52,6 +101,40 @@ if (isset($_GET['status'], $_GET['msg'])) {
         .form-control.is-invalid:focus{border-color:#dc3545!important;box-shadow:0 0 0 3px rgba(220,53,69,.12)!important}
         .error-message{font-size:12px;color:#dc3545;margin-top:4px;display:none;font-weight:500}
         .error-message.show{display:block}
+        .tools-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:16px;margin-bottom:18px}
+        .tool-card{background:#fff;border-radius:10px;border:1px solid #edf0f7;padding:16px;box-shadow:0 2px 10px rgba(67,94,190,.06)}
+        .tool-title{font-size:13px;font-weight:700;color:#2d3748;margin-bottom:12px}
+        .tool-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+        .tool-row.tri{grid-template-columns:1fr 1fr auto}
+        .btn-stat{height:100%;min-height:74px;display:flex;align-items:center;justify-content:center;font-weight:700}
+        @media(max-width:992px){.tools-grid{grid-template-columns:1fr}.tool-row,.tool-row.tri{grid-template-columns:1fr}}
+
+        /* ── Bouton Voir Candidatures ── */
+        .btn-view-cand{background:#e8f4fd;border:1.5px solid #b3d9f5;color:#185fa5;border-radius:6px;
+                       padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;
+                       display:inline-flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
+        .btn-view-cand:hover{background:#c5e2f8;border-color:#7bbfe8;color:#0d3f73}
+
+        /* ── Modale Candidatures ── */
+        #candModal .modal-box{max-width:820px}
+        .cand-header{background:linear-gradient(135deg,#435ebe 0%,#2a3f9e 100%);
+                     padding:20px 24px;border-radius:14px 14px 0 0;color:#fff}
+        .cand-header h5{margin:0;font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
+        .cand-header .offre-meta{font-size:12px;opacity:.8;margin-top:4px}
+        .cand-header .btn-close-x{background:rgba(255,255,255,.18);color:#fff}
+        .cand-header .btn-close-x:hover{background:rgba(255,255,255,.32);color:#fff}
+        .cand-table th{background:#f7f8fc;font-size:11px;font-weight:700;text-transform:uppercase;
+                       letter-spacing:.05em;color:#6c757d;border-bottom:2px solid #e9ecef;padding:10px 12px}
+        .cand-table td{font-size:13px;padding:10px 12px;vertical-align:middle;border-bottom:1px solid #f0f1f5}
+        .cand-table tr:last-child td{border-bottom:none}
+        .badge-accepte   {background:#D1E7DD;color:#0F5132;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+        .badge-refuse    {background:#F8D7DA;color:#842029;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+        .badge-en_attente{background:#FFF3CD;color:#856404;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+        .cand-empty{text-align:center;padding:40px;color:#adb5bd}
+        .cand-empty svg{opacity:.35;margin-bottom:10px}
+        .cand-count-badge{background:rgba(255,255,255,.25);border-radius:20px;
+                          padding:2px 10px;font-size:12px;font-weight:700;margin-left:8px}
+        #cand-loading{text-align:center;padding:40px;color:#6c757d}
     </style>
 </head>
 <body>
@@ -154,6 +237,61 @@ if (isset($_GET['status'], $_GET['msg'])) {
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                 </div>
                 <?php endif; ?>
+
+                <div class="tools-grid">
+                    <form class="tool-card" method="GET" action="rechercheOffre.php">
+                        <div class="tool-title">Recherche</div>
+                        <div class="tool-row">
+                            <div>
+                                <label class="field-label" for="titre">Titre</label>
+                                <input type="text" class="form-control" id="titre" name="titre" value="<?= htmlspecialchars($titreRecherche) ?>">
+                            </div>
+                            <div>
+                                <label class="field-label" for="type">Type</label>
+                                <select class="form-control" id="type" name="type">
+                                    <option value="" <?= $typeRecherche === '' ? 'selected' : '' ?>>Tous</option>
+                                    <?php foreach (['CDI','CDD','Stage','Freelance','Alternance'] as $typeOption): ?>
+                                    <option value="<?= $typeOption ?>" <?= $typeRecherche === $typeOption ? 'selected' : '' ?>><?= $typeOption ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="field-label" for="date_limite">Date limite</label>
+                                <input type="date" class="form-control" id="date_limite" name="date_limite" value="<?= htmlspecialchars($dateRecherche) ?>">
+                            </div>
+                            <input type="hidden" name="tri" value="<?= htmlspecialchars($triOffre) ?>">
+                            <input type="hidden" name="ordre" value="<?= htmlspecialchars($ordreTri) ?>">
+                            <button class="btn btn-primary" type="submit">Recherche</button>
+                        </div>
+                    </form>
+
+                    <form class="tool-card" method="GET" action="triOffre.php">
+                        <div class="tool-title">Tri</div>
+                        <div class="tool-row tri">
+                            <div>
+                                <label class="field-label" for="tri">Trier par</label>
+                                <select class="form-control" id="tri" name="tri">
+                                    <?php foreach ($trisAutorises as $value => $label): ?>
+                                    <option value="<?= htmlspecialchars($value) ?>" <?= $triOffre === $value ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="field-label" for="ordre">Ordre</label>
+                                <select class="form-control" id="ordre" name="ordre">
+                                    <option value="asc" <?= $ordreTri === 'asc' ? 'selected' : '' ?>>Croissant</option>
+                                    <option value="desc" <?= $ordreTri === 'desc' ? 'selected' : '' ?>>Decroissant</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="titre" value="<?= htmlspecialchars($titreRecherche) ?>">
+                            <input type="hidden" name="type" value="<?= htmlspecialchars($typeRecherche) ?>">
+                            <input type="hidden" name="date_limite" value="<?= htmlspecialchars($dateRecherche) ?>">
+                            <button class="btn btn-primary" type="submit">Tri</button>
+                        </div>
+                    </form>
+
+                    <a href="statistiqueOffre.php" class="btn btn-success btn-stat">Statistique</a>
+                </div>
  
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
@@ -187,7 +325,7 @@ if (isset($_GET['status'], $_GET['msg'])) {
                                         <td><span class="badge bg-primary"><?= htmlspecialchars($o['type']) ?></span></td>
                                         <td><?= htmlspecialchars($o['id_entreprise']) ?></td>
                                         <td style="white-space:nowrap">
-                                            <!-- BOUTON MODIFIER : utilise json_encode pour passer les données en JS -->
+                                            <!-- BOUTON MODIFIER -->
                                             <button class="btn-edit-orange"
                                                 onclick='editOffer(
                                                     <?= $o["id_offer"] ?>,
@@ -205,6 +343,23 @@ if (isset($_GET['status'], $_GET['msg'])) {
                                             <button class="btn btn-sm btn-danger ml-1"
                                                 onclick='deleteOffer(<?= $o["id_offer"] ?>, <?= json_encode($o["titre"]) ?>)'>
                                                 <i data-feather="trash-2" width="14"></i>
+                                            </button>
+                                            <!-- ★ BOUTON VOIR CANDIDATURES -->
+                                            <button class="btn-view-cand ml-1"
+                                                onclick='openCandModal(
+                                                    <?= (int)$o["id_offer"] ?>,
+                                                    <?= json_encode($o["titre"]) ?>,
+                                                    <?= json_encode($o["type"]) ?>
+                                                )'>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                     stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                                    <circle cx="9" cy="7" r="4"/>
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                                </svg>
+                                                Voir
                                             </button>
                                         </td>
                                     </tr>
@@ -234,6 +389,49 @@ if (isset($_GET['status'], $_GET['msg'])) {
     </div>
 </div>
  
+<!-- ════════════════════════════════
+     MODALE : CANDIDATURES (jointure)
+════════════════════════════════ -->
+<div class="modal-overlay" id="candModal">
+    <div class="modal-box" style="max-width:820px">
+        <div class="cand-header">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                    <h5>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Candidatures
+                        <span class="cand-count-badge" id="cand-count">0</span>
+                    </h5>
+                    <div class="offre-meta" id="cand-offre-meta">—</div>
+                </div>
+                <button class="btn-close-x" onclick="closeCandModal()">&#x2715;</button>
+            </div>
+        </div>
+        <div style="padding:0 0 4px">
+            <div id="cand-loading" style="display:none;text-align:center;padding:40px;color:#6c757d">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                     fill="none" stroke="#435ebe" stroke-width="2" stroke-linecap="round"
+                     style="animation:spin 1s linear infinite">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+                <p style="margin-top:10px;font-size:13px">Chargement…</p>
+            </div>
+            <div id="cand-table-wrap" style="overflow-x:auto;max-height:420px;overflow-y:auto"></div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn-cancel-modal" onclick="closeCandModal()">Fermer</button>
+        </div>
+    </div>
+</div>
+<style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
+
 <!-- ════════════════════════════════
      MODALE : MODIFIER
 ════════════════════════════════ -->
@@ -378,7 +576,87 @@ if (isset($_GET['status'], $_GET['msg'])) {
 <script src="assets/js/main.js"></script>
 <script>
 feather.replace();
- 
+
+/* ══════════════════════════════════════════════
+   MODALE CANDIDATURES
+══════════════════════════════════════════════ */
+// ★ Candidatures embarquées depuis PHP (pas de fichier AJAX séparé)
+var allCandidaturesData = <?= json_encode($candByOffer, JSON_UNESCAPED_UNICODE) ?>;
+
+function openCandModal(idOffer, titre, type) {
+    document.getElementById('cand-offre-meta').textContent =
+        'Offre · ' + titre + (type ? ' · ' + type : '');
+    document.getElementById('cand-count').textContent = '…';
+    document.getElementById('cand-table-wrap').innerHTML = '';
+    document.getElementById('cand-loading').style.display = 'none';
+    document.getElementById('candModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    var data = allCandidaturesData[idOffer] || [];
+    renderCandTable(data);
+}
+
+function renderCandTable(candidatures) {
+    document.getElementById('cand-count').textContent = candidatures.length;
+    if (candidatures.length === 0) {
+        document.getElementById('cand-table-wrap').innerHTML =
+            '<div style="text-align:center;padding:40px;color:#adb5bd">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"' +
+            ' fill="none" stroke="#ced4da" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5' +
+            'a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>' +
+            '<p style="margin-top:10px;font-size:14px">Aucune candidature pour cette offre.</p></div>';
+        return;
+    }
+    var rows = candidatures.map(function(c) {
+        var statut = c.Statut || 'en_attente';
+        var label  = statut.charAt(0).toUpperCase() + statut.slice(1).replace('_',' ');
+        var cv = c.cv
+            ? '<a href="../../uploads/' + escHtml(c.cv) + '" target="_blank" style="color:#435ebe;font-size:12px">📄 Voir CV</a>'
+            : '<span style="color:#ccc">–</span>';
+        var lettre = c.Lettre
+            ? '<span title="' + escHtml(c.Lettre) + '" style="font-size:12px">' +
+              escHtml(c.Lettre.substring(0,40)) + (c.Lettre.length>40?'…':'') + '</span>'
+            : '<span style="color:#ccc">–</span>';
+        return '<tr>' +
+            '<td><strong style="color:#2d3748">' + escHtml(String(c.id_user)) + '</strong></td>' +
+            '<td>' + cv + '</td>' +
+            '<td style="max-width:170px">' + lettre + '</td>' +
+            '<td style="font-size:12px;color:#6c757d">' + escHtml(c.Date||'–') + '</td>' +
+            '<td><span class="badge-' + escHtml(statut) + '">' + escHtml(label) + '</span></td>' +
+            '<td style="white-space:nowrap">' +
+              '<form method="POST" action="updateStatut.php" style="display:inline">' +
+                '<input type="hidden" name="id_user" value="' + parseInt(c.id_user) + '">' +
+                '<input type="hidden" name="id_offer" value="' + parseInt(c.id_offer) + '">' +
+                '<input type="hidden" name="statut" value="accepte">' +
+                '<button type="submit" class="btn btn-success btn-sm" style="font-size:11px;padding:3px 8px">✔</button>' +
+              '</form> ' +
+              '<form method="POST" action="updateStatut.php" style="display:inline">' +
+                '<input type="hidden" name="id_user" value="' + parseInt(c.id_user) + '">' +
+                '<input type="hidden" name="id_offer" value="' + parseInt(c.id_offer) + '">' +
+                '<input type="hidden" name="statut" value="refuse">' +
+                '<button type="submit" class="btn btn-danger btn-sm" style="font-size:11px;padding:3px 8px">✘</button>' +
+              '</form>' +
+            '</td></tr>';
+    }).join('');
+    document.getElementById('cand-table-wrap').innerHTML =
+        '<table class="table cand-table mb-0"><thead><tr>' +
+        '<th>Candidat (ID)</th><th>CV</th><th>Lettre</th><th>Date</th><th>Statut</th><th>Actions</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function closeCandModal() {
+    document.getElementById('candModal').classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+document.getElementById('candModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCandModal();
+});
+
 /* ══════════════════════════════════════════════
    VALIDATION HELPERS
 ══════════════════════════════════════════════ */
@@ -561,4 +839,3 @@ document.addEventListener('keydown', function(e) {
 </script>
 </body>
 </html>
- 

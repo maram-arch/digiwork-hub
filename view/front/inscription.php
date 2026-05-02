@@ -5,16 +5,32 @@ require_once __DIR__ . '/../../controller/EventController.php';
 require_once __DIR__ . '/../../controller/InscriptionController.php';
 require_once __DIR__ . '/../../model/Inscription.php';
 
+$inscriptionController = new InscriptionController();
+$eventCapacity = null;
+$currentEventInvites = 0;
+$remainingSeats = null;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_inscription'])) {
     // Les champs correspondent exactement aux colonnes de la table `inscription`
+    $nom = isset($_POST['nom']) ? htmlspecialchars(trim($_POST['nom'])) : '';
+    $post = isset($_POST['post']) ? htmlspecialchars($_POST['post']) : '';
+    $nber_invi = isset($_POST['nber_invi']) ? intval($_POST['nber_invi']) : 0;
     $id_user = isset($_POST['id_user']) ? intval($_POST['id_user']) : 0;
     $id_event = isset($_POST['id_event']) ? intval($_POST['id_event']) : 0;
-    $statut = isset($_POST['statut']) ? htmlspecialchars($_POST['statut']) : '';
 
     try {
         $inscriptionController = new InscriptionController();
         $eventController = new EventController();
 
+        if ($nom === '') {
+            throw new Exception('Veuillez saisir un nom pour l\'inscription.');
+        }
+        if ($post === '') {
+            throw new Exception('Veuillez sélectionner un poste pour l\'inscription.');
+        }
+        if ($nber_invi < 0) {
+            throw new Exception('Le nombre d\'invités doit être un entier positif.');
+        }
         if ($id_user <= 0) {
             throw new Exception('Veuillez saisir un ID utilisateur positif pour l\'inscription.');
         }
@@ -31,13 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_inscription'])
             }
         }
 
-        $inscription = new Inscription(null, $id_user, $id_event, null, $statut);
+        $inscription = new Inscription(null, $nom, $post, $nber_invi, $id_user, $id_event, null, null);
         $inscriptionController->addInscription($inscription);
 
         $eventController = new EventController();
         $eventController->incrementEventRegistrationCount($id_event);
 
-        $message = '<div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb; font-weight: 500; text-align:center;">Inscription enregistrée pour l\'utilisateur ID : '.$id_user.' (Statut : '.$statut.')</div>';
+        $message = '<div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb; font-weight: 500; text-align:center;">Inscription enregistrée pour l\'utilisateur ID : '.$id_user.'.</div>';
     } catch (Exception $e) {
         $message = '<div style="background-color: #fdecea; color: #b02a37; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c2c7; font-weight: 500; text-align:center;">Erreur lors de l\'inscription : '.htmlspecialchars($e->getMessage()).'</div>';
     }
@@ -46,9 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_inscription'])
 $eventTitle = 'Aucun événement sélectionné';
 if (isset($_GET['id_event'])) {
     $eventController = new EventController();
-    $event = $eventController->showEvent($_GET['id_event']);
+    $event = $eventController->showEvent((int)$_GET['id_event']);
     if ($event) {
         $eventTitle = htmlspecialchars($event['titre']);
+        $eventCapacity = isset($event['capacite']) ? (int)$event['capacite'] : null;
+        $currentEventInvites = $inscriptionController->getTotalInvitesForEvent((int)$_GET['id_event']);
+        if ($eventCapacity !== null) {
+            $remainingSeats = max(0, $eventCapacity - $currentEventInvites);
+        }
     }
 }
 ?>
@@ -319,24 +340,39 @@ if (isset($_GET['id_event'])) {
                     <small style="display:block; margin-top:6px; color:#4a5568; font-size:13px;">Saisissez un ID utilisateur entier valide.</small>
                 </div>
 
+                <div class="form-group">
+                    <label for="nom">Nom</label>
+                    <input type="text" id="nom" name="nom" placeholder="Entrez le nom" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="post">Poste</label>
+                    <select name="post" id="post" required>
+                        <option value="">Sélectionnez un poste</option>
+                        <option value="admin">admin</option>
+                        <option value="condidat">condidat</option>
+                        <option value="sponsor">sponsor</option>
+                        <option value="invite">invite</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="nber_invi">Nombre d'invités</label>
+                    <input type="number" id="nber_invi" name="nber_invi" placeholder="Entrez le nombre d'invités" value="0" min="0" step="1" required>
+                </div>
+
                 <?php if (isset($_GET['id_event'])): ?>
                     <input type="hidden" id="id_event" name="id_event" value="<?php echo htmlspecialchars($_GET['id_event']); ?>">
                 <?php endif; ?>
 
                 <div class="event-info" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #b3d9ff;">
-                    <strong>Événement sélectionné :</strong> <?php echo $eventTitle; ?>
+                    <strong>Événement sélectionné :</strong> <?php echo $eventTitle; ?><br>
+                    <?php if ($eventCapacity !== null): ?>
+                        <small style="display:block; margin-top:8px; color:#2d3748;">Capacité : <?php echo $eventCapacity; ?> | Inscriptions actuelles : <?php echo $currentEventInvites; ?> | Places restantes : <?php echo $remainingSeats; ?></small>
+                    <?php endif; ?>
                 </div>
 
-                <div class="form-group">
-                    <label for="statut">Statut (statut)</label>
-                    <select name="statut" id="statut" required>
-                        <option value="En attente">En attente</option>
-                        <option value="Confirmé">Confirmé</option>
-                        <option value="Annulé">Annulé</option>
-                    </select>
-                </div>
-
-                <button type="submit" name="submit_inscription" class="btn-submit">Confirmer l'inscription</button>
+                <button type="submit" name="submit_inscription" class="btn-submit" <?php echo ($remainingSeats !== null && $remainingSeats <= 0) ? 'disabled' : ''; ?>>Confirmer l'inscription</button>
             </form>
 
             <?php if (isset($_GET['id_event']) && intval($_GET['id_event']) > 0): ?>
@@ -355,14 +391,52 @@ if (isset($_GET['id_event'])) {
     <script>
         const inscriptionForm = document.getElementById('inscriptionForm');
         const jsError = document.getElementById('js-error');
+        const remainingSeats = <?php echo json_encode($remainingSeats, JSON_HEX_TAG); ?>;
+
         inscriptionForm.addEventListener('submit', function(event) {
             const idUserField = document.getElementById('id_user');
+            const nomField = document.getElementById('nom');
+            const postField = document.getElementById('post');
+            const nberInviField = document.getElementById('nber_invi');
+
             const idUser = parseInt(idUserField.value, 10);
+            const nom = nomField.value.trim();
+            const post = postField.value;
+            const nberInvi = parseInt(nberInviField.value, 10);
+
             if (!Number.isInteger(idUser) || idUser <= 0) {
                 event.preventDefault();
                 jsError.textContent = 'Veuillez saisir un ID utilisateur entier et valide.';
                 jsError.style.display = 'block';
                 idUserField.focus();
+                return;
+            }
+            if (nom === '') {
+                event.preventDefault();
+                jsError.textContent = 'Veuillez saisir un nom pour l\'inscription.';
+                jsError.style.display = 'block';
+                nomField.focus();
+                return;
+            }
+            if (!post) {
+                event.preventDefault();
+                jsError.textContent = 'Veuillez sélectionner un poste.';
+                jsError.style.display = 'block';
+                postField.focus();
+                return;
+            }
+            if (!Number.isInteger(nberInvi) || nberInvi < 0) {
+                event.preventDefault();
+                jsError.textContent = 'Veuillez saisir un nombre d\'invités valide.';
+                jsError.style.display = 'block';
+                nberInviField.focus();
+                return;
+            }
+            if (remainingSeats !== null && remainingSeats !== undefined && nberInvi > remainingSeats) {
+                event.preventDefault();
+                jsError.textContent = 'Il ne reste que ' + remainingSeats + ' place(s) disponibles pour cet événement.';
+                jsError.style.display = 'block';
+                nberInviField.focus();
                 return;
             }
             jsError.style.display = 'none';

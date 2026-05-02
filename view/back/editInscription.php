@@ -22,14 +22,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_inscription'])
     $id = isset($_POST['id_inscription']) ? (int)$_POST['id_inscription'] : 0;
     $id_user = isset($_POST['id_user']) ? (int)$_POST['id_user'] : 0;
     $id_event = isset($_POST['id_event']) ? (int)$_POST['id_event'] : 0;
-    $statut = isset($_POST['statut']) ? htmlspecialchars($_POST['statut']) : '';
 
     if ($id <= 0 || $id_user <= 0 || $id_event <= 0) {
         $message = '<div style="background-color: #fef2f2; color: #b02a37; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c2c7; font-weight: 500; text-align:center;">Veuillez fournir des identifiants valides pour l\'utilisateur, l\'événement et l\'inscription.</div>';
     } elseif (!$eventController->eventExists($id_event)) {
         $message = '<div style="background-color: #fef2f2; color: #b02a37; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c2c7; font-weight: 500; text-align:center;">L\'événement sélectionné n\'existe pas.</div>';
     } else {
-        $updatedInscription = new Inscription($id, $id_user, $id_event, null, $statut);
+        $existingNom = $inscription['nom'] ?? null;
+        $existingPost = $inscription['post'] ?? null;
+        $existingNberInvi = isset($inscription['nber_invi']) ? (int)$inscription['nber_invi'] : null;
+        $existingStatut = $inscription['statut'] ?? null;
+
+        $updatedInscription = new Inscription($id, $existingNom, $existingPost, $existingNberInvi, $id_user, $id_event, null, $existingStatut);
         $inscriptionController->updateInscription($updatedInscription, $id);
         $message = '<div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb; font-weight: 500; text-align:center;">Inscription modifiée avec succès.</div>';
         $inscription = $inscriptionController->showInscription($id);
@@ -91,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_inscription'])
         <div class="form-container">
             <div class="form-header">
                 <h2>Modifier l'inscription</h2>
-                <p>Changez l'utilisateur, l'événement ou le statut.</p>
+                <p>Changez l'utilisateur ou l'événement associé.</p>
             </div>
 
             <?php echo $message; ?>
@@ -117,15 +121,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_inscription'])
                                     </option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="statut">Statut</label>
-                        <select id="statut" name="statut" required>
-                            <option value="En attente" <?php echo ($inscription['statut'] === 'En attente') ? 'selected' : ''; ?>>En attente</option>
-                            <option value="Confirmé" <?php echo ($inscription['statut'] === 'Confirmé') ? 'selected' : ''; ?>>Confirmé</option>
-                            <option value="Annulé" <?php echo ($inscription['statut'] === 'Annulé') ? 'selected' : ''; ?>>Annulé</option>
                         </select>
                     </div>
 

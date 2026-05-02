@@ -1,8 +1,19 @@
 <?php
 require_once __DIR__ . '/../../controller/InscriptionController.php';
+require_once __DIR__ . '/../../controller/EventController.php';
 
+$eventId = isset($_GET['event_id']) ? intval($_GET['event_id']) : null;
 $inscriptionController = new InscriptionController();
-$listInscriptions = $inscriptionController->listInscriptions();
+$listInscriptions = $inscriptionController->listInscriptions($eventId);
+$eventTitle = null;
+if ($eventId !== null && $eventId > 0) {
+    $eventController = new EventController();
+    $event = $eventController->showEvent($eventId);
+    if ($event) {
+        $eventTitle = $event['titre'];
+    }
+}
+
 $message = '';
 if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
     $message = '<div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb; font-weight: 500; text-align:center;">✅ L\'inscription a été annulée avec succès.</div>';
@@ -64,8 +75,19 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
 
     <div class="page-header">
         <div class="section-title">Gérer les inscriptions</div>
-        <div class="section-description">Toutes les inscriptions enregistrées dans la base de données s'affichent ici.</div>
-        <a href="manageEvents.php" class="action-link">Retour aux événements</a>
+        <div class="section-description">
+            <?php if ($eventTitle): ?>
+                Inscriptions pour l'événement "<?php echo htmlspecialchars($eventTitle); ?>".
+            <?php else: ?>
+                Toutes les inscriptions enregistrées dans la base de données s'affichent ici.
+            <?php endif; ?>
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+            <?php if ($eventTitle): ?>
+                <a href="manageInscriptions.php" class="action-link">Voir toutes les inscriptions</a>
+            <?php endif; ?>
+            <a href="manageEvents.php" class="action-link">Retour aux événements</a>
+        </div>
     </div>
 
     <?php if ($message): ?>
@@ -79,10 +101,12 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
                     <thead>
                         <tr>
                             <th>ID inscription</th>
+                            <th>Nom</th>
+                            <th>Poste</th>
+                            <th>Invités</th>
                             <th>Utilisateur</th>
                             <th>Événement</th>
                             <th>Date</th>
-                            <th>Statut</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -90,10 +114,12 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
                         <?php foreach ($listInscriptions as $inscription): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($inscription['id_inscription']); ?></td>
+                                <td><?php echo htmlspecialchars($inscription['nom'] ?? '-'); ?></td>
+                                <td><?php echo htmlspecialchars($inscription['post'] ?? '-'); ?></td>
+                                <td><?php echo isset($inscription['nber_invi']) ? (int)$inscription['nber_invi'] : 0; ?></td>
                                 <td><?php echo htmlspecialchars($inscription['user_email'] ?? $inscription['id_user']); ?></td>
                                 <td><?php echo htmlspecialchars($inscription['event_title'] ?? $inscription['id_event']); ?></td>
-                                <td><?php echo htmlspecialchars($inscription['date_inscription']); ?></td>
-                                <td><?php echo htmlspecialchars($inscription['statut']); ?></td>
+                                <td><?php echo htmlspecialchars($inscription['date_inscription'] ?? '-'); ?></td>
                                 <td>
                                     <a href="editInscription.php?id=<?php echo htmlspecialchars($inscription['id_inscription']); ?>" class="btn-modifier" style="margin-right: 10px;">Modifier</a>
                                     <button type="button" class="btn-supprimer" onclick="deleteInscription(<?php echo htmlspecialchars($inscription['id_inscription']); ?>)">Annuler</button>

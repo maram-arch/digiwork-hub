@@ -273,6 +273,85 @@ $images = [
             gap: 5px;
         }
 
+        .toggle-details-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .toggle-details-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .event-details-panel {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.35s ease, opacity 0.35s ease;
+        }
+
+        .event-details-panel.open {
+            opacity: 1;
+        }
+
+        .details-grid {
+            display: grid;
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .detail-card {
+            background: #f8fafc;
+            border: 1px solid #dbeafe;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: inset 0 0 0 1px rgba(14, 90, 214, 0.06);
+        }
+
+        .detail-card h4 {
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #1f3c72;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-row span:last-child {
+            font-weight: 700;
+            color: #1f3c72;
+        }
+
+        .detail-map {
+            width: 100%;
+            min-height: 200px;
+            border: none;
+            border-radius: 16px;
+            margin-top: 12px;
+        }
+
         .btn-inscrire {
             background-color: var(--primary-blue);
             color: var(--white);
@@ -360,7 +439,7 @@ $images = [
 <body>
 
     <nav class="navbar">
-        <a href="../home.php" class="logo">
+        <a href="index.php" class="logo">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
@@ -413,55 +492,82 @@ $images = [
                     if ($heureStr) {
                         $dateStr .= ' à ' . $heureStr;
                     }
-                    $titreStr = isset($event['titre']) ? htmlspecialchars($event['titre']) : 'Sans titre';
-                    $descStr = isset($event['description']) ? htmlspecialchars($event['description']) : '...';
-                    $lieuStr = isset($event['lieu']) ? htmlspecialchars($event['lieu']) : 'En ligne';
-                    $idEvent = isset($event['id_event']) ? htmlspecialchars($event['id_event']) : '';
+                    $titreRaw = isset($event['titre']) ? $event['titre'] : 'Sans titre';
+                    $titreStr = htmlspecialchars($titreRaw);
+                    $descRaw = isset($event['description']) ? $event['description'] : '...';
+                    $descStr = htmlspecialchars($descRaw);
+                    $lieuRaw = isset($event['lieu']) ? $event['lieu'] : 'En ligne';
+                    $lieuStr = htmlspecialchars($lieuRaw);
+                    $capaciteStr = isset($event['capacite']) ? (int)$event['capacite'] : 0;
                     $status = 'À venir';
                     $countdown = 'Date non précisée';
-                    if (isset($event['date_event'])) {
-                        $eventTime = strtotime($event['date_event'] . ' ' . ($event['heure_event'] ?? '00:00'));
-                        $current = time();
-                        $diff = $eventTime - $current;
-                        if ($diff > 0) {
-                            $status = 'À venir';
-                            $days = floor($diff / 86400);
-                            $hours = floor(($diff % 86400) / 3600);
-                            $minutes = floor(($diff % 3600) / 60);
-                            $countdown = 'Dans ' . ($days > 0 ? $days . 'j ' : '') . sprintf('%02d:%02d', $hours, $minutes);
-                        } else {
-                            $status = 'Passé';
-                            $diff = abs($diff);
-                            $days = floor($diff / 86400);
-                            $hours = floor(($diff % 86400) / 3600);
-                            $minutes = floor(($diff % 3600) / 60);
-                            $countdown = 'Il y a ' . ($days > 0 ? $days . 'j ' : '') . sprintf('%02d:%02d', $hours, $minutes);
+                    $idEvent = isset($event['id_event']) ? htmlspecialchars($event['id_event']) : '';
+                    $attrTitle = htmlspecialchars($titreRaw, ENT_QUOTES);
+                    $attrDesc = htmlspecialchars($descRaw, ENT_QUOTES);
+                    $attrLieu = htmlspecialchars($lieuRaw, ENT_QUOTES);
+                    $countRegistered = isset($event['nbr_inscri']) ? (int)$event['nbr_inscri'] : 0;
+                    $remainingSeats = $capaciteStr ? max(0, $capaciteStr - $countRegistered) : 'N/A';
+                    $fillPercent = $capaciteStr ? round(($countRegistered / $capaciteStr) * 100) : 0;
+                    $showMap = !empty($lieuRaw) && strtolower(trim($lieuRaw)) !== 'en ligne';
+                    $mapQuery = $showMap ? urlencode($lieuRaw) : '';
+                    $calendarUrl = '#';
+                    if (!empty($event['date_event']) && !empty($event['heure_event'])) {
+                        try {
+                            $start = new DateTime($event['date_event'] . ' ' . $event['heure_event']);
+                            $end = clone $start;
+                            $end->modify('+2 hours');
+                            $calendarUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' . urlencode($titreRaw) . '&details=' . urlencode(strip_tags($descRaw)) . '&location=' . urlencode($lieuRaw) . '&dates=' . $start->format('Ymd\THis') . '/' . $end->format('Ymd\THis');
+                        } catch (Exception $e) {
+                            $calendarUrl = '#';
                         }
                     }
-                    echo '
-                    <div class="event-card" data-title="'.$titreStr.'" data-lieu="'.$lieuStr.'" data-description="'.$descStr.'">
-                        <div class="event-img" style="background-image: url(\''.$img.'\');">
-                            <div class="event-status-badge '.($status === 'Passé' ? 'past' : 'coming').'">'.$status.'</div>
+                    ?>
+                    <div class="event-card" data-title="<?php echo $attrTitle; ?>" data-lieu="<?php echo $attrLieu; ?>" data-description="<?php echo $attrDesc; ?>">
+                        <div class="event-img" style="background-image: url('<?php echo $img; ?>');">
+                            <div class="event-status-badge <?php echo ($status === 'Passé' ? 'past' : 'coming'); ?>"><?php echo $status; ?></div>
                         </div>
                         <div class="event-content">
-                            <h3 class="event-title">'.$titreStr.'</h3>
-                            <p class="event-desc">'.$descStr.'</p>
+                            <h3 class="event-title"><?php echo $titreStr; ?></h3>
+                            <p class="event-desc"><?php echo $descStr; ?></p>
                             <div class="event-meta">
                                 <span class="event-date-text">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7V3M16 7V3M3 11H21M5 21H19A2 2 0 0 0 21 19V7A2 2 0 0 0 19 5H5A2 2 0 0 0 3 7V19A2 2 0 0 0 5 21Z"></path></svg>
-                                    '.$dateStr.'
+                                    <?php echo $dateStr; ?>
                                 </span>
                             </div>
                             <div class="event-footer">
-                                <span class="event-countdown">'.$countdown.'</span>
+                                <span class="event-countdown"><?php echo $countdown; ?></span>
                                 <span class="event-location" style="color: var(--primary-blue);">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                    '.$lieuStr.'
+                                    <?php echo $lieuStr; ?>
                                 </span>
-                                <a href="inscription.php?id_event='.$idEvent.'" class="btn-inscrire">S\'inscrire</a>
+                                <a href="inscription.php?id_event=<?php echo $idEvent; ?>" class="btn-inscrire">S'inscrire</a>
+                            </div>
+                            <button type="button" class="toggle-details-btn" onclick="toggleEventDetails(<?php echo $idEvent; ?>)">Voir détails</button>
+                            <div class="event-details-panel" id="details-panel-<?php echo $idEvent; ?>">
+                                <div class="details-grid">
+                                    <div class="detail-card">
+                                        <h4>Statut et capacité</h4>
+                                        <div class="detail-row"><span>Total invités</span><span><?php echo $countRegistered; ?></span></div>
+                                        <div class="detail-row"><span>Capacité</span><span><?php echo $capaciteStr; ?></span></div>
+                                        <div class="detail-row"><span>Places restantes</span><span><?php echo $remainingSeats; ?></span></div>
+                                        <div class="detail-row"><span>Taux de remplissage</span><span><?php echo $fillPercent; ?>%</span></div>
+                                        <div class="detail-row"><span>Ajouter au calendrier</span><span><a class="btn-inscrire" href="<?php echo $calendarUrl; ?>" target="_blank" style="padding: 10px 14px; font-size: 13px;">Ajouter</a></span></div>
+                                    </div>
+                                    <div class="detail-card">
+                                        <h4>Localisation</h4>
+                                        <div class="detail-row"><span>Adresse</span><span><?php echo $lieuStr; ?></span></div>
+                                        <?php if ($showMap): ?>
+                                            <iframe class="detail-map" src="https://www.google.com/maps?q=<?php echo $mapQuery; ?>&output=embed"></iframe>
+                                        <?php else: ?>
+                                            <p style="margin:0; color:#475569;">Événement en ligne ou lieu non précisé.</p>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>';
+                    </div>
+                    <?php
                     $i++;
                 }
             } else {
@@ -508,6 +614,26 @@ $images = [
             } else if (noResultsMsg) {
                 noResultsMsg.remove();
             }
+        });
+
+        function toggleEventDetails(eventId) {
+            const panel = document.getElementById('details-panel-' + eventId);
+            if (!panel) return;
+            const isOpen = panel.classList.contains('open');
+            document.querySelectorAll('.event-details-panel.open').forEach(openPanel => {
+                openPanel.classList.remove('open');
+                openPanel.style.maxHeight = '0';
+            });
+            if (!isOpen) {
+                panel.classList.add('open');
+                panel.style.maxHeight = panel.scrollHeight + 'px';
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            document.querySelectorAll('.event-details-panel.open').forEach(panel => {
+                panel.style.maxHeight = panel.scrollHeight + 'px';
+            });
         });
 
         // View all button functionality

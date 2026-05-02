@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../controller/EventController.php';
 
 $eventController = new EventController();
 $listEvents = $eventController->listEvents();
+$stats = $eventController->getEventStatistics();
 $message = '';
 
 if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
@@ -43,10 +44,46 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
         .page-header p { color: var(--text-light); font-size: 15px; margin-bottom: 20px; }
         .page-header .action-link { display: inline-flex; background-color: var(--primary-green); color: var(--white); padding: 12px 18px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: background 0.3s; }
         .page-header .action-link:hover { background-color: var(--primary-green-hover); }
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px 40px; }
+        .container { max-width: 1800px; margin: 0 auto; padding: 0 20px 40px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 34px; }
+        .stat-card { position: relative; background: linear-gradient(180deg, #ffffff 0%, #f1f6ff 100%); border: 1px solid rgba(34,112,193,0.15); border-left-width: 6px; border-radius: 18px; padding: 26px 24px; box-shadow: 0 14px 40px rgba(17, 46, 92, 0.08); transition: transform 0.25s ease, box-shadow 0.25s ease; opacity: 0; transform: translateY(18px); animation: fadeInUp 0.65s ease forwards; }
+        .stat-card:nth-child(1) { animation-delay: 0.08s; }
+        .stat-card:nth-child(2) { animation-delay: 0.16s; }
+        .stat-card:nth-child(3) { animation-delay: 0.24s; }
+        .stat-card:nth-child(4) { animation-delay: 0.32s; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 20px 50px rgba(17, 46, 92, 0.14); }
+        .stat-card--events { border-left-color: #2270c1; }
+        .stat-card--registrations { border-left-color: #1b4379; }
+        .stat-card--upcoming { border-left-color: #69b83b; }
+        .stat-card--popular { border-left-color: #f6ad55; }
+        .stat-card h3 { margin-bottom: 12px; font-size: 13px; color: #5a6e8f; text-transform: uppercase; letter-spacing: 0.18em; }
+        .stat-card strong { display: block; font-size: 40px; margin-bottom: 8px; color: #17325a; }
+        .stat-card small { display: block; color: #7f8fa3; font-size: 13px; }
+        .chart-grid { display: flex; justify-content: center; gap: 18px; margin-bottom: 32px; }
+        .graph-card { display: flex; flex-direction: column; justify-content: flex-start; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 24px; box-shadow: 0 18px 35px rgba(15, 42, 83, 0.06); transition: transform 0.25s ease, box-shadow 0.25s ease; position: relative; min-height: 520px; width: 100%; max-width: 1180px; }
+        .graph-card:hover { transform: translateY(-3px); box-shadow: 0 24px 45px rgba(15, 42, 83, 0.1); }
+        .graph-title { font-size: 16px; font-weight: 700; color: #1f3c72; margin-bottom: 12px; }
+        .graph-subtitle { font-size: 14px; color: #6b7c99; margin-bottom: 18px; }
+        .chart-canvas { display: block; width: 100%; height: 460px; max-height: 520px; }
+        .chart-legend { display: grid; gap: 12px; margin-top: 18px; }
+        .chart-legend-item { display: flex; align-items: center; gap: 10px; }
+        .chart-legend-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+        .chart-legend-label { font-size: 13px; color: #283d66; overflow-wrap: break-word; max-width: 220px; }
+        .chart-legend-value { font-size: 13px; color: #6b7c99; }
+        .chart-legend-dot--blue { background: #0d6efd; }
+        .chart-legend-dot--pink { background: #d63384; }
+        .chart-legend-dot--yellow { background: #f59f00; }
+        .chart-legend-dot--green { background: #84c225; }
+        .kpi-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+        .kpi-list li { display: flex; gap: 12px; align-items: baseline; font-size: 14px; color: #4a5568; }
+        .kpi-list li::before { content: '•'; color: #0d6efd; font-weight: 700; display: inline-block; width: 1em; }
+        .graph-tooltip { opacity: 1; visibility: visible; position: static; margin-bottom: 12px; background: rgba(17, 46, 92, 0.08); color: #112e5c; padding: 10px 14px; border-radius: 16px; font-size: 13px; pointer-events: auto; transform: none; transition: none; }
+        .graph-card:hover .graph-tooltip { opacity: 1; visibility: visible; transform: none; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        .stat-card .stat-value { display: block; margin-top: 6px; font-weight: 600; color: #505f78; }
         .section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; color: var(--text-dark); display: flex; justify-content: space-between; align-items: center; }
         .table-wrapper { overflow-x: auto; }
-        .event-table { width: 100%; min-width: 1200px; border-collapse: collapse; background-color: var(--white); box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 16px; overflow: hidden; }
+        .event-table { width: 100%; min-width: 1600px; border-collapse: collapse; background-color: var(--white); box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 16px; overflow: hidden; }
         .event-table th, .event-table td { padding: 16px 18px; text-align: left; border-bottom: 1px solid #edf2f7; font-size: 14px; color: var(--text-dark); }
         .event-table th { background-color: #f7fafc; font-weight: 700; color: var(--primary-blue); }
         .event-table tbody tr:hover { background-color: #f1f5f9; }
@@ -78,6 +115,79 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
     <?php endif; ?>
 
     <div class="container">
+        <?php
+            $totalEvents = max(1, (int)$stats['total_events']);
+            $upcomingEvents = (int)$stats['upcoming_events'];
+            $totalRegistrations = (int)$stats['total_registrations'];
+            $popularRegistrations = !empty($stats['popular_event']) ? (int)$stats['popular_event']['registrations'] : 0;
+            $upcomingPercent = min(100, round(($upcomingEvents / $totalEvents) * 100));
+            $popularPercent = $totalRegistrations ? min(100, round(($popularRegistrations / $totalRegistrations) * 100)) : 0;
+            $averageRegistrations = $totalEvents ? round($totalRegistrations / $totalEvents, 1) : 0;
+        ?>
+
+        <div class="stats-grid">
+            <div class="stat-card stat-card--events">
+                <h3>Total des événements</h3>
+                <strong><?php echo isset($stats['total_events']) ? (int)$stats['total_events'] : 0; ?></strong>
+                <small>Événements actuellement enregistrés</small>
+            </div>
+            <div class="stat-card stat-card--registrations">
+                <h3>Total des inscriptions</h3>
+                <strong><?php echo isset($stats['total_registrations']) ? (int)$stats['total_registrations'] : 0; ?></strong>
+                <small>Inscriptions collectées sur tous les événements</small>
+            </div>
+            <div class="stat-card stat-card--upcoming">
+                <h3>Événements à venir</h3>
+                <strong><?php echo isset($stats['upcoming_events']) ? (int)$stats['upcoming_events'] : 0; ?></strong>
+                <small>Événements programmés après aujourd'hui</small>
+            </div>
+            <div class="stat-card stat-card--popular">
+                <h3>Événement le plus populaire</h3>
+                <?php if (!empty($stats['popular_event']) && !empty($stats['popular_event']['titre'])): ?>
+                    <strong><?php echo htmlspecialchars($stats['popular_event']['titre']); ?></strong>
+                    <small><?php echo (int)$stats['popular_event']['registrations']; ?> inscriptions</small>
+                <?php else: ?>
+                    <strong>Aucun événement</strong>
+                    <small>Aucun événement disponible</small>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php
+            $eventsForChart = $listEvents;
+            usort($eventsForChart, function ($a, $b) {
+                return (int)$b['nbr_inscri'] <=> (int)$a['nbr_inscri'];
+            });
+            $eventsForChart = array_slice($eventsForChart, 0, 6);
+            $chartLabels = array_map(function ($event) {
+                return htmlspecialchars(substr($event['titre'] ?? 'Sans titre', 0, 20));
+            }, $eventsForChart);
+            $chartData = array_map(function ($event) {
+                return (int)$event['nbr_inscri'];
+            }, $eventsForChart);
+            $chartColors = ['#0d6efd', '#d63384', '#f59f00', '#84c225', '#6f42c1', '#20c997'];
+        ?>
+
+        <div class="chart-grid">
+            <div class="graph-card">
+                <div class="graph-tooltip">Top 6 événements par inscriptions</div>
+                <div class="graph-title">Top événements par nombre d'inscriptions</div>
+                <div class="graph-subtitle">Classement des 6 événements les plus populaires</div>
+                <canvas id="eventRegistrationsChart" class="chart-canvas"></canvas>
+                <div class="chart-legend">
+                    <?php foreach ($chartLabels as $index => $label): ?>
+                        <div class="chart-legend-item">
+                            <span class="chart-legend-dot chart-legend-dot--<?php echo $index + 1; ?>" style="background: <?php echo $chartColors[$index]; ?>;"></span>
+                            <div>
+                                <div class="chart-legend-label"><?php echo $label; ?></div>
+                                <div class="chart-legend-value"><?php echo $chartData[$index]; ?> inscriptions</div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+
         <div class="table-wrapper">
             <?php if (count($listEvents) > 0): ?>
                 <table class="event-table">
@@ -98,13 +208,17 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
                         <?php foreach ($listEvents as $event):
                             $dateStr = isset($event['date_event']) ? htmlspecialchars($event['date_event']) : 'À définir';
                             $heureStr = isset($event['heure_event']) ? htmlspecialchars($event['heure_event']) : '---';
-                            $titreStr = isset($event['titre']) ? htmlspecialchars($event['titre']) : 'Sans titre';
-                            $descStr = isset($event['description']) ? htmlspecialchars($event['description']) : '...';
+                            $titreRaw = isset($event['titre']) ? $event['titre'] : 'Sans titre';
+                            $titreStr = htmlspecialchars($titreRaw);
+                            $descRaw = isset($event['description']) ? $event['description'] : '';
+                            $descStr = $descRaw !== '' ? htmlspecialchars($descRaw) : '...';
                             $descShort = strlen($descStr) > 70 ? substr($descStr, 0, 67) . '...' : $descStr;
-                            $lieuStr = isset($event['lieu']) ? htmlspecialchars($event['lieu']) : 'En ligne';
+                            $lieuRaw = isset($event['lieu']) ? $event['lieu'] : 'En ligne';
+                            $lieuStr = htmlspecialchars($lieuRaw);
                             $capaciteStr = isset($event['capacite']) ? (int)$event['capacite'] : 0;
                             $idEvent = isset($event['id_event']) ? htmlspecialchars($event['id_event']) : '';
                         ?>
+
                             <tr>
                                 <td><?php echo $idEvent; ?></td>
                                 <td><?php echo $titreStr; ?></td>
@@ -115,7 +229,8 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
                                 <td><?php echo $capaciteStr; ?></td>
                                 <td><?php echo isset($event['nbr_inscri']) ? (int)$event['nbr_inscri'] : 0; ?></td>
                                 <td>
-                                    <a href="../front/inscription.php?id_event=<?php echo $idEvent; ?>" class="btn-modifier" style="background-color: #2270c1;">Voir l'événement</a>
+                                    <a href="manageInscriptions.php?event_id=<?php echo $idEvent; ?>" class="btn-modifier" style="background-color: #2270c1;">Voir inscriptions</a>
+                                    <a href="../front/inscription.php?id_event=<?php echo $idEvent; ?>" class="btn-modifier" style="background-color: #4a90e2;">Voir l'événement</a>
                                     <a href="editEvent.php?id=<?php echo $idEvent; ?>" class="btn-modifier">Modifier</a>
                                     <button type="button" class="btn-supprimer" onclick="deleteEvent(<?php echo $idEvent; ?>)">Supprimer</button>
                                 </td>
@@ -129,11 +244,72 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         function deleteEvent(eventId) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
                 window.location.href = 'handleDeleteEvent.php?id=' + eventId;
             }
+        }
+
+        const eventLabels = <?php echo json_encode($chartLabels, JSON_HEX_TAG); ?>;
+        const eventData = <?php echo json_encode($chartData, JSON_HEX_TAG); ?>;
+        const eventColors = <?php echo json_encode($chartColors, JSON_HEX_TAG); ?>;
+
+        if (eventLabels.length > 0) {
+            const ctx = document.getElementById('eventRegistrationsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: eventLabels,
+                    datasets: [{
+                        label: 'Inscriptions',
+                        data: eventData,
+                        backgroundColor: eventColors,
+                        borderColor: eventColors,
+                        borderWidth: 1,
+                        borderRadius: 12,
+                        maxBarThickness: 46
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#4a5568' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#edf2f7' },
+                            ticks: {
+                                color: '#4a5568',
+                                precision: 0,
+                                stepSize: 1,
+                                callback: function(value) {
+                                    return Number.isInteger(value) ? value : '';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 46, 92, 0.92)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: 'rgba(255,255,255,0.12)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' inscriptions';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
     </script>
 </body>

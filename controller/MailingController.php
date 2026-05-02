@@ -64,6 +64,30 @@ class MailingController {
         return mail($to, $subject, $htmlMessage, $headers);
     }
     
+    // Save email history to database
+    public function saveEmailHistory($subject, $message, $recipientCount, $successCount, $failedCount) {
+        try {
+            $sql = "INSERT INTO `email_history` (subject, message, recipient_count, success_count, failed_count, sent_by) 
+                    VALUES (?, ?, ?, ?, ?, 'admin')";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$subject, $message, $recipientCount, $successCount, $failedCount]);
+        } catch (Exception $e) {
+            error_log("Failed to save email history: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    // Get email history from database
+    public function getEmailHistory() {
+        try {
+            $sql = "SELECT * FROM `email_history` ORDER BY sent_at DESC LIMIT 50";
+            $stmt = $this->pdo->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+    
     // Send bulk email to multiple users
     public function sendBulkEmail($recipients, $subject, $message) {
         $successCount = 0;
@@ -176,7 +200,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             $result = $controller->sendBulkEmail($recipients, $subject, $message);
+            
+            // Save to database
+            $controller->saveEmailHistory($subject, $message, count($recipients), $result['success'], $result['failed']);
+            
             echo json_encode(['status' => 'success', 'data' => $result]);
+            break;
+            
+        case 'getEmailHistory':
+            echo json_encode(['status' => 'success', 'data' => $controller->getEmailHistory()]);
             break;
             
         default:

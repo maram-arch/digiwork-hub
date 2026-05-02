@@ -163,6 +163,53 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
     <script>
         let selectedRecipients = [];
         
+        // Load email history on page load
+        async function loadEmailHistory() {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'getEmailHistory');
+                
+                const response = await fetch('../../controller/MailingController.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    displayEmailHistory(data.data);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        
+        function displayEmailHistory(history) {
+            const tbody = document.getElementById('emailHistory');
+            
+            if (history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucun email envoyé</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            history.forEach(h => {
+                const date = new Date(h.sent_at).toLocaleString('fr-FR');
+                const statusClass = h.failed_count === 0 ? 'status-actif' : 'status-expire';
+                const statusText = h.failed_count === 0 ? 'Tout envoyé' : `${h.failed_count} échoués`;
+                
+                html += `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${h.subject}</td>
+                        <td>${h.recipient_count}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+        
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.className = `admin-toast ${type === 'error' ? 'error' : ''}`;
@@ -260,7 +307,7 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
                 
                 if (data.status === 'success') {
                     showToast(`Email envoyé avec succès! ${data.data.success} réussis, ${data.data.failed} échoués`);
-                    addToEmailHistory(subject, selectedRecipients.length, data.data.success);
+                    loadEmailHistory(); // Refresh history from database
                 } else {
                     showToast('Erreur lors de l\'envoi', 'error');
                 }
@@ -298,25 +345,10 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
             document.getElementById('previewModal').style.display = 'none';
         }
         
-        function addToEmailHistory(subject, count, success) {
-            const tbody = document.getElementById('emailHistory');
-            const now = new Date().toLocaleString('fr-FR');
-            
-            const row = `
-                <tr>
-                    <td>${now}</td>
-                    <td>${subject}</td>
-                    <td>${count}</td>
-                    <td><span class="status-badge status-actif">${success} envoyés</span></td>
-                </tr>
-            `;
-            
-            if (tbody.querySelector('td[colspan]')) {
-                tbody.innerHTML = row;
-            } else {
-                tbody.insertAdjacentHTML('afterbegin', row);
-            }
-        }
+        // Load email history on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEmailHistory();
+        });
     </script>
 </body>
 </html>

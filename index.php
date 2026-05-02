@@ -1,6 +1,6 @@
 <li class="sidebar-item">
-    <a href="listOffre.php" class='sidebar-link'>
-        <i data-feather="briefcase"></i> 
-        <span>Gestion Offres</span>
+    <a href="listPublications.php" class="sidebar-link">
+        <i data-feather="message-square"></i> 
+        <span>Gestion Forum</span>
     </a>
 </li>

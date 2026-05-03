@@ -1,7 +1,57 @@
 <?php
 require_once __DIR__ . '/../../controller/EventController.php';
+require_once __DIR__ . '/../../controller/InscriptionController.php';
 
 $eventController = new EventController();
+$inscriptionController = new InscriptionController();
+$emailFeedbackMessages = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_event_message'])) {
+    $eventId = isset($_POST['id_event']) ? intval($_POST['id_event']) : 0;
+    $contactEmail = isset($_POST['contact_email']) ? filter_var(trim($_POST['contact_email']), FILTER_SANITIZE_EMAIL) : '';
+    $recipientEmail = isset($_POST['recipient_email']) ? filter_var(trim($_POST['recipient_email']), FILTER_SANITIZE_EMAIL) : '';
+    $contactSubject = isset($_POST['contact_subject']) ? htmlspecialchars(trim($_POST['contact_subject'])) : '';
+    $contactMessage = isset($_POST['contact_message']) ? htmlspecialchars(trim($_POST['contact_message'])) : '';
+
+    try {
+        if ($eventId <= 0) {
+            throw new Exception('Événement invalide.');
+        }
+        if ($contactEmail === '' || !filter_var($contactEmail, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception('Veuillez saisir une adresse email valide.');
+        }
+        if ($recipientEmail !== '' && !filter_var($recipientEmail, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception('Veuillez saisir un email destinataire valide ou laissez vide.');
+        }
+        if ($contactSubject === '') {
+            throw new Exception('Veuillez saisir un sujet.');
+        }
+        if ($contactMessage === '') {
+            throw new Exception('Veuillez saisir un message.');
+        }
+
+        $event = $eventController->showEvent($eventId);
+        $eventTitle = $event ? htmlspecialchars($event['titre']) : 'Événement inconnu';
+        $recipient = $recipientEmail !== '' ? $recipientEmail : 'contact@digiworkhub.com';
+        $subject = 'Demande de détails : ' . $eventTitle . ' - ' . $contactSubject;
+        $body = "Demande de détails pour l'événement : $eventTitle\n";
+        $body .= "ID événement : $eventId\n";
+        $body .= "Email de l'expéditeur : $contactEmail\n\n";
+        if ($recipientEmail !== '') {
+            $body .= "Email destinataire demandé : $recipientEmail\n\n";
+        }
+        $body .= "Message :\n$contactMessage\n";
+
+        if (!$inscriptionController->sendEventEmail($contactEmail, $recipient, $subject, $body)) {
+            throw new Exception('Impossible d\'envoyer l\'email pour le moment.');
+        }
+
+        $emailFeedbackMessages[$eventId] = '<div class="feedback success">Message envoyé avec succès. Nous vous répondrons bientôt.</div>';
+    } catch (Exception $e) {
+        $emailFeedbackMessages[$eventId] = '<div class="feedback error">Erreur : ' . htmlspecialchars($e->getMessage()) . '</div>';
+    }
+}
+
 $listEvents = $eventController->listEvents();
 
 $images = [
@@ -264,6 +314,21 @@ $images = [
             padding-top: 15px;
         }
 
+        .event-map-preview {
+            margin-top: 18px;
+            border-radius: 18px;
+            overflow: hidden;
+            height: 180px;
+            min-height: 160px;
+            box-shadow: inset 0 0 0 1px rgba(203, 242, 255, 0.9);
+        }
+
+        .event-map-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
         .event-location {
             font-size: 14px;
             font-weight: 600;
@@ -293,6 +358,102 @@ $images = [
         .toggle-details-btn:hover {
             background: #1d4ed8;
             transform: translateY(-1px);
+        }
+
+        .contact-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            background: #10b981;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .contact-toggle-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .contact-form-panel {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.35s ease, opacity 0.35s ease;
+        }
+
+        .contact-form-panel.open {
+            opacity: 1;
+        }
+
+        .contact-form {
+            margin-top: 15px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            font-size: 14px;
+        }
+
+        .contact-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .contact-form button {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            background: #2563eb;
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .contact-form button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .feedback {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .feedback.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .feedback.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .contact-note {
+            font-size: 13px;
+            color: #475569;
+            margin-top: 8px;
         }
 
         .event-details-panel {
@@ -535,6 +696,11 @@ $images = [
                                     <?php echo $dateStr; ?>
                                 </span>
                             </div>
+                            <?php if ($showMap): ?>
+                                <div class="event-map-preview">
+                                    <iframe src="https://www.google.com/maps?q=<?php echo $mapQuery; ?>&output=embed" allowfullscreen loading="lazy"></iframe>
+                                </div>
+                            <?php endif; ?>
                             <div class="event-footer">
                                 <span class="event-countdown"><?php echo $countdown; ?></span>
                                 <span class="event-location" style="color: var(--primary-blue);">
@@ -542,6 +708,18 @@ $images = [
                                     <?php echo $lieuStr; ?>
                                 </span>
                                 <a href="inscription.php?id_event=<?php echo $idEvent; ?>" class="btn-inscrire">S'inscrire</a>
+                            </div>
+                            <button type="button" class="contact-toggle-btn" onclick="toggleContactForm(<?php echo $idEvent; ?>)">Rédiger ma demande</button>
+                            <div class="contact-form-panel" id="contact-form-<?php echo $idEvent; ?>">
+                                <form action="" method="POST" class="contact-form">
+                                    <input type="hidden" name="id_event" value="<?php echo $idEvent; ?>">
+                                    <input type="email" name="contact_email" placeholder="Votre email" required>
+                                    <input type="email" name="recipient_email" placeholder="Email destinataire (optionnel)">
+                                    <input type="text" name="contact_subject" placeholder="Sujet" required>
+                                    <textarea name="contact_message" rows="6" placeholder="Écrivez ici ce que vous souhaitez demander" required></textarea>
+                                    <p class="contact-note">Veuillez écrire votre demande avant de cliquer sur Envoyer.</p>
+                                    <button type="submit" name="submit_event_message">Envoyer la demande</button>
+                                </form>
                             </div>
                             <button type="button" class="toggle-details-btn" onclick="toggleEventDetails(<?php echo $idEvent; ?>)">Voir détails</button>
                             <div class="event-details-panel" id="details-panel-<?php echo $idEvent; ?>">
@@ -557,11 +735,18 @@ $images = [
                                     <div class="detail-card">
                                         <h4>Localisation</h4>
                                         <div class="detail-row"><span>Adresse</span><span><?php echo $lieuStr; ?></span></div>
-                                        <?php if ($showMap): ?>
-                                            <iframe class="detail-map" src="https://www.google.com/maps?q=<?php echo $mapQuery; ?>&output=embed"></iframe>
-                                        <?php else: ?>
+                                        <?php if (!$showMap): ?>
                                             <p style="margin:0; color:#475569;">Événement en ligne ou lieu non précisé.</p>
+                                        <?php else: ?>
+                                            <p style="margin:0; color:#475569;">La carte est affichée ci-dessus.</p>
                                         <?php endif; ?>
+                                    </div>
+                                    <div class="detail-card">
+                                        <h4>Demander plus de détails</h4>
+                                        <?php if (isset($emailFeedbackMessages[$idEvent])): ?>
+                                            <?php echo $emailFeedbackMessages[$idEvent]; ?>
+                                        <?php endif; ?>
+                                        <p style="margin:0; color:#475569;">Cliquez sur le bouton ci-dessus pour afficher le formulaire et envoyer votre demande directement.</p>
                                     </div>
                                 </div>
                             </div>
@@ -642,6 +827,67 @@ $images = [
             searchInput.dispatchEvent(new Event('input'));
             searchInput.focus();
         }
+
+        function toggleContactForm(eventId) {
+            const formPanel = document.getElementById('contact-form-' + eventId);
+            if (!formPanel) {
+                return;
+            }
+            const isOpen = formPanel.classList.contains('open');
+
+            document.querySelectorAll('.contact-form-panel.open').forEach(panel => {
+                panel.classList.remove('open');
+                panel.style.maxHeight = '0';
+            });
+
+            if (!isOpen) {
+                formPanel.classList.add('open');
+                formPanel.style.maxHeight = formPanel.scrollHeight + 'px';
+            }
+        }
+
+        document.querySelectorAll('.contact-form').forEach(form => {
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const submitButton = form.querySelector('button[type="submit"]');
+                const formData = new FormData(form);
+                formData.append('ajax', '1');
+
+                submitButton.disabled = true;
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Envoi...';
+
+                try {
+                    const response = await fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    const feedback = form.closest('.detail-card').querySelector('.feedback');
+
+                    if (feedback) {
+                        feedback.remove();
+                    }
+
+                    const messageBox = document.createElement('div');
+                    messageBox.className = 'feedback ' + (data.success ? 'success' : 'error');
+                    messageBox.textContent = data.message;
+                    form.closest('.detail-card').insertBefore(messageBox, form);
+
+                    if (data.success) {
+                        form.reset();
+                    }
+                } catch (error) {
+                    const messageBox = document.createElement('div');
+                    messageBox.className = 'feedback error';
+                    messageBox.textContent = 'Erreur lors de l\'envoi. Veuillez réessayer.';
+                    form.closest('.detail-card').insertBefore(messageBox, form);
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalText;
+                }
+            });
+        });
     </script>
 
 </body>

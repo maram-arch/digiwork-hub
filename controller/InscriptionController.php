@@ -85,6 +85,15 @@ class InscriptionController {
         }
     }
 
+    public function sendEventEmail(string $fromEmail, string $recipient, string $subject, string $message): bool {
+        $headers = 'From: ' . $fromEmail . "\r\n" .
+                   'Reply-To: ' . $fromEmail . "\r\n" .
+                   'MIME-Version: 1.0' . "\r\n" .
+                   'Content-type: text/plain; charset=utf-8';
+
+        return mail($recipient, $subject, $message, $headers);
+    }
+
     public function userExists(int $id_user): bool {
         $db = config::getConnexion();
         try {

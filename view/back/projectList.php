@@ -2,21 +2,18 @@
 require_once __DIR__ . '/../../controller/projectController.php';
 
 $projetC = new ProjetC();
+
 $projectStats = $projetC->getProjectStatsByStatus();
 $sponsorStats = $projetC->getMostSponsoredStats();
 
-/* PROJECT */
 $sort = $_GET['sort'] ?? 'id-projet';
 $direction = $_GET['direction'] ?? 'ASC';
 $searchId = $_GET['searchId'] ?? '';
-
 $listeProjets = $projetC->listProjets($sort, $direction, $searchId);
 
-/* SPONSOR */
 $sortSponsor = $_GET['sortSponsor'] ?? 'id_user';
 $directionSponsor = $_GET['directionSponsor'] ?? 'ASC';
 $searchSponsorId = $_GET['searchSponsorId'] ?? '';
-
 $listeSponsors = $projetC->listSponsors($sortSponsor, $directionSponsor, $searchSponsorId);
 ?>
 
@@ -25,7 +22,6 @@ $listeSponsors = $projetC->listSponsors($sortSponsor, $directionSponsor, $search
 <head>
     <meta charset="UTF-8">
     <title>Liste des Projets et Sponsors</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body {
@@ -38,7 +34,7 @@ $listeSponsors = $projetC->listSponsors($sortSponsor, $directionSponsor, $search
             color: #1b3f8b;
         }
 
-        a.btn {
+        .btn {
             display: inline-block;
             background: #1b3f8b;
             color: white;
@@ -46,6 +42,7 @@ $listeSponsors = $projetC->listSponsors($sortSponsor, $directionSponsor, $search
             padding: 10px 16px;
             border-radius: 6px;
             margin-bottom: 20px;
+            font-weight: bold;
         }
 
         form {
@@ -53,8 +50,9 @@ $listeSponsors = $projetC->listSponsors($sortSponsor, $directionSponsor, $search
         }
 
         input, select, button {
-            padding: 6px;
+            padding: 7px;
             font-size: 15px;
+            margin: 3px;
         }
 
         button {
@@ -99,114 +97,40 @@ $listeSponsors = $projetC->listSponsors($sortSponsor, $directionSponsor, $search
             margin: 40px 0;
             border: 1px solid #1b3f8b;
         }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .popup-content {
+            background: white;
+            width: 600px;
+            margin: 80px auto;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
     </style>
 </head>
-<script>
-function toggleProjectStats() {
-    const section = document.getElementById("projectStatsSection");
-    section.style.display = section.style.display === "none" ? "block" : "none";
-}
-
-function toggleSponsorStats() {
-    const section = document.getElementById("sponsorStatsSection");
-    section.style.display = section.style.display === "none" ? "block" : "none";
-}
-function openProjectStats() {
-    document.getElementById("projectStatsPopup").style.display = "block";
-}
-
-function closeProjectStats() {
-    document.getElementById("projectStatsPopup").style.display = "none";
-}
-
-function openSponsorStats() {
-    document.getElementById("sponsorStatsPopup").style.display = "block";
-}
-
-function closeSponsorStats() {
-    document.getElementById("sponsorStatsPopup").style.display = "none";
-}
-
-const projectLabels = [
-    <?php foreach ($projectStats as $stat) { ?>
-        "<?= htmlspecialchars($stat['statut']); ?>",
-    <?php } ?>
-];
-
-const projectData = [
-    <?php foreach ($projectStats as $stat) { ?>
-        <?= $stat['total']; ?>,
-    <?php } ?>
-];
-
-const sponsorLabels = [
-    <?php foreach ($sponsorStats as $stat) { ?>
-        "<?= htmlspecialchars($stat['nom']); ?>",
-    <?php } ?>
-];
-
-const sponsorData = [
-    <?php foreach ($sponsorStats as $stat) { ?>
-        <?= $stat['total']; ?>,
-    <?php } ?>
-];
-
-function labelsWithPercent(labels, data) {
-    const total = data.reduce((a, b) => a + b, 0);
-
-    return labels.map((label, index) => {
-        let percentage = ((data[index] / total) * 100).toFixed(1);
-        return label + " : " + percentage + "%";
-    });
-}
-
-new Chart(document.getElementById("projectChart"), {
-    type: "pie",
-    data: {
-        labels: labelsWithPercent(projectLabels, projectData),
-        datasets: [{
-            data: projectData
-        }]
-    }
-});
-
-new Chart(document.getElementById("sponsorChart"), {
-    type: "pie",
-    data: {
-        labels: labelsWithPercent(sponsorLabels, sponsorData),
-        datasets: [{
-            data: sponsorData
-        }]
-    }
-});
-function openProjectStats() {
-    document.getElementById("projectStatsPopup").style.display = "block";
-}
-
-function closeProjectStats() {
-    document.getElementById("projectStatsPopup").style.display = "none";
-}
-
-function openSponsorStats() {
-    document.getElementById("sponsorStatsPopup").style.display = "block";
-}
-
-function closeSponsorStats() {
-    document.getElementById("sponsorStatsPopup").style.display = "none";
-}
-</script>
 
 <body>
 
 <h1>Liste des Projets</h1>
 
-<a class="btn" href="view/back/projectCRUD.php">+ Ajouter un projet</a>
+<a class="btn" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD">
+    + Ajouter un projet
+</a>
 
 <form method="GET" action="/DigiWorkHub/digiwork-hub/index2.php">
-
     <input type="hidden" name="page" value="listProject">
 
-    <!-- SEARCH -->
     <input type="number" name="searchId"
            placeholder="Rechercher par ID projet"
            value="<?= htmlspecialchars($searchId); ?>">
@@ -215,7 +139,6 @@ function closeSponsorStats() {
 
     <br><br>
 
-    <!-- TRI -->
     <select name="sort">
         <option value="id-projet" <?= ($sort == 'id-projet') ? 'selected' : '' ?>>ID</option>
         <option value="budget" <?= ($sort == 'budget') ? 'selected' : '' ?>>Budget</option>
@@ -231,12 +154,12 @@ function closeSponsorStats() {
     </select>
 
     <button type="submit" name="action" value="sort">🔽 Trier</button>
-
 </form>
+
 <button onclick="openProjectStats()" type="button">Statistique projets</button>
 
-<div id="projectStatsPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;">
-    <div style="background:white; width:600px; margin:80px auto; padding:25px; border-radius:12px; text-align:center;">
+<div id="projectStatsPopup" class="popup">
+    <div class="popup-content">
         <h2>Statistiques des projets</h2>
 
         <?php
@@ -298,10 +221,15 @@ function closeSponsorStats() {
             <td><?= htmlspecialchars($projet['id-user']); ?></td>
             <td><?= htmlspecialchars($projet['id-offre']); ?></td>
             <td>
-                <a class="edit" href="view/back/projectCRUD.php?edit=<?= $projet['id-projet']; ?>">Modifier</a>
+                <a class="edit" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD&edit=<?= $projet['id-projet']; ?>">
+                    Modifier
+                </a>
                 |
-                <a class="delete" href="view/back/projectCRUD.php?delete=<?= $projet['id-projet']; ?>"
-                   onclick="return confirm('Supprimer ce projet ?');">Supprimer</a>
+                <a class="delete"
+                   href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD&delete=<?= $projet['id-projet']; ?>"
+                   onclick="return confirm('Supprimer ce projet ?');">
+                    Supprimer
+                </a>
             </td>
         </tr>
     <?php } ?>
@@ -312,10 +240,8 @@ function closeSponsorStats() {
 <h2>Liste des Sponsorships</h2>
 
 <form method="GET" action="/DigiWorkHub/digiwork-hub/index2.php">
-
     <input type="hidden" name="page" value="listProject">
 
-    <!-- SEARCH -->
     <input type="number" name="searchSponsorId"
            placeholder="Rechercher par ID User"
            value="<?= htmlspecialchars($searchSponsorId); ?>">
@@ -324,7 +250,6 @@ function closeSponsorStats() {
 
     <br><br>
 
-    <!-- TRI -->
     <select name="sortSponsor">
         <option value="id_user" <?= ($sortSponsor == 'id_user') ? 'selected' : '' ?>>ID User</option>
         <option value="nom" <?= ($sortSponsor == 'nom') ? 'selected' : '' ?>>Nom</option>
@@ -337,12 +262,12 @@ function closeSponsorStats() {
     </select>
 
     <button type="submit" name="actionSponsor" value="sort">🔽 Trier</button>
-
 </form>
+
 <button onclick="openSponsorStats()" type="button">Statistique sponsorships</button>
 
-<div id="sponsorStatsPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;">
-    <div style="background:white; width:600px; margin:80px auto; padding:25px; border-radius:12px; text-align:center;">
+<div id="sponsorStatsPopup" class="popup">
+    <div class="popup-content">
         <h2>Statistiques des sponsorships</h2>
 
         <?php
@@ -401,5 +326,24 @@ function closeSponsorStats() {
         </tr>
     <?php } ?>
 </table>
+
+<script>
+function openProjectStats() {
+    document.getElementById("projectStatsPopup").style.display = "block";
+}
+
+function closeProjectStats() {
+    document.getElementById("projectStatsPopup").style.display = "none";
+}
+
+function openSponsorStats() {
+    document.getElementById("sponsorStatsPopup").style.display = "block";
+}
+
+function closeSponsorStats() {
+    document.getElementById("sponsorStatsPopup").style.display = "none";
+}
+</script>
+
 </body>
 </html>

@@ -25,7 +25,7 @@ if (isset($_GET['delete'])) {
         $query = $db->prepare($sql);
         $query->execute(['id' => $_GET['delete']]);
 
-        header("Location: projectCRUD.php");
+        header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
     } catch (Exception $e) {
         $error = "Erreur suppression projet : " . $e->getMessage();
@@ -48,7 +48,7 @@ if (isset($_POST['add'])) {
             'id_offre' => $_POST['id_offre']
         ]);
 
-        header("Location: projectCRUD.php");
+        header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
     } catch (Exception $e) {
         $error = "Erreur ajout projet : " . $e->getMessage();
@@ -78,7 +78,7 @@ if (isset($_POST['update'])) {
             'id_offre' => $_POST['id_offre']
         ]);
 
-        header("Location: projectCRUD.php");
+        header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
     } catch (Exception $e) {
         $error = "Erreur modification projet : " . $e->getMessage();
@@ -110,7 +110,7 @@ if (isset($_GET['delete_sponsor'])) {
         $query = $db->prepare($sql);
         $query->execute(['id_user' => $_GET['delete_sponsor']]);
 
-        header("Location: projectCRUD.php");
+        header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
     } catch (Exception $e) {
         $error = "Erreur suppression sponsor : " . $e->getMessage();
@@ -132,7 +132,7 @@ if (isset($_POST['add_sponsor'])) {
             'discription' => trim($_POST['sponsor_discription'])
         ]);
 
-        header("Location: projectCRUD.php");
+        header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
     } catch (Exception $e) {
         $error = "Erreur ajout sponsor : " . $e->getMessage();
@@ -158,7 +158,7 @@ if (isset($_POST['update_sponsor'])) {
             'discription' => trim($_POST['sponsor_discription'])
         ]);
 
-        header("Location: projectCRUD.php");
+        header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
     } catch (Exception $e) {
         $error = "Erreur modification sponsor : " . $e->getMessage();
@@ -297,7 +297,7 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
 
 <body>
 
-<a class="back-link" href="projectList.php">← Retour à la liste</a>
+<a class="back-link" href="/DigiWorkHub/digiwork-hub/index2.php?page=listProject">← Retour à la liste</a>
 
 <h1>Gestion des Projets & Sponsors</h1>
 
@@ -341,7 +341,7 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
             <input type="number" name="id_offre" value="<?php echo htmlspecialchars($editProjet['id-offre']); ?>" required>
 
             <button type="submit" name="update">Modifier Projet</button>
-            <a class="cancel-btn" href="projectCRUD.php">Annuler</a>
+            <a class="cancel-btn" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD">Annuler</a>
         </form>
 
     <?php } else { ?>
@@ -407,8 +407,8 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
                 <td><?php echo htmlspecialchars($projet['id-user']); ?></td>
                 <td><?php echo htmlspecialchars($projet['id-offre']); ?></td>
                 <td>
-                    <a class="edit-link" href="projectCRUD.php?edit=<?php echo $projet['id-projet']; ?>">Modifier</a> |
-                    <a class="delete-link" href="projectCRUD.php?delete=<?php echo $projet['id-projet']; ?>"
+                    <a class="edit-link" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD&edit=<?php echo $projet['id-projet']; ?>">Modifier</a> |
+                    <a class="delete-link" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD&delete=<?php echo $projet['id-projet']; ?>"
                        onclick="return confirm('Supprimer ce projet ?');">Supprimer</a>
                 </td>
             </tr>
@@ -443,7 +443,7 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
             <textarea name="sponsor_discription" required><?php echo htmlspecialchars($editSponsor['discription']); ?></textarea>
 
             <button type="submit" name="update_sponsor">Modifier Sponsor</button>
-            <a class="cancel-btn" href="projectCRUD.php">Annuler</a>
+            <a class="cancel-btn" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD">Annuler</a>
         </form>
 
     <?php } else { ?>
@@ -497,8 +497,8 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
                 <td><?php echo htmlspecialchars($sponsor['adresse']); ?></td>
                 <td><?php echo htmlspecialchars($sponsor['discription']); ?></td>
                 <td>
-                    <a class="edit-link" href="projectCRUD.php?edit_sponsor=<?php echo $sponsor['id_user']; ?>">Modifier</a> |
-                    <a class="delete-link" href="projectCRUD.php?delete_sponsor=<?php echo $sponsor['id_user']; ?>"
+                    <a class="edit-link" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD&edit_sponsor=<?php echo $sponsor['id_user']; ?>">Modifier</a>
+                    <a class="delete-link" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD&delete_sponsor=<?php echo $sponsor['id_user']; ?>"
                        onclick="return confirm('Supprimer ce sponsor ?');">Supprimer</a>
                 </td>
             </tr>

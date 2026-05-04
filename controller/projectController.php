@@ -161,6 +161,16 @@ public function getMostSponsoredStats()
             die('Erreur deleteProjet : ' . $e->getMessage());
         }
     }
-    
+   public function listProjetsLimited($limit = 3)
+{
+    $db = config::getConnexion();
+
+    $sql = "SELECT * FROM projet ORDER BY `id-projet` DESC LIMIT :limit";
+    $query = $db->prepare($sql);
+    $query->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+    $query->execute();
+
+    return $query;
+}
 }
 ?>

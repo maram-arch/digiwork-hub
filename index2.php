@@ -4,7 +4,11 @@ $page = $_GET['page'] ?? 'home';
 
 switch ($page) {
     case 'home':
-        require_once('view/front/projets.html');
+        require_once('view/front/projets.php');
+        break;
+
+    case 'exploreProjects':
+        require_once('view/front/exploreProjects.php');
         break;
 
     case 'listProject':

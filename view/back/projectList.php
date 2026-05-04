@@ -5,6 +5,7 @@ $projetC = new ProjetC();
 
 $projectStats = $projetC->getProjectStatsByStatus();
 $sponsorStats = $projetC->getMostSponsoredStats();
+$historique = $projetC->listHistorique();
 
 $sort = $_GET['sort'] ?? 'id-projet';
 $direction = $_GET['direction'] ?? 'ASC';
@@ -61,6 +62,8 @@ $listeSponsors = $projetC->listSponsors($sortSponsor, $directionSponsor, $search
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            padding: 8px 12px;
+            font-weight: bold;
         }
 
         table {
@@ -116,6 +119,12 @@ $listeSponsors = $projetC->listSponsors($sortSponsor, $directionSponsor, $search
             padding: 25px;
             border-radius: 12px;
             text-align: center;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .historique-content {
+            width: 85%;
         }
     </style>
 </head>
@@ -157,6 +166,10 @@ $listeSponsors = $projetC->listSponsors($sortSponsor, $directionSponsor, $search
 </form>
 
 <button onclick="openProjectStats()" type="button">Statistique projets</button>
+<button onclick="openHistorique()" type="button">Historique</button>
+<a href="/DigiWorkHub/digiwork-hub/exportProjectsSponsorsPDF.php" class="btn">
+    Exporter PDF
+</a>
 
 <div id="projectStatsPopup" class="popup">
     <div class="popup-content">
@@ -196,6 +209,34 @@ $listeSponsors = $projetC->listSponsors($sortSponsor, $directionSponsor, $search
         <?php } ?>
 
         <button onclick="closeProjectStats()" type="button">Fermer</button>
+    </div>
+</div>
+
+<div id="historiquePopup" class="popup">
+    <div class="popup-content historique-content">
+        <h2>Historique</h2>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Action</th>
+                <th>Entité</th>
+                <th>Description</th>
+                <th>Date</th>
+            </tr>
+
+            <?php foreach ($historique as $h) { ?>
+                <tr>
+                    <td><?= htmlspecialchars($h['id_historique']); ?></td>
+                    <td><?= htmlspecialchars($h['action']); ?></td>
+                    <td><?= htmlspecialchars($h['entite']); ?></td>
+                    <td><?= htmlspecialchars($h['description']); ?></td>
+                    <td><?= htmlspecialchars($h['date_action']); ?></td>
+                </tr>
+            <?php } ?>
+        </table>
+
+        <button onclick="closeHistorique()" type="button">Fermer</button>
     </div>
 </div>
 
@@ -342,6 +383,14 @@ function openSponsorStats() {
 
 function closeSponsorStats() {
     document.getElementById("sponsorStatsPopup").style.display = "none";
+}
+
+function openHistorique() {
+    document.getElementById("historiquePopup").style.display = "block";
+}
+
+function closeHistorique() {
+    document.getElementById("historiquePopup").style.display = "none";
 }
 </script>
 

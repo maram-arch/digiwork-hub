@@ -1,29 +1,36 @@
 <?php
 require_once __DIR__ . '/../../config2.php';
+require_once __DIR__ . '/../../controller/projectController.php';
 
 $db = config::getConnexion();
+$projetC = new ProjetC();
 $error = "";
 
-function formatStatut($statut) {
-    switch ($statut) {
-        case 'en_attente': return 'En attente';
-        case 'en_cours': return 'En cours';
-        case 'termine': return 'Terminé';
-        case 'annule': return 'Annulé';
-        default: return $statut;
-    }
+function formatStatut($statut)
+{
+    return match ($statut) {
+        'en_attente' => 'En attente',
+        'en_cours' => 'En cours',
+        'termine' => 'Terminé',
+        'annule' => 'Annulé',
+        default => $statut
+    };
 }
-
-/* =========================
-   PROJECT CRUD
-========================= */
 
 /* DELETE PROJECT */
 if (isset($_GET['delete'])) {
     try {
+        $id = $_GET['delete'];
+
         $sql = "DELETE FROM projet WHERE `id-projet` = :id";
         $query = $db->prepare($sql);
-        $query->execute(['id' => $_GET['delete']]);
+        $query->execute(['id' => $id]);
+
+        $projetC->addHistorique(
+            "Suppression",
+            "Projet",
+            "Le projet avec ID " . $id . " a été supprimé."
+        );
 
         header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
@@ -35,18 +42,26 @@ if (isset($_GET['delete'])) {
 /* ADD PROJECT */
 if (isset($_POST['add'])) {
     try {
+        $titre = trim($_POST['titre']);
+
         $sql = "INSERT INTO projet (`titre`, `discription`, `budget`, `statut`, `id-user`, `id-offre`)
                 VALUES (:titre, :discription, :budget, :statut, :id_user, :id_offre)";
 
         $query = $db->prepare($sql);
         $query->execute([
-            'titre' => trim($_POST['titre']),
+            'titre' => $titre,
             'discription' => trim($_POST['discription']),
             'budget' => str_replace(',', '.', $_POST['budget']),
             'statut' => $_POST['statut'],
             'id_user' => $_POST['id_user'],
             'id_offre' => $_POST['id_offre']
         ]);
+
+        $projetC->addHistorique(
+            "Ajout",
+            "Projet",
+            "Le projet '" . $titre . "' a été ajouté."
+        );
 
         header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
@@ -58,6 +73,8 @@ if (isset($_POST['add'])) {
 /* UPDATE PROJECT */
 if (isset($_POST['update'])) {
     try {
+        $titre = trim($_POST['titre']);
+
         $sql = "UPDATE projet SET
                     `titre` = :titre,
                     `discription` = :discription,
@@ -70,13 +87,19 @@ if (isset($_POST['update'])) {
         $query = $db->prepare($sql);
         $query->execute([
             'id' => $_POST['id_projet'],
-            'titre' => trim($_POST['titre']),
+            'titre' => $titre,
             'discription' => trim($_POST['discription']),
             'budget' => str_replace(',', '.', $_POST['budget']),
             'statut' => $_POST['statut'],
             'id_user' => $_POST['id_user'],
             'id_offre' => $_POST['id_offre']
         ]);
+
+        $projetC->addHistorique(
+            "Modification",
+            "Projet",
+            "Le projet '" . $titre . "' a été modifié."
+        );
 
         header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
@@ -99,16 +122,20 @@ if (isset($_GET['edit'])) {
 $listeProjets = $db->query("SELECT * FROM projet ORDER BY `id-projet` DESC")->fetchAll(PDO::FETCH_ASSOC);
 
 
-/* =========================
-   SPONSOR CRUD
-========================= */
-
 /* DELETE SPONSOR */
 if (isset($_GET['delete_sponsor'])) {
     try {
+        $idUser = $_GET['delete_sponsor'];
+
         $sql = "DELETE FROM sponsor WHERE id_user = :id_user";
         $query = $db->prepare($sql);
-        $query->execute(['id_user' => $_GET['delete_sponsor']]);
+        $query->execute(['id_user' => $idUser]);
+
+        $projetC->addHistorique(
+            "Suppression",
+            "Sponsorship",
+            "Le sponsorship avec ID User " . $idUser . " a été supprimé."
+        );
 
         header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
@@ -120,17 +147,25 @@ if (isset($_GET['delete_sponsor'])) {
 /* ADD SPONSOR */
 if (isset($_POST['add_sponsor'])) {
     try {
+        $nom = trim($_POST['nom']);
+
         $sql = "INSERT INTO sponsor (id_user, nom, type, adresse, discription)
                 VALUES (:id_user, :nom, :type, :adresse, :discription)";
 
         $query = $db->prepare($sql);
         $query->execute([
             'id_user' => $_POST['sponsor_id_user'],
-            'nom' => trim($_POST['nom']),
+            'nom' => $nom,
             'type' => trim($_POST['type']),
             'adresse' => trim($_POST['adresse']),
             'discription' => trim($_POST['sponsor_discription'])
         ]);
+
+        $projetC->addHistorique(
+            "Ajout",
+            "Sponsorship",
+            "Le sponsorship '" . $nom . "' a été ajouté."
+        );
 
         header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
@@ -142,6 +177,8 @@ if (isset($_POST['add_sponsor'])) {
 /* UPDATE SPONSOR */
 if (isset($_POST['update_sponsor'])) {
     try {
+        $nom = trim($_POST['nom']);
+
         $sql = "UPDATE sponsor SET
                     nom = :nom,
                     type = :type,
@@ -152,11 +189,17 @@ if (isset($_POST['update_sponsor'])) {
         $query = $db->prepare($sql);
         $query->execute([
             'id_user' => $_POST['sponsor_id_user'],
-            'nom' => trim($_POST['nom']),
+            'nom' => $nom,
             'type' => trim($_POST['type']),
             'adresse' => trim($_POST['adresse']),
             'discription' => trim($_POST['sponsor_discription'])
         ]);
+
+        $projetC->addHistorique(
+            "Modification",
+            "Sponsorship",
+            "Le sponsorship '" . $nom . "' a été modifié."
+        );
 
         header("Location: /DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD");
         exit;
@@ -214,13 +257,13 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
         input, textarea, select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #d6dce5;
-            border-radius: 8px;
-            font-size: 14px;
+            border: 1px solid #ccd3dd;
+            border-radius: 7px;
+            font-size: 15px;
         }
 
         textarea {
-            min-height: 90px;
+            height: 90px;
         }
 
         button {
@@ -228,35 +271,10 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
             background: #1b3f8b;
             color: white;
             border: none;
-            padding: 12px 18px;
-            border-radius: 8px;
+            padding: 11px 18px;
+            border-radius: 7px;
+            font-weight: bold;
             cursor: pointer;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background: #15316d;
-        }
-
-        .cancel-btn {
-            background: #888;
-            color: white;
-            padding: 12px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            margin-left: 10px;
-        }
-
-        .back-link {
-            color: #1b3f8b;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .error {
-            color: red;
-            font-weight: bold;
-            margin: 15px 0;
         }
 
         table {
@@ -265,19 +283,44 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
             background: white;
         }
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
-        }
-
         th {
             background: #1b3f8b;
             color: white;
+            padding: 12px;
+        }
+
+        td {
+            border: 1px solid #ddd;
+            padding: 11px;
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #1b3f8b;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .cancel-btn {
+            display: inline-block;
+            margin-left: 10px;
+            background: #777;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
         }
 
         .edit-link {
-            color: #0a7cff;
+            color: #0066ff;
             text-decoration: none;
             font-weight: bold;
         }
@@ -304,10 +347,6 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
 <?php if (!empty($error)) { ?>
     <p class="error"><?php echo $error; ?></p>
 <?php } ?>
-
-<!-- =========================
-     PROJECT FORM
-========================= -->
 
 <div class="card">
     <?php if ($editProjet) { ?>
@@ -378,10 +417,6 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
     <?php } ?>
 </div>
 
-<!-- =========================
-     PROJECT TABLE
-========================= -->
-
 <div class="card">
     <h2>Liste des projets</h2>
 
@@ -399,7 +434,7 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
 
         <?php foreach ($listeProjets as $projet) { ?>
             <tr>
-                <td><?php echo $projet['id-projet']; ?></td>
+                <td><?php echo htmlspecialchars($projet['id-projet']); ?></td>
                 <td><?php echo htmlspecialchars($projet['titre']); ?></td>
                 <td><?php echo htmlspecialchars($projet['discription']); ?></td>
                 <td><?php echo htmlspecialchars($projet['budget']); ?></td>
@@ -417,10 +452,6 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
 </div>
 
 <div class="section-separator"></div>
-
-<!-- =========================
-     SPONSOR FORM
-========================= -->
 
 <div class="card">
     <?php if ($editSponsor) { ?>
@@ -472,10 +503,6 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
     <?php } ?>
 </div>
 
-<!-- =========================
-     SPONSOR TABLE
-========================= -->
-
 <div class="card">
     <h2>Liste des sponsors</h2>
 
@@ -497,7 +524,7 @@ $listeSponsors = $db->query("SELECT * FROM sponsor ORDER BY id_user DESC")->fetc
                 <td><?php echo htmlspecialchars($sponsor['adresse']); ?></td>
                 <td><?php echo htmlspecialchars($sponsor['discription']); ?></td>
                 <td>
-                    <a class="edit-link" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD&edit_sponsor=<?php echo $sponsor['id_user']; ?>">Modifier</a>
+                    <a class="edit-link" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD&edit_sponsor=<?php echo $sponsor['id_user']; ?>">Modifier</a> |
                     <a class="delete-link" href="/DigiWorkHub/digiwork-hub/index2.php?page=projectCRUD&delete_sponsor=<?php echo $sponsor['id_user']; ?>"
                        onclick="return confirm('Supprimer ce sponsor ?');">Supprimer</a>
                 </td>
@@ -538,43 +565,23 @@ function validateProjetForm(event) {
         return false;
     }
 
-    if (discription === "") {
-        alert("La description ne doit pas être vide.");
+    if (discription.length < 10) {
+        alert("La description doit contenir au moins 10 caractères.");
         return false;
     }
 
-    if (discription.length < 20) {
-        alert("La description doit contenir au moins 20 caractères, espaces inclus.");
+    if (isNaN(budget) || Number(budget) <= 0) {
+        alert("Le budget doit être un nombre positif.");
         return false;
     }
 
-    if (budget === "") {
-        alert("Le budget ne doit pas être vide.");
+    if (idUser === "" || Number(idUser) <= 0) {
+        alert("ID User doit être un nombre positif.");
         return false;
     }
 
-    if (isNaN(budget)) {
-        alert("Le budget doit contenir uniquement des nombres.");
-        return false;
-    }
-
-    if (Number(budget) < 0) {
-        alert("Le budget ne peut pas être négatif.");
-        return false;
-    }
-
-    if (!/^\d+(\.\d{1,2})?$/.test(budget)) {
-        alert("Le budget doit être un nombre valide avec maximum 2 chiffres après la virgule.");
-        return false;
-    }
-
-    if (idUser === "" || !/^\d+$/.test(idUser) || Number(idUser) <= 0 || idUser.length < 8 || idUser.length > 12) {
-        alert("L'ID User doit être un entier positif entre 8 et 12 chiffres.");
-        return false;
-    }
-
-    if (idOffre === "" || !/^\d+$/.test(idOffre) || Number(idOffre) <= 0 || idOffre.length < 8 || idOffre.length > 12) {
-        alert("L'ID Offre doit être un entier positif entre 8 et 12 chiffres.");
+    if (idOffre === "" || Number(idOffre) <= 0) {
+        alert("ID Offre doit être un nombre positif.");
         return false;
     }
 
@@ -584,60 +591,34 @@ function validateProjetForm(event) {
 function validateSponsorForm(event) {
     const form = event.target;
 
-    const idUserInput = form.querySelector('[name="sponsor_id_user"]');
-    const idUser = idUserInput ? idUserInput.value.trim() : "";
+    const idUser = form.querySelector('[name="sponsor_id_user"]').value.trim();
     const nom = form.querySelector('[name="nom"]').value.trim();
     const type = form.querySelector('[name="type"]').value.trim();
     const adresse = form.querySelector('[name="adresse"]').value.trim();
-    const discription = form.querySelector('[name="sponsor_discription"]').value.trim();
+    const description = form.querySelector('[name="sponsor_discription"]').value.trim();
 
-    if (idUserInput && (idUser === "" || !/^\d+$/.test(idUser) || Number(idUser) <= 0 || idUser.length < 8 || idUser.length > 12)) {
-        alert("L'ID User du sponsor doit être un entier positif entre 8 et 12 chiffres.");
+    if (idUser === "" || Number(idUser) <= 0) {
+        alert("ID User doit être un nombre positif.");
         return false;
     }
 
-    if (nom === "") {
-        alert("Le nom du sponsor ne doit pas être vide.");
+    if (nom.length < 2) {
+        alert("Le nom doit contenir au moins 2 caractères.");
         return false;
     }
 
-    if (/^\d+$/.test(nom)) {
-        alert("Le nom du sponsor ne doit pas contenir uniquement des chiffres.");
+    if (type.length < 2) {
+        alert("Le type doit contenir au moins 2 caractères.");
         return false;
     }
 
-    if (!/^[a-zA-ZÀ-ÿ0-9\s'-]+$/.test(nom)) {
-        alert("Le nom du sponsor contient des caractères invalides.");
+    if (adresse.length < 3) {
+        alert("L'adresse doit contenir au moins 3 caractères.");
         return false;
     }
 
-    if (type === "") {
-        alert("Le type du sponsor ne doit pas être vide.");
-        return false;
-    }
-
-    if (/^\d+$/.test(type)) {
-        alert("Le type du sponsor ne doit pas contenir uniquement des chiffres.");
-        return false;
-    }
-
-   if (adresse === "") {
-    alert("L'adresse ne doit pas être vide.");
-    return false;
-}
-
-if (adresse.length < 10) {
-    alert("L'adresse doit contenir au moins 10 caractères.");
-    return false;
-}
-
-if (adresse.length > 50) {
-    alert("L'adresse ne doit pas dépasser 50 caractères.");
-    return false;
-}
-
-    if (discription.length < 20) {
-        alert("La description du sponsor doit contenir au moins 20 caractères.");
+    if (description.length < 10) {
+        alert("La description doit contenir au moins 10 caractères.");
         return false;
     }
 

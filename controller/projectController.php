@@ -5,96 +5,134 @@ require_once __DIR__ . '/../model/project.php';
 
 class ProjetC
 {
- public function listProjets($sort = 'id-projet', $direction = 'ASC', $searchId = '')
-{
-    $db = config::getConnexion();
+    public function addHistorique($action, $entite, $description)
+    {
+        $db = config::getConnexion();
 
-    $allowedSorts = ['id-projet', 'titre', 'budget', 'statut', 'id-user', 'id-offre'];
-    $allowedDirections = ['ASC', 'DESC'];
-
-    if (!in_array($sort, $allowedSorts)) {
-        $sort = 'id-projet';
-    }
-
-    $direction = strtoupper($direction);
-
-    if (!in_array($direction, $allowedDirections)) {
-        $direction = 'ASC';
-    }
-
-    if (!empty($searchId)) {
-        $sql = "SELECT * FROM projet 
-                WHERE `id-projet` = :searchId
-                ORDER BY `$sort` $direction";
+        $sql = "INSERT INTO historique (action, entite, description)
+                VALUES (:action, :entite, :description)";
 
         $query = $db->prepare($sql);
-        $query->execute(['searchId' => $searchId]);
+        $query->execute([
+            'action' => $action,
+            'entite' => $entite,
+            'description' => $description
+        ]);
+    }
+
+    public function listHistorique()
+    {
+        $db = config::getConnexion();
+
+        $sql = "SELECT * FROM historique ORDER BY date_action DESC";
+        return $db->query($sql);
+    }
+
+    public function listProjets($sort = 'id-projet', $direction = 'ASC', $searchId = '')
+    {
+        $db = config::getConnexion();
+
+        $allowedSorts = ['id-projet', 'titre', 'budget', 'statut', 'id-user', 'id-offre'];
+        $allowedDirections = ['ASC', 'DESC'];
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'id-projet';
+        }
+
+        $direction = strtoupper($direction);
+
+        if (!in_array($direction, $allowedDirections)) {
+            $direction = 'ASC';
+        }
+
+        if (!empty($searchId)) {
+            $sql = "SELECT * FROM projet 
+                    WHERE `id-projet` = :searchId
+                    ORDER BY `$sort` $direction";
+
+            $query = $db->prepare($sql);
+            $query->execute(['searchId' => $searchId]);
+            return $query;
+        }
+
+        $sql = "SELECT * FROM projet ORDER BY `$sort` $direction";
+        return $db->query($sql);
+    }
+
+    public function listProjetsLimited($limit = 3)
+    {
+        $db = config::getConnexion();
+
+        $sql = "SELECT * FROM projet ORDER BY `id-projet` DESC LIMIT :limit";
+        $query = $db->prepare($sql);
+        $query->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $query->execute();
+
         return $query;
     }
 
-    $sql = "SELECT * FROM projet ORDER BY `$sort` $direction";
-    return $db->query($sql);
-}
+    public function listSponsors($sort = 'id_user', $direction = 'ASC', $searchIdUser = '')
+    {
+        $db = config::getConnexion();
 
+        $allowedSorts = ['id_user', 'nom', 'type'];
+        $allowedDirections = ['ASC', 'DESC'];
 
-public function listSponsors($sort = 'id_user', $direction = 'ASC', $searchIdUser = '')
-{
-    $db = config::getConnexion();
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'id_user';
+        }
 
-    $allowedSorts = ['id_user', 'nom', 'type'];
-    $allowedDirections = ['ASC', 'DESC'];
+        $direction = strtoupper($direction);
 
-    if (!in_array($sort, $allowedSorts)) {
-        $sort = 'id_user';
+        if (!in_array($direction, $allowedDirections)) {
+            $direction = 'ASC';
+        }
+
+        if (!empty($searchIdUser)) {
+            $sql = "SELECT * FROM sponsor 
+                    WHERE id_user = :searchIdUser
+                    ORDER BY `$sort` $direction";
+
+            $query = $db->prepare($sql);
+            $query->execute(['searchIdUser' => $searchIdUser]);
+            return $query;
+        }
+
+        $sql = "SELECT * FROM sponsor ORDER BY `$sort` $direction";
+        return $db->query($sql);
     }
 
-    $direction = strtoupper($direction);
+    public function getProjectStatsByStatus()
+    {
+        $db = config::getConnexion();
 
-    if (!in_array($direction, $allowedDirections)) {
-        $direction = 'ASC';
+        $sql = "SELECT statut, COUNT(*) AS total
+                FROM projet
+                GROUP BY statut";
+
+        return $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    if (!empty($searchIdUser)) {
-        $sql = "SELECT * FROM sponsor 
-                WHERE id_user = :searchIdUser
-                ORDER BY `$sort` $direction";
+    public function getMostSponsoredStats()
+    {
+        $db = config::getConnexion();
 
-        $query = $db->prepare($sql);
-        $query->execute(['searchIdUser' => $searchIdUser]);
-        return $query;
+        $sql = "SELECT nom, COUNT(*) AS total
+                FROM sponsor
+                GROUP BY nom
+                ORDER BY total DESC";
+
+        return $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    $sql = "SELECT * FROM sponsor ORDER BY `$sort` $direction";
-    return $db->query($sql);
-}
-public function getProjectStatsByStatus()
-{
-    $db = config::getConnexion();
-
-    $sql = "SELECT statut, COUNT(*) AS total
-            FROM projet
-            GROUP BY statut";
-
-    return $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-}
-
-public function getMostSponsoredStats()
-{
-    $db = config::getConnexion();
-
-    $sql = "SELECT nom, COUNT(*) AS total
-            FROM sponsor
-            GROUP BY nom
-            ORDER BY total DESC";
-
-    return $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-}
     public function getProjetById($id)
     {
         $sql = "SELECT * FROM projet WHERE `id-projet` = :id";
         $db = config::getConnexion();
+
         $query = $db->prepare($sql);
         $query->execute(['id' => $id]);
+
         return $query->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -115,6 +153,13 @@ public function getMostSponsoredStats()
                 'id_user' => $projet->getIdUser(),
                 'id_offre' => $projet->getIdOffre()
             ]);
+
+            $this->addHistorique(
+                "Ajout",
+                "Projet",
+                "Le projet '" . $projet->getTitre() . "' a été ajouté."
+            );
+
         } catch (Exception $e) {
             die('Erreur addProjet : ' . $e->getMessage());
         }
@@ -144,6 +189,13 @@ public function getMostSponsoredStats()
                 'id_user' => $projet->getIdUser(),
                 'id_offre' => $projet->getIdOffre()
             ]);
+
+            $this->addHistorique(
+                "Modification",
+                "Projet",
+                "Le projet '" . $projet->getTitre() . "' a été modifié."
+            );
+
         } catch (Exception $e) {
             die('Erreur updateProjet : ' . $e->getMessage());
         }
@@ -157,20 +209,16 @@ public function getMostSponsoredStats()
         try {
             $query = $db->prepare($sql);
             $query->execute(['id' => $id]);
+
+            $this->addHistorique(
+                "Suppression",
+                "Projet",
+                "Le projet avec ID " . $id . " a été supprimé."
+            );
+
         } catch (Exception $e) {
             die('Erreur deleteProjet : ' . $e->getMessage());
         }
     }
-   public function listProjetsLimited($limit = 3)
-{
-    $db = config::getConnexion();
-
-    $sql = "SELECT * FROM projet ORDER BY `id-projet` DESC LIMIT :limit";
-    $query = $db->prepare($sql);
-    $query->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-    $query->execute();
-
-    return $query;
-}
 }
 ?>

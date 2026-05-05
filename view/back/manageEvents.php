@@ -70,17 +70,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
         .chart-legend-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
         .chart-legend-label { font-size: 13px; color: #283d66; overflow-wrap: break-word; max-width: 220px; }
         .chart-legend-value { font-size: 13px; color: #6b7c99; }
-        .chart-legend-dot--blue { background: #0d6efd; }
-        .chart-legend-dot--pink { background: #d63384; }
-        .chart-legend-dot--yellow { background: #f59f00; }
-        .chart-legend-dot--green { background: #84c225; }
-        .kpi-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
-        .kpi-list li { display: flex; gap: 12px; align-items: baseline; font-size: 14px; color: #4a5568; }
-        .kpi-list li::before { content: '•'; color: #0d6efd; font-weight: 700; display: inline-block; width: 1em; }
-        .graph-tooltip { opacity: 1; visibility: visible; position: static; margin-bottom: 12px; background: rgba(17, 46, 92, 0.08); color: #112e5c; padding: 10px 14px; border-radius: 16px; font-size: 13px; pointer-events: auto; transform: none; transition: none; }
-        .graph-card:hover .graph-tooltip { opacity: 1; visibility: visible; transform: none; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        .stat-card .stat-value { display: block; margin-top: 6px; font-weight: 600; color: #505f78; }
         .section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; color: var(--text-dark); display: flex; justify-content: space-between; align-items: center; }
         .table-wrapper { overflow-x: auto; }
         .event-table { width: 100%; min-width: 1600px; border-collapse: collapse; background-color: var(--white); box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 16px; overflow: hidden; }
@@ -88,10 +78,15 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
         .event-table th { background-color: #f7fafc; font-weight: 700; color: var(--primary-blue); }
         .event-table tbody tr:hover { background-color: #f1f5f9; }
         .event-table td:last-child { white-space: nowrap; }
-        .btn-modifier, .btn-supprimer { text-decoration: none; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; padding: 8px 16px; cursor: pointer; transition: background 0.3s; display: inline-flex; align-items: center; justify-content: center; }
-        .btn-modifier { background-color: var(--primary-green); color: var(--white); margin-right: 10px; }
+        .btn-action { text-decoration: none; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; padding: 8px 16px; cursor: pointer; transition: background 0.3s; display: inline-flex; align-items: center; justify-content: center; color: #ffffff; margin-right: 6px; }
+        .btn-action:last-child { margin-right: 0; }
+        .btn-inscriptions { background-color: #2270c1; }
+        .btn-inscriptions:hover { background-color: #1a5a9e; }
+        .btn-mails { background-color: #7c3aed; }
+        .btn-mails:hover { background-color: #6d28d9; }
+        .btn-modifier { background-color: var(--primary-green); }
         .btn-modifier:hover { background-color: #5a9a2f; }
-        .btn-supprimer { background-color: #e53e3e; color: var(--white); }
+        .btn-supprimer { background-color: #e53e3e; }
         .btn-supprimer:hover { background-color: #c53030; }
         .event-desc { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .message-box { max-width: 1100px; margin: 0 auto 20px; padding: 0 20px; }
@@ -116,15 +111,13 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
 
     <div class="container">
         <?php
-            $totalEvents = max(1, (int)$stats['total_events']);
-            $upcomingEvents = (int)$stats['upcoming_events'];
+            $totalEvents        = max(1, (int)$stats['total_events']);
+            $upcomingEvents     = (int)$stats['upcoming_events'];
             $totalRegistrations = (int)$stats['total_registrations'];
             $popularRegistrations = !empty($stats['popular_event']) ? (int)$stats['popular_event']['registrations'] : 0;
-            $upcomingPercent = min(100, round(($upcomingEvents / $totalEvents) * 100));
-            $popularPercent = $totalRegistrations ? min(100, round(($popularRegistrations / $totalRegistrations) * 100)) : 0;
-            $averageRegistrations = $totalEvents ? round($totalRegistrations / $totalEvents, 1) : 0;
         ?>
 
+        <!-- Stats cards -->
         <div class="stats-grid">
             <div class="stat-card stat-card--events">
                 <h3>Total des événements</h3>
@@ -155,29 +148,23 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
 
         <?php
             $eventsForChart = $listEvents;
-            usort($eventsForChart, function ($a, $b) {
-                return (int)$b['nbr_inscri'] <=> (int)$a['nbr_inscri'];
-            });
+            usort($eventsForChart, fn($a, $b) => (int)$b['nbr_inscri'] <=> (int)$a['nbr_inscri']);
             $eventsForChart = array_slice($eventsForChart, 0, 6);
-            $chartLabels = array_map(function ($event) {
-                return htmlspecialchars(substr($event['titre'] ?? 'Sans titre', 0, 20));
-            }, $eventsForChart);
-            $chartData = array_map(function ($event) {
-                return (int)$event['nbr_inscri'];
-            }, $eventsForChart);
-            $chartColors = ['#0d6efd', '#d63384', '#f59f00', '#84c225', '#6f42c1', '#20c997'];
+            $chartLabels = array_map(fn($e) => htmlspecialchars(substr($e['titre'] ?? 'Sans titre', 0, 20)), $eventsForChart);
+            $chartData   = array_map(fn($e) => (int)$e['nbr_inscri'], $eventsForChart);
+            $chartColors = ['#0d6efd','#d63384','#f59f00','#84c225','#6f42c1','#20c997'];
         ?>
 
+        <!-- Chart -->
         <div class="chart-grid">
             <div class="graph-card">
-                <div class="graph-tooltip">Top 6 événements par inscriptions</div>
                 <div class="graph-title">Top événements par nombre d'inscriptions</div>
                 <div class="graph-subtitle">Classement des 6 événements les plus populaires</div>
                 <canvas id="eventRegistrationsChart" class="chart-canvas"></canvas>
                 <div class="chart-legend">
                     <?php foreach ($chartLabels as $index => $label): ?>
                         <div class="chart-legend-item">
-                            <span class="chart-legend-dot chart-legend-dot--<?php echo $index + 1; ?>" style="background: <?php echo $chartColors[$index]; ?>;"></span>
+                            <span class="chart-legend-dot" style="background: <?php echo $chartColors[$index]; ?>;"></span>
                             <div>
                                 <div class="chart-legend-label"><?php echo $label; ?></div>
                                 <div class="chart-legend-value"><?php echo $chartData[$index]; ?> inscriptions</div>
@@ -188,6 +175,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
             </div>
         </div>
 
+        <!-- Table -->
         <div class="table-wrapper">
             <?php if (count($listEvents) > 0): ?>
                 <table class="event-table">
@@ -206,19 +194,16 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
                     </thead>
                     <tbody>
                         <?php foreach ($listEvents as $event):
-                            $dateStr = isset($event['date_event']) ? htmlspecialchars($event['date_event']) : 'À définir';
+                            $dateStr  = isset($event['date_event'])  ? htmlspecialchars($event['date_event'])  : 'À définir';
                             $heureStr = isset($event['heure_event']) ? htmlspecialchars($event['heure_event']) : '---';
-                            $titreRaw = isset($event['titre']) ? $event['titre'] : 'Sans titre';
-                            $titreStr = htmlspecialchars($titreRaw);
-                            $descRaw = isset($event['description']) ? $event['description'] : '';
-                            $descStr = $descRaw !== '' ? htmlspecialchars($descRaw) : '...';
-                            $descShort = strlen($descStr) > 70 ? substr($descStr, 0, 67) . '...' : $descStr;
-                            $lieuRaw = isset($event['lieu']) ? $event['lieu'] : 'En ligne';
-                            $lieuStr = htmlspecialchars($lieuRaw);
-                            $capaciteStr = isset($event['capacite']) ? (int)$event['capacite'] : 0;
-                            $idEvent = isset($event['id_event']) ? htmlspecialchars($event['id_event']) : '';
+                            $titreStr = htmlspecialchars($event['titre'] ?? 'Sans titre');
+                            $descRaw  = $event['description'] ?? '';
+                            $descStr  = $descRaw !== '' ? htmlspecialchars($descRaw) : '...';
+                            $descShort= mb_strlen($descStr) > 70 ? mb_substr($descStr, 0, 67) . '...' : $descStr;
+                            $lieuStr  = htmlspecialchars($event['lieu'] ?? 'En ligne');
+                            $capacite = isset($event['capacite']) ? (int)$event['capacite'] : 0;
+                            $idEvent  = isset($event['id_event'])  ? (int)$event['id_event']  : 0;
                         ?>
-
                             <tr>
                                 <td><?php echo $idEvent; ?></td>
                                 <td><?php echo $titreStr; ?></td>
@@ -226,20 +211,34 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
                                 <td><?php echo $dateStr; ?></td>
                                 <td><?php echo $heureStr; ?></td>
                                 <td><?php echo $lieuStr; ?></td>
-                                <td><?php echo $capaciteStr; ?></td>
+                                <td><?php echo $capacite; ?></td>
                                 <td><?php echo isset($event['nbr_inscri']) ? (int)$event['nbr_inscri'] : 0; ?></td>
                                 <td>
-                                    <a href="manageInscriptions.php?event_id=<?php echo $idEvent; ?>" class="btn-modifier" style="background-color: #2270c1;">Voir inscriptions</a>
-                                    <a href="../front/inscription.php?id_event=<?php echo $idEvent; ?>" class="btn-modifier" style="background-color: #4a90e2;">Voir l'événement</a>
-                                    <a href="editEvent.php?id=<?php echo $idEvent; ?>" class="btn-modifier">Modifier</a>
-                                    <button type="button" class="btn-supprimer" onclick="deleteEvent(<?php echo $idEvent; ?>)">Supprimer</button>
+                                    <!-- Voir les inscriptions -->
+                                    <a href="manageInscriptions.php?event_id=<?php echo $idEvent; ?>"
+                                       class="btn-action btn-inscriptions">Voir inscriptions</a>
+
+                                    <!-- ✅ Voir les mails reçus pour cet événement -->
+                                    <a href="viewMails.php?event_id=<?php echo $idEvent; ?>"
+                                       class="btn-action btn-mails">Voir les mails</a>
+
+                                    <!-- Modifier -->
+                                    <a href="editEvent.php?id=<?php echo $idEvent; ?>"
+                                       class="btn-action btn-modifier">Modifier</a>
+
+                                    <!-- Supprimer -->
+                                    <button type="button"
+                                            class="btn-action btn-supprimer"
+                                            onclick="deleteEvent(<?php echo $idEvent; ?>)">Supprimer</button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php else: ?>
-                <p style="text-align:center; color: var(--text-light); padding: 40px 0;">Aucun événement enregistré pour le moment.</p>
+                <p style="text-align:center; color: var(--text-light); padding: 40px 0;">
+                    Aucun événement enregistré pour le moment.
+                </p>
             <?php endif; ?>
         </div>
     </div>
@@ -253,7 +252,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
         }
 
         const eventLabels = <?php echo json_encode($chartLabels, JSON_HEX_TAG); ?>;
-        const eventData = <?php echo json_encode($chartData, JSON_HEX_TAG); ?>;
+        const eventData   = <?php echo json_encode($chartData,   JSON_HEX_TAG); ?>;
         const eventColors = <?php echo json_encode($chartColors, JSON_HEX_TAG); ?>;
 
         if (eventLabels.length > 0) {
@@ -276,10 +275,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#4a5568' }
-                        },
+                        x: { grid: { display: false }, ticks: { color: '#4a5568' } },
                         y: {
                             beginAtZero: true,
                             grid: { color: '#edf2f7' },
@@ -287,25 +283,17 @@ if (isset($_GET['message']) && $_GET['message'] === 'deleted') {
                                 color: '#4a5568',
                                 precision: 0,
                                 stepSize: 1,
-                                callback: function(value) {
-                                    return Number.isInteger(value) ? value : '';
-                                }
+                                callback: v => Number.isInteger(v) ? v : ''
                             }
                         }
                     },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            backgroundColor: 'rgba(17, 46, 92, 0.92)',
-                            titleColor: '#ffffff',
-                            bodyColor: '#ffffff',
-                            borderColor: 'rgba(255,255,255,0.12)',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function(context) {
-                                    return context.parsed.y + ' inscriptions';
-                                }
-                            }
+                            backgroundColor: 'rgba(17,46,92,0.92)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            callbacks: { label: ctx => ctx.parsed.y + ' inscriptions' }
                         }
                     }
                 }

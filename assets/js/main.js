@@ -56,7 +56,13 @@
 		for (var i = 0; i < sections.length; i++) {
 			var currLink = sections[i];
 			var val = currLink.getAttribute('href');
+			if (!val || val.charAt(0) !== '#') {
+				continue;
+			}
 			var refElement = document.querySelector(val);
+			if (!refElement) {
+				continue;
+			}
 			var scrollTopMinus = scrollPos + 73;
 			if (refElement.offsetTop <= scrollTopMinus && (refElement.offsetTop + refElement.offsetHeight > scrollTopMinus)) {
 				document.querySelector('.page-scroll').classList.remove('active');

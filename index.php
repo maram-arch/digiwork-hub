@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="no-js" lang="">
+<html class="no-js" lang="fr">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Nova - Bootstrap 5 Template</title>
-    <meta name="description" content="" />
+    <title>DigiWork Hub</title>
+    <meta name="description" content="Plateforme pour entrepreneurs digitaux" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Place favicon.ico in the root directory -->
 
@@ -53,8 +53,8 @@
             <div class="row align-items-center">
               <div class="col-lg-12">
                 <nav class="navbar navbar-expand-lg">
-                  <a class="navbar-brand" href="index.html">
-                    <img src="assets/img/logo/logo.png" alt="Logo" style="height: 300px; width: 300px;" />
+                  <a class="navbar-brand" href="index.php">
+                    <img src="assets/img/logo.png" alt="DigiWork HUB" style="height:52px;" />
                   </a>
                   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent6" aria-controls="navbarSupportedContent6" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="toggler-icon"></span>
@@ -65,17 +65,17 @@
                   <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent6">
                     <ul id="nav6" class="navbar-nav ms-auto">
                       <li class="nav-item">
-                        <a class="page-scroll active" href="#home">Home</a>
+                        <a class="page-scroll active" href="#home">Accueil</a>
                       </li>
                       <li class="nav-item">
-                        <a class="page-scroll" href="#feature">Feature</a>
+                        <a class="page-scroll" href="#feature">Plateforme</a>
                       </li>
                       <li class="nav-item">
-                        <a class="page-scroll" href="#about">About</a>
+                        <a class="page-scroll" href="#about">À propos</a>
                       </li>
 
                       <li class="nav-item">
-                        <a class="page-scroll" href="#pricing">Pricing</a>
+                        <a class="page-scroll" href="#pricing">Nos Packs</a>
                       </li>
                       <li class="nav-item">
                         <a class="page-scroll" href="./view/front/event.php">Événements</a>
@@ -83,10 +83,20 @@
                       <li class="nav-item">
                         <a class="page-scroll" href="#contact">Contact</a>
                       </li>
+                      <li class="nav-item">
+                        <a href="./view/back/dashboard_packs.php">Dashboard</a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="./view/back/dashboard_abonnements.php">Abonnements</a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="./view/back/manageEvents.php">Événements</a>
+                      </li>
                     </ul>
                   </div>
                   
                   <div class="header-action d-flex">
+                    <a href="./view/front/login.php"> <i class="lni lni-user"></i> Se connecter</a>
                     <a href="#0"> <i class="lni lni-cart"></i> </a>
                     <a href="#0"> <i class="lni lni-alarm"></i> </a>
                   </div>
@@ -109,9 +119,10 @@
           <div class="row">
             <div class="col-lg-6">
               <div class="hero-content-wrapper">
-                <h2 class="mb-30 wow fadeInUp" data-wow-delay=".2s">You're Using Free Lite Version</h2>
-                <p class="mb-30 wow fadeInUp" data-wow-delay=".4s">Please purchase full version of the template to get all sections and permission to use with commercial projects.</p>
-                <a href="./view/front/event.php" class="button button-lg radius-50 wow fadeInUp" data-wow-delay=".6s">Get Started <i class="lni lni-chevron-right"></i> </a>
+                <h2 class="mb-30 wow fadeInUp" data-wow-delay=".2s">Prêt à propulser vos projets ?</h2>
+                <p class="mb-30 wow fadeInUp" data-wow-delay=".4s">DigiWork Hub est la plateforme ultime pour gérer vos activités, de la gestion de clients à vos abonnements prioritaires.</p>
+                <a href="#pricing" class="button button-lg radius-50 wow fadeInUp page-scroll" data-wow-delay=".6s">Voir nos offres <i class="lni lni-chevron-right"></i> </a>
+                <a href="./view/back/dashboard_packs.php" class="button button-lg radius-50 wow fadeInUp ms-3" data-wow-delay=".8s" style="background: linear-gradient(45deg, #28a745, #20c997);">Gérer les Packs <i class="lni lni-package"></i> </a>
               </div>
             </div>
             <div class="col-lg-6 align-self-end">
@@ -273,56 +284,37 @@
         <div class="row align-items-center">
           <div class="col-xl-5 col-lg-6">
             <div class="section-title mb-60">
-              <h3 class="mb-15 wow fadeInUp" data-wow-delay=".2s">Pricing Plan</h3>
-              <p class="wow fadeInUp" data-wow-delay=".4s">Stop wasting time and money designing and managing a website that doesn’t get results. Happiness guaranteed!Stop wasting time and money designing and managing a website that doesn’t get results. Happiness guaranteed!</p>
+              <h3 class="mb-15 wow fadeInUp" data-wow-delay=".2s">Nos Packs</h3>
+              <p class="wow fadeInUp" data-wow-delay=".4s">Choisissez le pack qui correspond parfaitement à l'échelle de vos projets et bénéficiez de tout le support nécessaire pour réussir.</p>
             </div>
           </div>
           <div class="col-xl-7 col-lg-6">
             <div class="pricing-active-wrapper wow fadeInUp" data-wow-delay=".4s">
               <div class="pricing-active">
+                <?php
+                require_once("model/Pack.php");
+                $packModel = new Pack();
+                $packs = $packModel->getAll();
+                ?>
+                <?php foreach($packs as $p): ?>
                 <div class="single-pricing-wrapper">
                   <div class="single-pricing">
-                    <h6>Basic Design</h6>
-                    <h4>Web Design</h4>
-                    <h3>$ 29.00</h3>
+                    <h6><?= htmlspecialchars($p['nom-pack']) ?></h6>
+                    <h4>Max <?= htmlspecialchars($p['nb-proj-max']) ?> Projets</h4>
+                    <h3><?= htmlspecialchars($p['prix']) ?> dt</h3>
                     <ul>
-                      <li>Carefully crafted components</li>
-                      <li>Amazing page examples</li>
-                      <li>Super friendly support team</li>
-                      <li>Awesome Support</li>
+                      <li>Durée: <?= htmlspecialchars($p['duree']) ?></li>
+                      <li>Support prioritaire: <?= htmlspecialchars($p['support-prioritaire']) ?></li>
+                      <li><?= htmlspecialchars($p['description']) ?></li>
                     </ul>
-                    <a href="#0" class="button radius-30">Get Started</a>
+                    <form action="controller/AbonnementController.php" method="POST">
+                        <input type="hidden" name="action" value="subscribe">
+                        <input type="hidden" name="pack_id" value="<?= htmlspecialchars($p['id-pack']) ?>">
+                        <button type="submit" class="button radius-30">S'abonner</button>
+                    </form>
                   </div>
                 </div>
-                <div class="single-pricing-wrapper">
-                  <div class="single-pricing">
-                    <h6>Standard Design</h6>
-                    <h4>Web Development</h4>
-                    <h3>$ 89.00</h3>
-                    <ul>
-                      <li>Carefully crafted components</li>
-                      <li>Amazing page examples</li>
-                      <li>Super friendly support team</li>
-                      <li>Awesome Support</li>
-                    </ul>
-                    <a href="#0" class="button radius-30">Get Started</a>
-                  </div>
-                </div>
-                <div class="single-pricing-wrapper">
-                  <div class="single-pricing">
-                    <h6>Pro Design</h6>
-                    <h4>Design & Develop</h4>
-                    <h3>$ 199.00</h3>
-                    <ul>
-                      <li>Carefully crafted components</li>
-                      <li>Amazing page examples</li>
-                      <li>Super friendly support team</li>
-                      <li>Awesome Support</li>
-                    </ul>
-                    <a href="#0" class="button radius-30">Get Started</a>
-                  </div>
-                </div>
-                
+                <?php endforeach; ?>
               </div>
             </div>
           </div>

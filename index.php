@@ -99,6 +99,7 @@ exit;
                       <li class="nav-item">
                         <a href="./view/back/manageEvents.php">Événements</a>
                       </li>
+                      <li><a href="view/front/projets.php">Projets</a></li>
                     </ul>
                   </div>
                   

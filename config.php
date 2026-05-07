@@ -3,7 +3,7 @@ function getConnection() {
     static $pdo = null;
     if ($pdo === null) {
         $pdo = new PDO(
-            "mysql:host=localhost;dbname=digiwork_hub;charset=utf8mb4",
+            "mysql:host=localhost;dbname=digiwork-hub;charset=utf8mb4",
             'root',
             '',
             array(

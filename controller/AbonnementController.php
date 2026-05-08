@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../model/Abonnement.php';
 require_once __DIR__ . '/../model/Pack.php';
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/UserController.php';
 
 class AbonnementController {
     private Abonnement $abonnementModel;
@@ -88,16 +89,8 @@ class AbonnementController {
 
     // Obtenir les abonnements de l'utilisateur connecté
     public function getMine(): void {
-        session_start();
-        
-        // Check if user is logged in
-        if (!isset($_SESSION['user_id'])) {
-            http_response_code(401);
-            echo json_encode(['status' => 'error', 'message' => 'Vous devez être connecté']);
-            return;
-        }
-
-        $id_user = $_SESSION['user_id'];
+        UserController::requireLogin();
+        $id_user = UserController::getCurrentUserId();
 
         try {
             $pdo = config::getConnexion();
@@ -136,8 +129,8 @@ class AbonnementController {
 
     // S'abonner à un pack (pour le frontend)
     public function subscribe(): void {
-        session_start();
-        
+        // Allow subscription without strict login requirement
+        // Use session user_id if available
         $pack_id = $_POST['pack_id'] ?? null;
         $nom = $_POST['nom'] ?? null;
         $tel = $_POST['tel'] ?? null;
@@ -177,18 +170,19 @@ class AbonnementController {
 
         if (!$pack_id) {
             http_response_code(400);
+            header('Content-Type: application/json');
             echo json_encode(['status' => 'error', 'message' => 'ID pack requis']);
             return;
         }
 
-        // Check if user is logged in
-        if (!isset($_SESSION['user_id'])) {
+        $id_user = UserController::getCurrentUserId();
+
+        if ($id_user === null) {
             http_response_code(401);
-            echo json_encode(['status' => 'error', 'message' => 'Vous devez être connecté pour vous abonner']);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => 'Vous devez être connecté pour vous abonner. Veuillez vous connecter d\'abord.']);
             return;
         }
-
-        $id_user = $_SESSION['user_id'];
 
         try {
             $pdo = config::getConnexion();
@@ -391,6 +385,7 @@ class AbonnementController {
         
         switch ($action) {
             case 'getAll':
+                UserController::requireAdmin();
                 $this->getAll();
                 break;
             case 'getById':
@@ -403,15 +398,19 @@ class AbonnementController {
                 $this->subscribe();
                 break;
             case 'create':
+                UserController::requireAdmin();
                 $this->create();
                 break;
             case 'update':
+                UserController::requireAdmin();
                 $this->update();
                 break;
             case 'delete':
+                UserController::requireAdmin();
                 $this->delete();
                 break;
             case 'getStats':
+                UserController::requireAdmin();
                 $this->getStats();
                 break;
             default:

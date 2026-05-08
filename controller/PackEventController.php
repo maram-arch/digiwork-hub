@@ -1,7 +1,9 @@
 <?php
-require_once 'model/PackEvent.php';
-require_once 'model/Pack.php';
-require_once 'model/Event.php';
+require_once __DIR__ . '/../model/PackEvent.php';
+require_once __DIR__ . '/../model/Pack.php';
+require_once __DIR__ . '/../model/Event.php';
+require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/UserController.php';
 
 class PackEventController {
     private PackEvent $packEventModel;
@@ -217,6 +219,11 @@ class PackEventController {
     // Router les requêtes
     public function handleRequest(): void {
         $action = $_GET['action'] ?? '';
+
+        $adminActions = ['getAll', 'create', 'update', 'delete', 'link', 'unlink', 'getAvailablePacks', 'getAvailableEvents'];
+        if (in_array($action, $adminActions, true)) {
+            UserController::requireAdmin();
+        }
         
         switch ($action) {
             case 'getAll':

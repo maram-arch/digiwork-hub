@@ -2,10 +2,12 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../model/Inscription.php';
 require_once __DIR__ . '/EventController.php';
+require_once __DIR__ . '/UserController.php';
 
 class InscriptionController {
 
     public function listInscriptions($eventId = null) {
+        // Admin check is handled by the calling page (backoffice)
         $db = config::getConnexion();
         try {
             if ($eventId !== null && $eventId > 0) {
@@ -52,6 +54,7 @@ class InscriptionController {
     }
 
     public function addInscription($inscription) {
+        // Auth check: use session user_id if available, otherwise allow guest inscription
         $db = config::getConnexion();
         try {
             $eventController = new EventController();
@@ -122,6 +125,7 @@ class InscriptionController {
     }
 
     public function deleteInscription($id) {
+        UserController::requireAdmin();
         $db = config::getConnexion();
         try {
             $oldQuery = $db->prepare('SELECT id_event FROM inscription WHERE id_inscription = :id');
@@ -145,6 +149,7 @@ class InscriptionController {
     }
 
     public function updateInscription($inscription, $id) {
+        UserController::requireAdmin();
         $db = config::getConnexion();
         try {
             $oldQuery = $db->prepare('SELECT id_event FROM inscription WHERE id_inscription = :id');
@@ -198,6 +203,7 @@ class InscriptionController {
     }
 
     public function showInscription($id) {
+        UserController::requireAdmin();
         $db = config::getConnexion();
         try {
             $query = $db->prepare('SELECT * FROM inscription WHERE id_inscription = :id');

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../model/Event.php';
+require_once __DIR__ . '/UserController.php';
 
 class EventController {
     
@@ -38,6 +39,7 @@ class EventController {
     }
 
     public function getEventStatistics() {
+        UserController::requireAdmin();
         $db = config::getConnexion();
         try {
             $statsQuery = $db->query(
@@ -77,6 +79,7 @@ class EventController {
     }
 
     public function addEvent($event) {
+        UserController::requireAdmin();
         $db = config::getConnexion();
         try {
             $query = $db->prepare(
@@ -117,6 +120,7 @@ class EventController {
     }
 
     public function deleteEvent($id) {
+        UserController::requireAdmin();
         $db = config::getConnexion();
         try {
             $query = $db->prepare('DELETE FROM evente WHERE id_event = :id');
@@ -127,6 +131,7 @@ class EventController {
     }
 
     public function updateEvent($event, $id) {
+        UserController::requireAdmin();
         $db = config::getConnexion();
         try {
             $query = $db->prepare(

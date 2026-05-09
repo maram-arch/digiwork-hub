@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/../../model/Publication.php';
 require_once __DIR__ . '/../../config/config.php';
 
-$id_user = $_SESSION['id_user'] ?? 1;
+$id_users = $_SESSION['id_users'] ?? 1;
 $pdo = Config::getConnexion();
 $stmt = $pdo->prepare("
     SELECT f.*, u.nom, u.prenom
@@ -11,9 +11,8 @@ $stmt = $pdo->prepare("
     INNER JOIN favoris fav ON f.id_publication = fav.id_publication
     LEFT JOIN user u ON f.id_user = u.id_user
     WHERE fav.id_user = ?
-    ORDER BY fav.created_at DESC
 ");
-$stmt->execute([$id_user]);
+$stmt->execute([$id_users]);
 $favoris = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -66,7 +65,6 @@ document.querySelectorAll('.remove-fav').forEach(btn => {
         }).then(() => location.reload());
     });
 });
-// Mode sombre
 if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
 document.getElementById('themeToggle').addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');

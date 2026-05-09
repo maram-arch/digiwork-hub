@@ -1,32 +1,15 @@
-<style id="theme-style">
-    body { background: #fff; color: #000; transition: 0.3s; }
-    body.dark-mode { background: #1e1e2f; color: #eee; }
-    body.dark-mode .card, body.dark-mode .pub-card, body.dark-mode .form-container { background: #2a2a3a; color: #eee; border-color: #444; }
-</style>
-<button id="theme-toggle" class="btn btn-sm btn-secondary position-fixed bottom-0 end-0 m-3">🌓 Thème</button>
-<script>
-document.getElementById('theme-toggle').addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-});
-if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
-</script>
 <?php
 // view/frontoffice/ajouter_publication.php
-// Formulaire d'ajout de publication côté utilisateur
-// Version corrigée : insertion directe PDO (sans dépendre du contrôleur)
 
 require_once __DIR__ . '/../../config/Config.php';
 
 session_start();
-$id_user = $_SESSION['id_user'] ?? 1; // à adapter
-
+$id_user = $_SESSION['id_user'] ?? 1;
 $errorMessage = "";
 $successMessage = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $errors = [];
-
     $titre     = trim($_POST["titre"] ?? '');
     $contenu   = trim($_POST["contenu"] ?? '');
     $categorie = trim($_POST["categorie"] ?? 'general');
@@ -35,7 +18,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $event_lieu = !empty($_POST["event_lieu"]) ? trim($_POST["event_lieu"]) : null;
     $date_programmee = !empty($_POST["date_programmee"]) ? $_POST["date_programmee"] : null;
 
-    // Validations
     if (strlen($titre) < 3)      $errors[] = "Titre trop court (min 3).";
     if (strlen($contenu) < 10)   $errors[] = "Contenu trop court (min 10).";
     if (!$categorie)             $errors[] = "Catégorie obligatoire.";
@@ -43,7 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $errors[] = "Date programmée dans le futur.";
     }
 
-    // Image
     $image = null;
     if (!empty($_FILES['image']['name'])) {
         $uploadDir = __DIR__ . '/../../public/uploads/publications/';
@@ -65,15 +46,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     if (empty($errors)) {
-        // Nettoyage anti-XSS et bad words (optionnel)
         $titre   = htmlspecialchars($titre, ENT_QUOTES, 'UTF-8');
         $contenu = htmlspecialchars($contenu, ENT_QUOTES, 'UTF-8');
         $event_lieu = htmlspecialchars($event_lieu, ENT_QUOTES, 'UTF-8');
-
-        // Date de publication
         $date_publication = $date_programmee ?: date('Y-m-d H:i:s');
 
-        // Insertion directe PDO
         try {
             $pdo = Config::getConnexion();
             $sql = "INSERT INTO forums (titre, contenu, categorie, image, statut, nb_vues, nb_likes, is_event, event_date, event_lieu, date_publication, id_user)
@@ -90,7 +67,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ':date_publication' => $date_publication,
                 ':id_user' => $id_user
             ]);
-
             if ($success) {
                 header("Location: publications.php?status=success&msg=" . urlencode("Publication ajoutée"));
                 exit;
@@ -101,7 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $errors[] = "Erreur SQL : " . $e->getMessage();
         }
     }
-
     if (!empty($errors)) {
         $errorMessage = implode("<br>", $errors);
     }
@@ -114,16 +89,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Ajouter une publication - DigiWork Hub</title>
     <link rel="stylesheet" href="assets/css/bootstrap-5.0.0-beta1.min.css">
     <link rel="stylesheet" href="assets/css/lindy-uikit.css">
-    <style>
+    <style id="theme-style">
+        body { background: #fff; color: #000; transition: 0.3s; }
+        body.dark-mode { background: #1e1e2f; color: #eee; }
+        body.dark-mode .card, body.dark-mode .pub-card, body.dark-mode .form-container { background: #2a2a3a; color: #eee; border-color: #444; }
         .form-container { max-width: 800px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         .required:after { content: " *"; color: red; }
         .error-msg { color: #dc3545; font-size: 0.875rem; margin-top: 5px; }
         .btn-primary { background: #435ebe; border: none; }
         .btn-primary:hover { background: #3348a8; }
+        
     </style>
 </head>
-
 <body>
+<button id="theme-toggle" class="btn btn-sm btn-secondary position-fixed bottom-0 end-0 m-3" style="z-index: 1000;">🌓 Thème</button>
 <header class="header header-6">
     <div class="navbar-area">
         <div class="container">
@@ -209,17 +188,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     document.getElementById('is_event').addEventListener('change', function() {
         document.getElementById('eventFields').style.display = this.checked ? 'block' : 'none';
     });
-
     function validateForm() {
         let isValid = true;
         document.querySelectorAll('.error-msg').forEach(el => el.innerHTML = '');
-
         let titre = document.getElementById('titre').value.trim();
         let contenu = document.getElementById('contenu').value.trim();
         let categorie = document.getElementById('categorie').value;
         let dateProg = document.getElementById('date_programmee').value;
         let image = document.getElementById('image').files[0];
-
         if (titre.length < 3) {
             document.getElementById('titreError').innerHTML = 'Titre trop court (min 3)';
             isValid = false;
@@ -249,6 +225,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
         return isValid;
     }
+    // Mode sombre
+    if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    });
 </script>
 </body>
 </html>

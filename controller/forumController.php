@@ -1,3 +1,6 @@
+// Fichier: ForumController.php
+// Aucune modification SQL directe (les requêtes sont dans le modèle Forum.php)
+
 <?php
 
 require_once "model/Forum.php";
@@ -44,3 +47,4 @@ class ForumController
         require "view/frontoffice/editPublication.php";
     }
 }
+?>

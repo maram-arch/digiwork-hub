@@ -1,6 +1,5 @@
 <?php
 
-
 require_once __DIR__ . '/../model/Commentaire.php';
 require_once __DIR__ . '/../config/Config.php';
 
@@ -26,27 +25,25 @@ class CommentaireController
         return $text;
     }
 
-    // ==============================================================
-    // CRUD DE BASE
-    // ==============================================================
-
-    
     public function addCommentaire(Commentaire $c): bool
     {
-        
         $contenuNettoye = $this->sanitizeComment($c->getContenu());
         $c->setContenu($contenuNettoye);
-        return $c->addCommentaire();
+        $result = $c->addCommentaire();
+        if ($result) {
+            require_once __DIR__ . '/../model/WhatsAppNotifier.php';
+            $notifier = new WhatsAppNotifier();
+            $notifier->notifyOwner($c->getId_publication(), $c->getId_users(), 'comment');
+        }
+        return $result;
     }
 
-  
     public function deleteCommentaire(int $id_commentaire): bool
     {
         $model = new Commentaire($id_commentaire);
         return $model->deleteCommentaire($id_commentaire);
     }
 
-    
     public function updateCommentaire(int $id_commentaire, string $contenu): bool
     {
         $contenu = $this->sanitizeComment($contenu);
@@ -54,48 +51,83 @@ class CommentaireController
         $model = new Commentaire($id_commentaire);
         return $model->updateCommentaire($id_commentaire, $contenu);
     }
-    public function toggleLikeCommentaireAjax() {
-    header('Content-Type: application/json');
-    if (!isset($_SESSION['id_user'])) {
-        echo json_encode(['success' => false]);
+
+    public function likeCommentaireAjax() {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION['id_users'])) {
+            echo json_encode(['success' => false, 'message' => 'Non connecté']);
+            exit;
+        }
+        $id_commentaire = filter_input(INPUT_POST, 'id_commentaire', FILTER_VALIDATE_INT);
+        if (!$id_commentaire) {
+            echo json_encode(['success' => false, 'message' => 'ID invalide']);
+            exit;
+        }
+        $id_users = $_SESSION['id_users'];
+        $pdo = Config::getConnexion();
+        // Correction : colonne id_user (au lieu de id_users)
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM commentaire_likes WHERE id_commentaire = ? AND id_user = ?");
+        $stmt->execute([$id_commentaire, $id_users]);
+        $liked = $stmt->fetchColumn() > 0;
+        if ($liked) {
+            $pdo->prepare("DELETE FROM commentaire_likes WHERE id_commentaire = ? AND id_user = ?")->execute([$id_commentaire, $id_users]);
+            $action = 'unliked';
+        } else {
+            $pdo->prepare("INSERT INTO commentaire_likes (id_commentaire, id_user) VALUES (?, ?)")->execute([$id_commentaire, $id_users]);
+            $action = 'liked';
+        }
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM commentaire_likes WHERE id_commentaire = ?");
+        $stmt->execute([$id_commentaire]);
+        $nb_likes = (int)$stmt->fetchColumn();
+        echo json_encode(['success' => true, 'action' => $action, 'nb_likes' => $nb_likes]);
         exit;
     }
-    $id_commentaire = (int)($_POST['id_commentaire'] ?? 0);
-    $id_user = $_SESSION['id_user'];
-    if (!$id_commentaire) {
-        echo json_encode(['success' => false]);
+
+    public function addReponseAjax() {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION['id_users'])) { 
+            echo json_encode(['success' => false]); 
+            exit; 
+        }
+        $id_publication = (int)($_POST['id_publication'] ?? 0);
+        $parent_id = (int)($_POST['parent_id'] ?? 0);
+        $contenu = trim($_POST['contenu'] ?? '');
+        if (!$id_publication || !$parent_id || strlen($contenu) < 3) { 
+            echo json_encode(['success' => false]); 
+            exit; 
+        }
+        $ok = Commentaire::addReponse(htmlspecialchars($contenu), $id_publication, $_SESSION['id_users'], $parent_id);
+        if ($ok) {
+            require_once __DIR__ . '/../model/WhatsAppNotifier.php';
+            $notifier = new WhatsAppNotifier();
+            $notifier->notifyOwner($id_publication, $_SESSION['id_users'], 'comment');
+        }
+        echo json_encode(['success' => $ok]);
         exit;
     }
-    $result = Commentaire::toggleLikeCommentaire($id_commentaire, $id_user);
-    echo json_encode(['success' => true, 'action' => $result['action'], 'nb_likes' => $result['nb_likes']]);
-    exit;
-}
-    // ==============================================================
-    // ★ MÉTHODES AVEC JOINTURE
-    // ==============================================================
 
     public function getAllCommentaires(): array
     {
         $model = new Commentaire();
-        return $model->getAllCommentairesWithUserAndPublication();
+        return $model->getAllCommentairesWithUsersAndPublication();
     }
 
     public function getCommentairesByPublication(int $id_publication): array
     {
         $model = new Commentaire();
-        return $model->getCommentairesByPublicationWithUser($id_publication);
+        return $model->getCommentairesByPublicationWithUsers($id_publication);
     }
 
     public function getCommentaireById(int $id_commentaire): ?array
     {
         $model = new Commentaire($id_commentaire);
-        return $model->getCommentaireByIdWithUser($id_commentaire);
+        return $model->getCommentaireByIdWithUsers($id_commentaire);
     }
 
-    public function getCommentairesByUser(int $id_user): array
+    public function getCommentairesByUser(int $id_users): array
     {
         $model = new Commentaire();
-        return $model->getCommentairesByUserWithPublication($id_user);
+        return $model->getCommentairesByUsersWithPublication($id_users);
     }
 
     public function getNbCommentairesParPublication(): array
@@ -103,29 +135,5 @@ class CommentaireController
         $model = new Commentaire();
         return $model->getNbCommentairesParPublication();
     }
-
-
-
-    public function likeCommentaireAjax() {
-    header('Content-Type: application/json');
-    if (!isset($_SESSION['id_user'])) { echo json_encode(['success' => false]); exit; }
-    $id_commentaire = (int)($_POST['id_commentaire'] ?? 0);
-    if (!$id_commentaire) { echo json_encode(['success' => false]); exit; }
-    $result = Commentaire::toggleLikeCommentaire($id_commentaire, $_SESSION['id_user']);
-    echo json_encode(['success' => true, 'action' => $result['action'], 'nb_likes' => $result['nb_likes']]);
-    exit;
-}
-
-public function addReponseAjax() {
-    header('Content-Type: application/json');
-    if (!isset($_SESSION['id_user'])) { echo json_encode(['success' => false]); exit; }
-    $id_publication = (int)($_POST['id_publication'] ?? 0);
-    $parent_id = (int)($_POST['parent_id'] ?? 0);
-    $contenu = trim($_POST['contenu'] ?? '');
-    if (!$id_publication || !$parent_id || strlen($contenu) < 3) { echo json_encode(['success' => false]); exit; }
-    $ok = Commentaire::addReponse(htmlspecialchars($contenu), $id_publication, $_SESSION['id_user'], $parent_id);
-    echo json_encode(['success' => $ok]);
-    exit;
-}
 }
 ?>

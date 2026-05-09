@@ -4,8 +4,9 @@ class Config {
 
     // ✅ Utilisez votre clé Hugging Face (déjà fournie)
     const HUGGINGFACE_API_KEY = "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";
-    const TWILIO_ACCOUNT_SID  = "AC8247e85c21e08f71bd5139819440d5a2";    
-    const TWILIO_AUTH_TOKEN   = "76feee7e5e58257b610788d2e6920a30";      
+    const TWILIO_ACCOUNT_SID  = "AC4be4c3b975205c1d29453e90fdc7b665";    
+    const TWILIO_AUTH_TOKEN   = "892864efd55acbd19bb8336035af70da";
+    const GROQ_API_KEY = "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";
     const TWILIO_WHATSAPP_NUMBER = "+14155238886"; 
     
 

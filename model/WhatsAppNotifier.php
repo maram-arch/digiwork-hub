@@ -1,4 +1,5 @@
 <?php
+// model/WhatsAppNotifier.php
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../config/config.php';
 
@@ -19,6 +20,7 @@ class WhatsAppNotifier
         );
     }
 
+    // Envoie un message WhatsApp via Twilio
     public function sendWhatsAppMessage($toTelephone, $body)
     {
         if (empty($toTelephone)) {
@@ -40,6 +42,7 @@ class WhatsAppNotifier
         }
     }
 
+    // Notifie le propriétaire d'une publication (like, commentaire, partage)
     public function notifyOwner($id_publication, $id_auteur, $interaction)
     {
         error_log("DEBUG [WhatsAppNotifier::notifyOwner] appelé pour publication $id_publication, auteur $id_auteur, interaction $interaction");
@@ -53,8 +56,8 @@ class WhatsAppNotifier
             return;
         }
         if ($pub['id_user'] == $id_auteur) {
-            error_log("notifyOwner: auto-notification ignorée");
-            return;
+            error_log("notifyOwner: auto-notification forcée pour test");
+            // return; // commenté pour permettre l'envoi même à soi-même
         }
 
         $stmt = $pdo->prepare("SELECT tel FROM user WHERE id_user = ?");

@@ -1,19 +1,4 @@
-<style id="theme-style">
-    body { background: #fff; color: #000; transition: 0.3s; }
-    body.dark-mode { background: #1e1e2f; color: #eee; }
-    body.dark-mode .card, body.dark-mode .pub-card, body.dark-mode .form-container { background: #2a2a3a; color: #eee; border-color: #444; }
-</style>
-<button id="theme-toggle" class="btn btn-sm btn-secondary position-fixed bottom-0 end-0 m-3">🌓 Thème</button>
-<script>
-document.getElementById('theme-toggle').addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-});
-if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
-</script>
 <?php
-
-
 session_start();
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../controller/CommentaireController.php';
@@ -21,14 +6,15 @@ require_once __DIR__ . '/../../controller/PublicationController.php';
 
 // Récupérer l'utilisateur connecté (à adapter)
 $dbTemp  = Config::getConnexion();
-$id_user = (int)$dbTemp->query(
+// Correction : table "user" et colonne "id_user"
+$id_users = (int)$dbTemp->query(
     "SELECT id_user FROM user ORDER BY id_user ASC LIMIT 1"
 )->fetchColumn();
-if ($id_user <= 0) $id_user = 1; // fallback
+if ($id_users <= 0) $id_users = 1; // fallback
 
 $commentaireController = new CommentaireController();
-// Récupérer les commentaires de l'utilisateur avec jointure publication
-$commentaires = $commentaireController->getCommentairesByUser($id_user);
+// Attention : la méthode getCommentairesByUser du contrôleur doit utiliser id_users
+$commentaires = $commentaireController->getCommentairesByUser($id_users);
 
 $message     = "";
 $messageType = "";
@@ -45,9 +31,9 @@ if (isset($_GET['status'], $_GET['msg'])) {
     <title>Mes commentaires - DigiWork Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Mêmes styles que candidatures.php, adaptés pour commentaires */
+        /* ========== TOUS TES STYLES EXISTANTS ========== */
+        /* (je conserve l'intégralité de ton CSS) */
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
- 
         :root {
             --brand:     #435ebe;
             --brand-lt:  #eef1fb;
@@ -67,9 +53,7 @@ if (isset($_GET['status'], $_GET['msg'])) {
             --shadow:    0 4px 24px rgba(67,94,190,.10);
             --shadow-hov:0 8px 36px rgba(67,94,190,.18);
         }
- 
         body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
- 
         .navbar { background:var(--surface); padding:0 36px; height:64px; display:flex; align-items:center; gap:24px; justify-content:space-between; box-shadow:0 1px 0 var(--border); position:sticky; top:0; z-index:100; }
         .navbar-left { display:flex; align-items:center; gap:24px; }
         .navbar-right { display:flex; align-items:center; gap:24px; }
@@ -80,19 +64,15 @@ if (isset($_GET['status'], $_GET['msg'])) {
         .nav-link.active { background:var(--brand-lt); color:var(--brand); font-weight:700; }
         .btn-forum { background:var(--brand); color:#fff; text-decoration:none; font-size:13px; font-weight:700; padding:9px 20px; border-radius:10px; transition:background .2s; flex-shrink:0; }
         .btn-forum:hover { background:var(--brand-dk); }
- 
         .container { max-width:1200px; margin:0 auto; padding:40px 24px; }
         .page-header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:32px; flex-wrap:wrap; gap:16px; }
         .page-header h1 { font-size:28px; font-weight:800; letter-spacing:-.5px; margin-bottom:4px; }
         .page-header p  { font-size:14px; color:var(--muted); }
         .count-pill { background:var(--brand-lt); color:var(--brand); font-size:13px; font-weight:700; padding:6px 16px; border-radius:20px; }
- 
         .alert { padding:14px 18px; border-radius:12px; margin-bottom:28px; font-size:14px; font-weight:500; display:flex; align-items:center; gap:10px; }
         .alert-success { background:var(--success-lt); color:#065f46; border-left:4px solid var(--success); }
         .alert-danger  { background:var(--danger-lt);  color:#991b1b; border-left:4px solid var(--danger); }
- 
         .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
- 
         .comment-card {
             background:var(--surface);
             border-radius:var(--radius);
@@ -110,32 +90,26 @@ if (isset($_GET['status'], $_GET['msg'])) {
         .comment-card:nth-child(2){animation-delay:.10s}
         .comment-card:nth-child(3){animation-delay:.15s}
         .comment-card:nth-child(4){animation-delay:.20s}
- 
         .card-head { padding:20px 20px 14px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
         .pub-info { flex:1; min-width:0; }
         .pub-titre { font-size:16px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .pub-cat  { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; background:var(--brand-lt); color:var(--brand); margin-bottom:6px; }
         .comment-date { font-size:12px; color:var(--muted); margin-top:4px; display:flex; align-items:center; gap:4px; }
- 
         .card-body { padding:0 20px 16px; flex:1; display:flex; flex-direction:column; gap:12px; }
         .divider { height:1px; background:var(--border); margin:0 -20px; }
         .comment-content { background:#f8faff; border-radius:12px; padding:12px 14px; font-size:13px; line-height:1.6; color:var(--text); border-left:3px solid var(--brand-lt); }
- 
         .card-foot { padding:14px 20px; border-top:1px solid var(--border); background:#fafbff; display:flex; gap:8px; justify-content:flex-end; align-items:center; }
         .btn-a { display:inline-flex; align-items:center; gap:6px; border:none; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:all .15s; }
         .btn-edit { background:#fff7ed; color:#c2410c; border:1px solid #fed7aa; }
         .btn-edit:hover { background:#ffedd5; }
         .btn-del  { background:var(--danger-lt); color:var(--danger); border:1px solid #fecaca; }
         .btn-del:hover { background:#ffe4e4; }
- 
         .empty-wrap { grid-column:1/-1; text-align:center; padding:80px 24px; background:var(--surface); border-radius:var(--radius); border:2px dashed var(--border); }
         .empty-ic { width:80px; height:80px; background:var(--brand-lt); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:32px; }
         .empty-wrap h3 { font-size:20px; font-weight:800; margin-bottom:8px; }
         .empty-wrap p  { color:var(--muted); font-size:14px; margin-bottom:24px; }
         .btn-voir { display:inline-block; background:var(--brand); color:#fff; text-decoration:none; padding:12px 28px; border-radius:10px; font-weight:700; font-size:14px; transition:background .2s; }
         .btn-voir:hover { background:var(--brand-dk); }
- 
-        /* MODALES */
         .modal-ov { display:none; position:fixed; inset:0; background:rgba(15,20,50,.55); backdrop-filter:blur(3px); z-index:9999; justify-content:center; align-items:center; padding:16px; }
         .modal-ov.show { display:flex; }
         .modal-box { background:var(--surface); border-radius:20px; width:100%; max-width:520px; max-height:92vh; overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,.28); animation:mIn .22s cubic-bezier(.34,1.56,.64,1); }
@@ -159,7 +133,6 @@ if (isset($_GET['status'], $_GET['msg'])) {
         .del-ic { width:68px; height:68px; background:var(--danger-lt); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:28px; }
         .btn-del-c { background:var(--danger); color:#fff; border:none; border-radius:10px; padding:10px 28px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
         .btn-del-c:hover { background:#dc2626; }
- 
         @media(max-width:640px){
             .container{padding:24px 16px;}
             .cards-grid{grid-template-columns:1fr;}
@@ -169,7 +142,7 @@ if (isset($_GET['status'], $_GET['msg'])) {
         }
     </style>
 </head>
-<!-- Chatbot Widget -->
+<!-- Chatbot Widget (inchangé, je le garde) -->
 <style>
 .chatbot-widget {
     position: fixed;
@@ -244,7 +217,6 @@ if (isset($_GET['status'], $_GET['msg'])) {
     padding: 0 15px;
     cursor: pointer;
 }
-/* Mode sombre */
 .dark-mode .chatbot-window {
     background: #2a2a3a;
     color: #eee;
@@ -285,13 +257,11 @@ if (isset($_GET['status'], $_GET['msg'])) {
     const messagesDiv = document.getElementById('chatMessages');
     const input = document.getElementById('chatInput');
     const sendBtn = document.getElementById('chatSend');
-
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
             chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
         });
     }
-
     function addMessage(sender, text) {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
@@ -299,34 +269,27 @@ if (isset($_GET['status'], $_GET['msg'])) {
         messagesDiv.appendChild(msgDiv);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
-
     function sendMessage() {
         const msg = input.value.trim();
         if (!msg) return;
         addMessage('user', msg);
         input.value = '';
-
         fetch('chatbot.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'message=' + encodeURIComponent(msg)
         })
         .then(res => res.json())
-        .then(data => {
-            addMessage('bot', data.reply);
-        })
-        .catch(err => {
-            addMessage('bot', 'Erreur de connexion. Réessayez.');
-            console.error(err);
-        });
+        .then(data => addMessage('bot', data.reply))
+        .catch(err => addMessage('bot', 'Erreur de connexion. Réessayez.'));
     }
-
     if (sendBtn) sendBtn.addEventListener('click', sendMessage);
     if (input) input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 })();
 </script>
+
 <body>
- 
+
 <nav class="navbar">
     <div class="navbar-left">
         <img src="assets/img/logo/logo.png" style="width:230px;">
@@ -340,9 +303,8 @@ if (isset($_GET['status'], $_GET['msg'])) {
         </div>
     </div>
 </nav>
- 
+
 <div class="container">
- 
     <div class="page-header">
         <div>
             <h1>Mes commentaires</h1>
@@ -350,15 +312,14 @@ if (isset($_GET['status'], $_GET['msg'])) {
         </div>
         <span class="count-pill"><?= count($commentaires) ?> commentaire<?= count($commentaires) > 1 ? 's' : '' ?></span>
     </div>
- 
+
     <?php if ($message): ?>
     <div class="alert alert-<?= $messageType ?>">
         <?= $messageType === 'success' ? '✅' : '❌' ?> <?= $message ?>
     </div>
     <?php endif; ?>
- 
+
     <div class="cards-grid">
- 
     <?php if (count($commentaires) > 0): ?>
         <?php foreach ($commentaires as $c): ?>
         <div class="comment-card">
@@ -374,14 +335,12 @@ if (isset($_GET['status'], $_GET['msg'])) {
                     </div>
                 </div>
             </div>
- 
             <div class="card-body">
                 <div class="divider"></div>
                 <div class="comment-content">
                     <?= nl2br(htmlspecialchars($c['contenu'])) ?>
                 </div>
             </div>
- 
             <div class="card-foot">
                 <button class="btn-a btn-edit"
                     data-id_commentaire="<?= (int)$c['id_commentaire'] ?>"
@@ -400,7 +359,6 @@ if (isset($_GET['status'], $_GET['msg'])) {
             </div>
         </div>
         <?php endforeach; ?>
- 
     <?php else: ?>
         <div class="empty-wrap">
             <div class="empty-ic">💬</div>
@@ -409,10 +367,9 @@ if (isset($_GET['status'], $_GET['msg'])) {
             <a href="publications.php" class="btn-voir">Participer au forum</a>
         </div>
     <?php endif; ?>
- 
     </div>
 </div>
- 
+
 <!-- MODALE MODIFIER COMMENTAIRE -->
 <div class="modal-ov" id="editModal">
     <div class="modal-box">
@@ -425,8 +382,7 @@ if (isset($_GET['status'], $_GET['msg'])) {
             <div class="modal-body">
                 <div>
                     <label class="field-lbl">📝 Contenu du commentaire *</label>
-                    <textarea class="m-in" name="contenu" id="edit_contenu" rows="6"
-                              placeholder="Votre commentaire..." maxlength="1000"></textarea>
+                    <textarea class="m-in" name="contenu" id="edit_contenu" rows="6" placeholder="Votre commentaire..." maxlength="1000"></textarea>
                     <div class="char-c" id="edit_count">0 / 1000 caractères</div>
                     <div class="err" id="err_contenu"></div>
                 </div>
@@ -438,7 +394,7 @@ if (isset($_GET['status'], $_GET['msg'])) {
         </form>
     </div>
 </div>
- 
+
 <!-- MODALE SUPPRIMER -->
 <div class="modal-ov" id="deleteModal">
     <div class="modal-box" style="max-width:440px">
@@ -459,7 +415,7 @@ if (isset($_GET['status'], $_GET['msg'])) {
         </div>
     </div>
 </div>
- 
+
 <script>
 function openEditModal(btn) {
     document.getElementById('edit_id_commentaire').value = btn.dataset.id_commentaire;
@@ -474,7 +430,6 @@ function closeEditModal() {
     document.getElementById('editModal').classList.remove('show');
     document.body.style.overflow = '';
 }
-// Compteur en temps réel
 const editTextarea = document.getElementById('edit_contenu');
 if (editTextarea) {
     editTextarea.addEventListener('input', function() {

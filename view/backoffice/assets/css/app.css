@@ -1500,11 +1500,4 @@ footer {
 
 .bg-gray-700 {
   background-color: #4a5568 !important;
-
-#sidebar {
-    width: 300px !important;
-}
-
-#sidebar .sidebar-wrapper {
-    width: 300px !important;
 }

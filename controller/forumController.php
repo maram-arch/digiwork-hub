@@ -1,9 +1,7 @@
-// Fichier: ForumController.php
-// Aucune modification SQL directe (les requêtes sont dans le modèle Forum.php)
-
 <?php
 
-require_once "model/Forum.php";
+require_once __DIR__ . '/../model/forum.php';
+require_once __DIR__ . '/UserController.php';
 
 class ForumController
 {
@@ -16,35 +14,38 @@ class ForumController
 
     public function index()
     {
+        UserController::requireLogin();
         $forums = $this->forum->getAll();
         require "view/frontoffice/listPublication.php";
     }
 
     public function add()
     {
+        UserController::requireLogin();
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $this->forum->add($_POST['titre'], $_POST['contenu'], 1);
-            header("Location: index.php?action=list");
+            $this->forum->add($_POST['titre'], $_POST['contenu'], UserController::getCurrentUserId());
+            header("Location: index.php?action=forum_list");
         }
         require "view/frontoffice/addPublication.php";
     }
 
     public function delete()
     {
+        UserController::requireAdmin();
         $this->forum->delete($_GET['id']);
-        header("Location: index.php?action=list");
+        header("Location: index.php?action=forum_list");
     }
 
     public function edit()
     {
+        UserController::requireLogin();
         $forum = $this->forum->getById($_GET['id']);
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->forum->update($_GET['id'], $_POST['titre'], $_POST['contenu']);
-            header("Location: index.php?action=list");
+            header("Location: index.php?action=forum_list");
         }
 
         require "view/frontoffice/editPublication.php";
     }
 }
-?>

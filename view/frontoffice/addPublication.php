@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Ajouter une Publication</title>
-    <!-- Styles -->
     <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../assets/css/LineIcons.2.0.css">
     <link rel="stylesheet" href="../../assets/css/main.css">
@@ -29,7 +28,6 @@
 </head>
 <body>
 
-<!-- En-tête de la page -->
 <div class="page-header">
     <h1>
         <a href="index.php?action=list" class="back-link">&#8592;</a>
@@ -39,13 +37,13 @@
 
 <div class="wrapper">
     <div class="form-card">
-        <!-- Affichage des erreurs éventuelles -->
+
         <?php if (!empty($error)): ?>
             <div class="error-msg"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <!-- Formulaire d'ajout -->
         <form action="index.php?action=add" method="POST">
+
             <label>Titre :</label>
             <input type="text" name="titre" value="<?php echo htmlspecialchars($titre); ?>">
             <br><br>
@@ -56,6 +54,7 @@
 
             <button type="submit" class="btn-submit">Ajouter</button>
             <a href="index.php?action=list" class="btn-cancel">Annuler</a>
+
         </form>
     </div>
 </div>

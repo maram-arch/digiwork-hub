@@ -1,0 +1,39 @@
+.hero-light {
+    background: linear-gradient(130deg, #e9f7ef 0%, #f7f9fb 100%);
+    min-height: 100vh;
+}
+
+.crud-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.card-soft {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .08);
+    border: 0;
+}
+
+.badge-ok {
+    background: #e8f6ef;
+    color: #0f5132;
+    border: 1px solid #b7ebcc;
+    padding: .5rem .75rem;
+    border-radius: .5rem;
+}
+
+.badge-err {
+    background: #fde8e8;
+    color: #842029;
+    border: 1px solid #f5c2c7;
+    padding: .5rem .75rem;
+    border-radius: .5rem;
+}
+
+.validation-error {
+    color: #dc3545;
+    font-size: .875rem;
+    display: none;
+}

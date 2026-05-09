@@ -37,7 +37,7 @@
       let navbarToggler6 = document.querySelector(".header-6 .navbar-toggler");
       var navbarCollapse6 = document.querySelector(".header-6 .navbar-collapse");
 
-      document.querySelectorAll(".header-6 .page-scroll").forEach(e =>
+      document.querySelectorAll(".header-6 .page-scroll, .header-6 .page-scroll-auth").forEach(e =>
           e.addEventListener("click", () => {
               navbarToggler6.classList.remove("active");
               navbarCollapse6.classList.remove('show')
@@ -48,18 +48,32 @@
       })
 
 
-    // section menu active
+    // section menu active (ignore liens sans ancre valide : connexion, inscription, etc.)
 	function onScroll(event) {
 		var sections = document.querySelectorAll('.page-scroll');
 		var scrollPos = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+		var scrollTopMinus = scrollPos + 73;
+		var firstNav = document.querySelector('.header-6 .page-scroll');
 
 		for (var i = 0; i < sections.length; i++) {
 			var currLink = sections[i];
 			var val = currLink.getAttribute('href');
-			var refElement = document.querySelector(val);
-			var scrollTopMinus = scrollPos + 73;
+			if (!val || val.length < 2 || val.charAt(0) !== '#') {
+				continue;
+			}
+			var refElement = null;
+			try {
+				refElement = document.querySelector(val);
+			} catch (e) {
+				continue;
+			}
+			if (!refElement) {
+				continue;
+			}
 			if (refElement.offsetTop <= scrollTopMinus && (refElement.offsetTop + refElement.offsetHeight > scrollTopMinus)) {
-				document.querySelector('.page-scroll').classList.remove('active');
+				if (firstNav) {
+					firstNav.classList.remove('active');
+				}
 				currLink.classList.add('active');
 			} else {
 				currLink.classList.remove('active');

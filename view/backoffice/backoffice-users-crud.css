@@ -1,0 +1,25 @@
+.crud-card {
+    margin-bottom: 1.5rem;
+}
+
+.error-box {
+    background: #fde8e8;
+    border: 1px solid #f5c2c7;
+    color: #842029;
+    padding: .75rem;
+    border-radius: .5rem;
+}
+
+.success-box {
+    background: #e8f6ef;
+    border: 1px solid #b7ebcc;
+    color: #0f5132;
+    padding: .75rem;
+    border-radius: .5rem;
+}
+
+.validation-error {
+    color: #dc3545;
+    font-size: .875rem;
+    display: none;
+}

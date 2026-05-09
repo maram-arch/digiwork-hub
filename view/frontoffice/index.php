@@ -1,112 +1,128 @@
 <?php
-// view/frontoffice/index.php - Accueil du forum
 
-require_once __DIR__ . '/../../controller/PublicationController.php';
+session_start();
 
-$controller = new PublicationController();
-$result = $controller->listPublication();
+require_once __DIR__ . '/../../controller/UserController.php';
 
-// Récupération des publications
-$publications = [];
-if ($result instanceof PDOStatement) {
-    $publications = $result->fetchAll(PDO::FETCH_ASSOC);
-} elseif (is_array($result)) {
-    $publications = $result;
+$action = $_GET['action'] ?? '';
+
+if ($action === 'logout') {
+    if (isset($_SESSION['user_id'])) {
+        try {
+            (new UserController())->logoutUser((int) $_SESSION['user_id']);
+        } catch (Throwable $e) {
+        }
+    }
+    header('Location: index.php');
+    exit;
 }
-?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DigiWork Hub - Forum</title>
-    <link rel="stylesheet" href="assets/css/bootstrap-5.0.0-beta1.min.css" />
-    <link rel="stylesheet" href="assets/css/LineIcons.2.0.css" />
-    <link rel="stylesheet" href="assets/css/tiny-slider.css" />
-    <link rel="stylesheet" href="assets/css/animate.css" />
-    <link rel="stylesheet" href="assets/css/lindy-uikit.css" />
-</head>
 
-<body>
-    <header class="header header-6">
-        <div class="navbar-area">
-            <div class="container">
-                <nav class="navbar navbar-expand-lg">
-                    <a class="navbar-brand" href="index.php"><img src="assets/img/logo/logo.png" style="width:250px;"></a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-                        <span class="toggler-icon"></span>
-                        <span class="toggler-icon"></span>
-                        <span class="toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item"><a class="nav-link active" href="index.php">Accueil</a></li>
-                            <li class="nav-item"><a class="nav-link" href="publications.php">Forum</a></li>
-                            <li class="nav-item"><a class="nav-link" href="mes_commentaires.php">Mes commentaires</a></li>
-                            
-                        </ul>
-                    </div>
-                </nav>
-            </div>
-        </div>
-    </header>
+if ($action === 'heartbeat' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    header('Content-Type: application/json; charset=utf-8');
 
-    <main>
-        <section class="hero-section-wrapper-5 py-5" style="background-color:#f8fafc;">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-lg-6">
-                        <h1 class="mb-4">Bienvenue sur le forum DigiWork Hub</h1>
-                        <p class="mb-4">Échangez, partagez vos idées et trouvez des réponses au sein de notre communauté.</p>
-                        <a class="button button-lg radius-50" href="publications.php">Voir les publications</a>
-                    </div>
-                    <div class="col-lg-6 text-center">
-                        <img src="assets/img/hero/hero-5/hero-img.svg" alt="Illustration DigiWork Hub" class="img-fluid" />
-                    </div>
-                </div>
-            </div>
-        </section>
+    if (!isset($_SESSION['user_id'])) {
+        echo json_encode(['success' => false]);
+        exit;
+    }
 
-        <section class="pricing-section py-5">
-            <div class="container">
-                <div class="row mb-4">
-                    <div class="col-lg-8">
-                        <h2>Dernières publications</h2>
-                        <p>Les sujets les plus récents du forum.</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <?php if (!empty($publications)): ?>
-                        <?php 
-                        $recent = array_slice($publications, 0, 3); 
-                        foreach ($recent as $pub): 
-                            $apercu = htmlspecialchars(strip_tags($pub['contenu'] ?? ''));
-                            $apercu = strlen($apercu) > 120 ? substr($apercu, 0, 120) . '…' : $apercu;
-                        ?>
-                            <div class="col-lg-4 mb-4">
-                                <div class="pricing-card p-4 border rounded shadow-sm">
-                                    <span class="badge bg-primary"><?= htmlspecialchars($pub['categorie'] ?? 'general') ?></span>
-                                    <h3 class="mt-3"><?= htmlspecialchars($pub['titre'] ?? '') ?></h3>
-                                    <p><?= nl2br($apercu) ?></p>
-                                    <div class="text-muted small mb-2">
-                                        📅 <?= date('d/m/Y', strtotime($pub['date_publication'] ?? 'now')) ?> &nbsp;|&nbsp;
-                                        👤 <?= htmlspecialchars(($pub['prenom'] ?? '') . ' ' . ($pub['nom'] ?? '')) ?>
-                                    </div>
-                                    <a href="detail_publication.php?id=<?= urlencode($pub['id_publication']) ?>" class="button button-sm radius-50">Lire la suite</a>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="col-12">
-                            <div class="alert alert-warning">Aucune publication pour le moment. Soyez le premier à poster !</div>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </section>
-    </main>
+    try {
+        (new UserController())->touchUserSession((int) $_SESSION['user_id']);
+        echo json_encode(['success' => true]);
+    } catch (Throwable $e) {
+        echo json_encode(['success' => false]);
+    }
+    exit;
+}
 
-    <script src="assets/js/bootstrap-5.0.0-beta1.min.js"></script>
-</body>
-</html>
+if (in_array($action, ['login', 'signup', 'verify_otp', 'resend_otp', 'forgot_password', 'verify_reset_otp', 'resend_reset_otp', 'reset_password'], true) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+
+    try {
+        $controller = new UserController();
+    } catch (Throwable $e) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Service temporairement indisponible. Verifiez que MySQL est demarre dans XAMPP.',
+        ]);
+        exit;
+    }
+
+    $payload = json_decode((string) file_get_contents('php://input'), true);
+    if (!is_array($payload)) {
+        $payload = $_POST;
+    }
+
+    if ($action === 'login') {
+        $result = $controller->login($payload);
+        if ($result['success']) {
+            $newUserId = (int) $result['user']['id'];
+            $oldUserId = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : 0;
+            if ($oldUserId > 0 && $oldUserId !== $newUserId) {
+                try {
+                    $controller->markUserOffline($oldUserId);
+                } catch (Throwable $e) {
+                }
+            }
+
+            session_regenerate_id(true);
+            $_SESSION['user_id'] = $newUserId;
+            $_SESSION['front_auth'] = true;
+            $controller->touchUserSession($newUserId);
+            $result['redirect'] = '../backoffice/index.php';
+        }
+        echo json_encode($result);
+    } elseif ($action === 'verify_otp') {
+        $result = $controller->verifyOtp($payload);
+        if ($result['success']) {
+            session_regenerate_id(true);
+            $_SESSION['user_id']    = (int) $result['user_id'];
+            $_SESSION['front_auth'] = true;
+            $controller->touchUserSession((int) $result['user_id']);
+            $result['redirect'] = '../backoffice/index.php';
+        }
+        echo json_encode($result);
+    } elseif ($action === 'resend_otp') {
+        echo json_encode($controller->resendOtp($payload));
+    } elseif ($action === 'forgot_password') {
+        echo json_encode($controller->forgotPassword($payload));
+    } elseif ($action === 'verify_reset_otp') {
+        echo json_encode($controller->verifyResetOtp($payload));
+    } elseif ($action === 'resend_reset_otp') {
+        echo json_encode($controller->resendResetOtp($payload));
+    } elseif ($action === 'reset_password') {
+        echo json_encode($controller->resetPassword($payload));
+    } else {
+        $result = $controller->signup($payload);
+        if (isset($result['errors'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => implode(' ', $result['errors']),
+            ]);
+        } else {
+            echo json_encode($result);
+        }
+    }
+    exit;
+}
+
+if (isset($_SESSION['user_id'])) {
+    try {
+        $currentUser = (new UserController())->findUser((int) $_SESSION['user_id']);
+    } catch (Throwable $e) {
+        $currentUser = null;
+    }
+} else {
+    $currentUser = null;
+}
+
+$frontAuthState = [
+    'loggedIn' => $currentUser !== null,
+    'frontAuth' => !empty($_SESSION['front_auth']),
+    'userId' => (int) ($currentUser['id_user'] ?? 0),
+    'role' => (string) ($currentUser['role'] ?? ''),
+    'email' => (string) ($currentUser['email'] ?? ''),
+];
+
+echo '<script>window.__FRONT_AUTH_STATE__ = ' . json_encode($frontAuthState, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ';</script>';
+
+include __DIR__ . '/index.html';

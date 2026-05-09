@@ -29,6 +29,17 @@ $userRole    = $userRole    ?? ($loggedInUser['role'] ?? 'condidat');
                 <!-- ── Admin menu ── -->
                 <li class="sidebar-title">Gestion</li>
 
+                <li class="sidebar-item <?= $activePage === 'offres' ? 'active' : '' ?> has-sub">
+                    <a href="#" class="sidebar-link">
+                        <i data-feather="briefcase" width="20"></i>
+                        <span>Gestion des offres</span>
+                    </a>
+                    <ul class="submenu <?= $activePage === 'offres' ? 'active' : '' ?>">
+                        <li><a href="listOffres.php">Offres</a></li>
+                        <li><a href="listCandidatures.php">Candidatures</a></li>
+                    </ul>
+                </li>
+
                 <li class="sidebar-item <?= $activePage === 'users' ? 'active' : '' ?> has-sub">
                     <a href="#" class="sidebar-link">
                         <i data-feather="users" width="20"></i>
@@ -97,6 +108,20 @@ $userRole    = $userRole    ?? ($loggedInUser['role'] ?? 'condidat');
                 <!-- ── Candidat menu ── -->
                 <li class="sidebar-title">Mon Espace</li>
 
+                <li class="sidebar-item <?= $activePage === 'offres' ? 'active' : '' ?>">
+                    <a href="../frontoffice/offres.php" class="sidebar-link">
+                        <i data-feather="briefcase" width="20"></i>
+                        <span>Offres</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item <?= $activePage === 'candidatures' ? 'active' : '' ?>">
+                    <a href="../frontoffice/mes_candidatures.php" class="sidebar-link">
+                        <i data-feather="file-text" width="20"></i>
+                        <span>Mes Candidatures</span>
+                    </a>
+                </li>
+
                 <li class="sidebar-item <?= $activePage === 'mes_inscriptions' ? 'active' : '' ?>">
                     <a href="index.php?page=mes_inscriptions" class="sidebar-link">
                         <i data-feather="calendar" width="20"></i>
@@ -130,6 +155,13 @@ $userRole    = $userRole    ?? ($loggedInUser['role'] ?? 'condidat');
                 <?php elseif ($userRole === 'entreprise' || $userRole === 'sponsor'): ?>
                 <!-- ── Entreprise / Sponsor menu ── -->
                 <li class="sidebar-title">Mon Espace</li>
+
+                <li class="sidebar-item <?= $activePage === 'offres' ? 'active' : '' ?>">
+                    <a href="listOffres.php" class="sidebar-link">
+                        <i data-feather="briefcase" width="20"></i>
+                        <span>Offres</span>
+                    </a>
+                </li>
 
                 <li class="sidebar-item <?= $activePage === 'mes_projets' ? 'active' : '' ?>">
                     <a href="index.php?page=mes_projets" class="sidebar-link">
